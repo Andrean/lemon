@@ -6,16 +6,24 @@ Created on 14.06.2013
 
 class Storage(object):
     '''
-    classdocs
+    Class using different files for every item
     '''
 
 
-    def __init__(self):
+    def __init__(self, _uniqueId):
         '''
         Constructor
         '''
+        self._storageID = _uniqueId;
     def readItem(self, item_id):
         pass
     
     def writeItem(self, item_id, content):
         pass
+    
+    def _read(self, file):
+        pass
+    
+    def _write(self, file, content):
+        pass
+    
