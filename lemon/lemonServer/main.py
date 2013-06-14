@@ -4,7 +4,11 @@ Created on 13.06.2013
 @author: vau
 '''
 import server
+import webInterfaceListener
 
 if __name__ == '__main__':
-    serverInstance      = server.Server(20);
-    serverInstance.start();
+    agentServerInstance      = server.Server(20);
+    httpInterfaceInstance    = webInterfaceListener.httpListener();
+    
+    agentServerInstance.start();
+    httpInterfaceInstance.start();
