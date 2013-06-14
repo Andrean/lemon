@@ -5,8 +5,9 @@ Created on 14.06.2013
 '''
 
 import common.IdGenerator
+import threading
 
-class Storage(object):
+class Storage(threading.Thread):
     '''
     Class using different files for every item
     '''
@@ -20,6 +21,8 @@ class Storage(object):
         if(~self._storageID):                                        
             self._storageID = common.IdGenerator.GenerateNewUniqueID();
             self._write(preinitFile, self._storageID)
+        threading.Thread.__init__(self)
+        self._lock  = threading.Lock()    
         
     # return byte content from file
     def readItem(self, item_id):
@@ -32,18 +35,28 @@ class Storage(object):
         return self._write(fileName, content);
     
     def _read(self, file):
+        self._lock()
         try:
             f = open(file, 'rb');
         except IOError:
             return;
         content = f.read()
         f.close()
+        self._unlock()
         return content
     
     def _write(self, file, content):
+        self._lock()
         f = open(file, 'wb')
         f.write(content)
+        self._unlock()
             
     def _getFilename(self, item_id):
         if not item_id:
             return self._storageID + item_id;
+        
+    def _lock(self):
+        self._lock.acquire()
+        
+    def _unlock(self):
+        self._lock.release()
