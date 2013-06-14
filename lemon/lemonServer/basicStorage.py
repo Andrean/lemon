@@ -11,18 +11,22 @@ class Storage(threading.Thread):
     '''
     Class using different files for every item
     '''
-
-
     def __init__(self, preinitFile):
         '''
         Constructor
         '''
-        self._storageID =   self._read(preinitFile)
-        if(~self._storageID):                                        
+        self._lock  = threading.Lock()
+        self._storageID =   self._read(preinitFile) or ''
+        if  self._storageID is '':                                        
             self._storageID = common.IdGenerator.GenerateNewUniqueID();
             self._write(preinitFile, self._storageID)
+        else:
+            self._storageID = str(self._storageID, 'utf-8')
         threading.Thread.__init__(self)
-        self._lock  = threading.Lock()    
+         
+        
+    def run(self):
+        print(self._storageID)
         
     # return byte content from file
     def readItem(self, item_id):
@@ -35,10 +39,11 @@ class Storage(threading.Thread):
         return self._write(fileName, content);
     
     def _read(self, file):
-        self._lock()
+        self._dolock()
         try:
             f = open(file, 'rb');
         except IOError:
+            self._unlock()
             return;
         content = f.read()
         f.close()
@@ -46,16 +51,17 @@ class Storage(threading.Thread):
         return content
     
     def _write(self, file, content):
-        self._lock()
+        self._dolock()
         f = open(file, 'wb')
-        f.write(content)
+        f.write(bytes(content, 'utf-8'))
+        f.close()
         self._unlock()
             
     def _getFilename(self, item_id):
         if not item_id:
             return self._storageID + item_id;
         
-    def _lock(self):
+    def _dolock(self):
         self._lock.acquire()
         
     def _unlock(self):
