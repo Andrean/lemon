@@ -4,6 +4,7 @@ Created on 14.06.2013
 @author: vau
 '''
 
+import sys
 import common.IdGenerator
 import threading
 
@@ -18,7 +19,9 @@ class Storage(threading.Thread):
         '''
         self._lock  = threading.Lock()
         self._encoding  = 'utf-8'
-        self._storageID =   self._read(preinitFile) or ''
+        self._logger    = logger
+        self._storageID = self._read(preinitFile) or ''
+        
         if  self._storageID is '':                                        
             self._storageID = common.IdGenerator.GenerateNewUniqueID();
             logger.info("storage create new ID")
@@ -26,7 +29,7 @@ class Storage(threading.Thread):
         else:
             self._storageID = str(self._storageID, self._encoding)
         threading.Thread.__init__(self)
-        logger.info("storage started with Id " + self._storageID)
+        self._logger.info("storage started with Id " + self._storageID)
          
         
     def run(self):
@@ -46,20 +49,30 @@ class Storage(threading.Thread):
         self._dolock()
         try:
             f = open(file, 'rb');
+            content = f.read()
+            return content
         except IOError:
             self._unlock()
-            return;
-        content = f.read()
-        f.close()
-        self._unlock()
-        return content
-    
+        except Exception as ex:
+            tb  = sys.exc_info()[2]
+            self._logger.error(ex.with_traceback(tb))
+        finally:
+            f.close()
+            self._unlock()
+                      
     def _write(self, file, content):
-        self._dolock()
-        f = open(file, 'wb')
-        f.write(bytes(content, self._encoding))
-        f.close()
-        self._unlock()
+        try:
+            self._dolock()
+            f = open(file, 'wb')
+            f.write(bytes(content, self._encoding))
+        except Exception as ex:
+            tb = sys.exc_info()[2]
+            self._logger.error(ex.with_traceback(tb))
+        finally:
+            f.close()
+            self._unlock()
+            return
+        
             
     def _getFilename(self, item_id):
         if not item_id:
