@@ -7,6 +7,7 @@ Created on 14.06.2013
 import sys
 import common.IdGenerator
 import threading
+import time
 
 
 class Storage(threading.Thread):
@@ -33,6 +34,8 @@ class Storage(threading.Thread):
          
         
     def run(self):
+        while(True):
+            time.sleep(0.1)
         print(self._storageID)
         
     # return byte content from file
@@ -46,18 +49,18 @@ class Storage(threading.Thread):
         return self._write(fileName, content);
     
     def _read(self, file):
-        self._dolock()
         try:
+            self._dolock()
             f = open(file, 'rb');
             content = f.read()
+            f.close()
             return content
         except IOError:
-            self._unlock()
+            self._logger.info("{0} is not exists. Creating new file".format(str(file)));
         except Exception as ex:
             tb  = sys.exc_info()[2]
             self._logger.error(ex.with_traceback(tb))
         finally:
-            f.close()
             self._unlock()
                       
     def _write(self, file, content):
@@ -65,21 +68,24 @@ class Storage(threading.Thread):
             self._dolock()
             f = open(file, 'wb')
             f.write(bytes(content, self._encoding))
+            return True
         except Exception as ex:
             tb = sys.exc_info()[2]
             self._logger.error(ex.with_traceback(tb))
         finally:
             f.close()
             self._unlock()
-            return
+            
         
             
     def _getFilename(self, item_id):
-        if not item_id:
-            return self._storageID + item_id;
+        return self._storageID + str(item_id);
         
     def _dolock(self):
         self._lock.acquire()
         
     def _unlock(self):
         self._lock.release()
+        
+    def quit(self):
+        exit(0);
