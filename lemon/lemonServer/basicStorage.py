@@ -16,12 +16,13 @@ class Storage(threading.Thread):
         Constructor
         '''
         self._lock  = threading.Lock()
+        self._encoding  = 'utf-8'
         self._storageID =   self._read(preinitFile) or ''
         if  self._storageID is '':                                        
             self._storageID = common.IdGenerator.GenerateNewUniqueID();
             self._write(preinitFile, self._storageID)
         else:
-            self._storageID = str(self._storageID, 'utf-8')
+            self._storageID = str(self._storageID, self._encoding)
         threading.Thread.__init__(self)
          
         
@@ -53,7 +54,7 @@ class Storage(threading.Thread):
     def _write(self, file, content):
         self._dolock()
         f = open(file, 'wb')
-        f.write(bytes(content, 'utf-8'))
+        f.write(bytes(content, self._encoding))
         f.close()
         self._unlock()
             
