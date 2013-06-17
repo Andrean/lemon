@@ -7,11 +7,12 @@ Created on 14.06.2013
 import common.IdGenerator
 import threading
 
+
 class Storage(threading.Thread):
     '''
     Class using different files for every item
     '''
-    def __init__(self, preinitFile):
+    def __init__(self, preinitFile, logger):
         '''
         Constructor
         '''
@@ -20,10 +21,12 @@ class Storage(threading.Thread):
         self._storageID =   self._read(preinitFile) or ''
         if  self._storageID is '':                                        
             self._storageID = common.IdGenerator.GenerateNewUniqueID();
+            logger.info("storage create new ID")
             self._write(preinitFile, self._storageID)
         else:
             self._storageID = str(self._storageID, self._encoding)
         threading.Thread.__init__(self)
+        logger.info("storage started with Id " + self._storageID)
          
         
     def run(self):
