@@ -5,6 +5,7 @@ Created on 14.06.2013
 '''
 
 import sys
+import os
 import common.IdGenerator
 import threading
 import time
@@ -14,27 +15,38 @@ class Storage(threading.Thread):
     '''
     Class using different files for every item
     '''
-    def __init__(self, preinitFile, logger):
+    def __init__(self, preinitFile, logger, cfg):
         '''
         Constructor
         '''
         self._lock  = threading.Lock()
         self._encoding  = 'utf-8'
         self._logger    = logger
-        self._storageID = self._read(preinitFile) or ''
+        self._config    = cfg
+        try:
+            self._path  = self._config['data_path']
+        except KeyError as k:
+            self._logger.error("config error. Cannot create storage {0} : {1}".format(self._storageID, str(k)))
+            return
+        
+        self._storageID = self._read(self._path + preinitFile) or ''
         
         if  self._storageID is '':                                        
             self._storageID = common.IdGenerator.GenerateNewUniqueID();
             logger.info("storage create new ID")
-            self._write(preinitFile, self._storageID)
+            self._write(self._path + preinitFile, self._storageID)
         else:
             self._storageID = str(self._storageID, self._encoding)
-        threading.Thread.__init__(self)
-        self._logger.info("storage started with Id " + self._storageID)
-         
         
+        threading.Thread.__init__(self)
+        self._logger.info("storage created with Id " + self._storageID)
+        
+                 
     def run(self):
         self._running = True
+        self._logger.info("storage {0} started".format(self._storageID))
+        if not os.path.exists(self._config['data_path']):
+            os.makedirs(self._config['data_path'])
         while(self._running):
             time.sleep(0.1)
         print(self._storageID)
@@ -80,7 +92,7 @@ class Storage(threading.Thread):
         
             
     def _getFilename(self, item_id):
-        return self._storageID + str(item_id);
+        return self._path + '/' + self._storageID + str(item_id);
         
     def _dolock(self):
         self._lock.acquire()
