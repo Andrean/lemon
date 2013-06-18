@@ -15,4 +15,13 @@ class LemonException(Exception):
         '''
         Constructor
         '''
+        pass
         
+
+class StorageNotCreatedException(LemonException):
+    '''
+    Using for raise exception if storage class has not created
+    '''
+
+    def __init__(self, message):
+        pass
