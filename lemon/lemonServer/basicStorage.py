@@ -34,7 +34,8 @@ class Storage(threading.Thread):
          
         
     def run(self):
-        while(True):
+        self._running = True
+        while(self._running):
             time.sleep(0.1)
         print(self._storageID)
         
@@ -88,4 +89,4 @@ class Storage(threading.Thread):
         self._lock.release()
         
     def quit(self):
-        exit(0);
+        self._running = False
