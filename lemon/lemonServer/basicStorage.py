@@ -61,6 +61,13 @@ class Storage(threading.Thread):
         fileName = self._getFilename(item_id);
         return self._write(fileName, content);
     
+    def deleteItem(self, item_id):
+        fileName = self._getFilename(item_id);
+        return self._delete(fileName)
+    
+    def quit(self):
+        self._running = False
+    
     def _read(self, file):
         try:
             self._dolock()
@@ -90,7 +97,14 @@ class Storage(threading.Thread):
             self._unlock()
             
         
-            
+    def _delete(self, file):
+        try:
+            os.remove(file)
+            return True
+        except Exception as e:
+            tb = sys.exc_info()[2]
+            self._logger.error(e.with_traceback(tb))
+                
     def _getFilename(self, item_id):
         return self._path + '/' + self._storageID + str(item_id);
         
@@ -100,5 +114,4 @@ class Storage(threading.Thread):
     def _unlock(self):
         self._lock.release()
         
-    def quit(self):
-        self._running = False
+    
