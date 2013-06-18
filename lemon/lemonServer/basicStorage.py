@@ -49,6 +49,7 @@ class Storage(threading.Thread):
             os.makedirs(self._config['data_path'])
         while(self._running):
             time.sleep(0.1)
+        self._logger.info("shutdown storage {0}".format(self._storageID))
         print(self._storageID)
         
     # return byte content from file
@@ -100,6 +101,7 @@ class Storage(threading.Thread):
     def _delete(self, file):
         try:
             os.remove(file)
+            self._logger.debug("file {0} deleted".format(file))
             return True
         except Exception as e:
             tb = sys.exc_info()[2]
