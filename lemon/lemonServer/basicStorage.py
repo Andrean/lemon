@@ -9,6 +9,7 @@ import os
 import common.IdGenerator
 import threading
 import time
+from exception.lemonException import StorageNotCreatedException 
 
 
 class Storage(threading.Thread):
@@ -26,9 +27,9 @@ class Storage(threading.Thread):
         try:
             self._path  = self._config['data_path']
         except KeyError as k:
-            self._logger.error("config error. Cannot create storage {0} : {1}".format(self._storageID, str(k)))
-            return
-        
+            self._logger.error("config error. Cannot create storage: {0}".format(str(k)))
+            raise StorageNotCreatedException('Configuration error. One or more fields in config is None')
+            
         self._storageID = self._read(self._path + preinitFile) or ''
         
         if  self._storageID is '':                                        
