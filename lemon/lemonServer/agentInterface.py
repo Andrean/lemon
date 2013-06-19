@@ -4,7 +4,7 @@ Created on 19.06.2013
 @author: vau
 '''
 
-class AgentListener(object):
+class AgentHandler(object):
     '''
     classdocs
     '''
@@ -15,11 +15,6 @@ class AgentListener(object):
         Constructor
         '''
     
-    def _receive(self, _bytedata):
-        pass
-    
-    def _send(self, _bytedata):
-        pass
-    
+         
     
     
