@@ -15,3 +15,8 @@ class BaseInterfaceLinstener():
         '''
         pass
         
+    def _receive(self, _bytedata):
+        pass
+    
+    def _send(self, _bytedata):
+        pass

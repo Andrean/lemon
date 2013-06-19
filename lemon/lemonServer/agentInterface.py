@@ -4,7 +4,7 @@ Created on 19.06.2013
 @author: vau
 '''
 
-class agentListener(object):
+class AgentListener(object):
     '''
     classdocs
     '''
