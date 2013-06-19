@@ -14,4 +14,12 @@ class agentListener(object):
         '''
         Constructor
         '''
-        
+    
+    def _receive(self, _bytedata):
+        pass
+    
+    def _send(self, _bytedata):
+        pass
+    
+    
+    
