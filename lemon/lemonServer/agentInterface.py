@@ -11,6 +11,7 @@ SECONDS  = 1
 MINUTES  = 60*SECONDS
 
 NOT_IDENTIFIED  = 2
+
 class AgentHandler(object):
     '''
     classdocs
