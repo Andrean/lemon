@@ -22,11 +22,11 @@ class AgentHandler(object):
         self._sessionStorage = {}
         self._expireTime = 20 * MINUTES
     def startSession(self, _agentId):
-        if _agentId not in self._sessionStorage:
-            _sessionId = common.IdGenerator.GenerateSessionID()
-            self._sessionStorage[_agentId] = {'id':_sessionId, 'expire': time.time() + self._expireTime}
-            return _sessionId
-        return self._sessionStorage[_agentId]['id']
+        _sessionId = common.IdGenerator.GenerateSessionID()
+        self._sessionStorage[_agentId] = {'id':_sessionId, 'expire': time.time() + self._expireTime}
+        return _sessionId
+    
+    
     
     def _checkExpiredSessions(self):
         pass
