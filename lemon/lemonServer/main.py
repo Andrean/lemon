@@ -27,3 +27,6 @@ if __name__ == '__main__':
     #starting instances
     agentServerInstance.start();
     httpInterfaceInstance.start();
+    
+    #shutdown agent listener
+    agentServerInstance.shutdownListener()
