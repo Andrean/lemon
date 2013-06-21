@@ -9,6 +9,8 @@ import time
 
 SECONDS  = 1
 MINUTES  = 60*SECONDS
+
+NOT_IDENTIFIED  = 2
 class AgentHandler(object):
     '''
     classdocs
@@ -27,7 +29,19 @@ class AgentHandler(object):
         return _sessionId
     
     
-    
+    def postData(self, key, _dictData):
+        agentId    = key[0]
+        sessionId  = key[1]
+        try:
+            if self._sessionStorage[agentId] != sessionId:
+                return NOT_IDENTIFIED  
+        except KeyError:
+            return
+        
+        self._TaskManager.addTask(agentId, _dictData)
+        
+        
+        
     def _checkExpiredSessions(self):
         pass
             
