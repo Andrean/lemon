@@ -7,11 +7,11 @@ Created on 19.06.2013
 from agentInterface import AgentHandler
 from socketserver import ThreadingMixIn
 from xmlrpc.server import SimpleXMLRPCServer
-from exception.lemonException import LemonException
+from exception.lemonException import ServerExitException
 
 class xmlrpcAgentListener(ThreadingMixIn, SimpleXMLRPCServer ):
     pass
 
-class XMLRPCExitException(LemonException):
+class XMLRPCExitException(ServerExitException):
     pass
     

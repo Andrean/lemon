@@ -25,3 +25,6 @@ class StorageNotCreatedException(LemonException):
 
     def __init__(self, message):
         pass
+
+class ServerExitException(LemonException):
+    pass
