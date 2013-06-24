@@ -12,6 +12,8 @@ MINUTES  = 60*SECONDS
 
 NOT_IDENTIFIED  = 2
 
+CMD_STORE       = 'store'
+
 class AgentHandler(object):
     '''
     classdocs
@@ -39,9 +41,8 @@ class AgentHandler(object):
         except KeyError:
             return
         
-        self._TaskManager.addTask(agentId, _dictData)
-        
-        
+        self._TaskManager.addTask(agentId, CMD_STORE, _dictData)
+                
         
     def _checkExpiredSessions(self):
         pass
