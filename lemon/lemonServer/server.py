@@ -14,7 +14,8 @@ class Server(threading.Thread):
     classdocs
     '''
     
-    def __init__(self, _id, _cfg):
+    def __init__(self, _id, _cfg, _TaskManager):
+        self._tmInstance    = _TaskManager
         self.__instanceId = _id;
         self._config    = _cfg
         cfg_ainterface  = self._config['AGENT_INTERFACE']
@@ -23,7 +24,8 @@ class Server(threading.Thread):
 
     def run(self):
         try:
-            self._xmlrpcListener.register_instance(AgentHandler())
+            agentHandler = AgentHandler(self._tmInstance)
+            self._xmlrpcListener.register_instance(agentHandler)
             self._xmlrpcListener.serve_forever()            
         except XMLRPCExitException:
             print("xmlrpc server shutdown")

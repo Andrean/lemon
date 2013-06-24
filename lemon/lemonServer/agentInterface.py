@@ -20,10 +20,11 @@ class AgentHandler(object):
     '''
 
 
-    def __init__(self):
+    def __init__(self, _taskmanager):
         '''
         Constructor
         '''
+        self._TaskManager   = _taskmanager
         self._sessionStorage = {}
         self._expireTime = 20 * MINUTES
     def startSession(self, _agentId):

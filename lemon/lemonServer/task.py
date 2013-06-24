@@ -8,6 +8,7 @@ import threading
 import queue
 import uuid
 import time
+import exception.lemonException as lemonException
 
 class TaskManager(threading.Thread):
     '''
@@ -15,13 +16,16 @@ class TaskManager(threading.Thread):
     '''
 
 
-    def __init__(self):
+    def __init__(self, logger, cfg):
         '''
         Constructor
         '''
         self._TaskQueue = queue.Queue()
         self._lock  = threading.Lock()
+        self._logger    = logger
+        self._config    = cfg
         self._running   = False
+        self._handlerList   = {}
         threading.Thread.__init__(self)
         
     def run(self):
@@ -37,9 +41,23 @@ class TaskManager(threading.Thread):
         task    = {taskId:[agentId,command, data]}
         self._addTask(task)
         
+    def connectHandler(self, _handler):
+        if _handler.getName() in self._handlerList.keys():
+            raise lemonException.HandlerAlreadyInListException()
+        else:
+            self._handlerList[_handler.getName()] = _handler
+        
     def _process(self):
-        pass
-    
+        task = self._TaskQueue.get()
+        taskId = task.keys()[0]
+        try:
+            self._logger.debug("Task {0} is processed".format(taskId))
+            for taskHandler in self._handlerList.values():
+                taskHandler.do(task)
+            self._logger.debug("Task {0} was processed without errors".format(taskId))
+        except Exception as e:
+            self._logger.error("Task {0} was processed with error: {1}".format(taskId, str(e)))
+            
     def _checkForTasks(self):
         if self._TaskQueue.empty():
             return False
