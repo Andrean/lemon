@@ -101,8 +101,10 @@ class Storage(threading.Thread):
         
     def _delete(self, file):
         try:
+            self._dolock()
             os.remove(file)
             self._logger.debug("file {0} deleted".format(file))
+            self._unlock()
             return True
         except Exception as e:
             tb = sys.exc_info()[2]
