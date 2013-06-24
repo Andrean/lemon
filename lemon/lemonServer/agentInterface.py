@@ -6,13 +6,14 @@ Created on 19.06.2013
 
 import common.IdGenerator
 import time
+import task_commands
 
 SECONDS  = 1
 MINUTES  = 60*SECONDS
 
 NOT_IDENTIFIED  = 2
 
-CMD_STORE       = 'store'
+
 
 class AgentHandler(object):
     '''
@@ -42,7 +43,7 @@ class AgentHandler(object):
         except KeyError:
             return
         
-        self._TaskManager.addTask(agentId, CMD_STORE, _dictData)
+        self._TaskManager.addTask(agentId, task_commands.CMD_STORE, _dictData)
                 
         
     def _checkExpiredSessions(self):

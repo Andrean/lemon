@@ -9,6 +9,8 @@ import queue
 import uuid
 import time
 import exception.lemonException as lemonException
+import task_commands
+import json
 
 class TaskManager(threading.Thread):
     '''
@@ -39,7 +41,7 @@ class TaskManager(threading.Thread):
     
     def addTask(self, agentId, command, data):
         taskId  = str(uuid.uuid4())
-        task    = {taskId:[agentId,command, data]}
+        task    = [taskId,[agentId,command, data]]
         self._addTask(task)
         
     def connectHandler(self, _handler):
@@ -50,7 +52,7 @@ class TaskManager(threading.Thread):
         
     def _process(self):
         task = self._TaskQueue.get()
-        taskId = task.keys()[0]
+        taskId = task[0]
         try:
             self._logger.debug("Task {0} is processed".format(taskId))
             for taskHandler in self._handlerList.values():
@@ -77,4 +79,41 @@ class TaskManager(threading.Thread):
         
     def _unlock(self):
         self._lock.release()
+        
+        
+class BaseTaskHandler(object):
+    
+    def __init__(self, name):
+        self._name  = name
+        self._commandList   = []
+        
+    def getName(self):
+        return self._name
+    
+    def do(self, task):
+        task_cmd = task[1][1]
+        if task_cmd in self._commandList:
+            try:
+                self._dispatchMethod(task_cmd, task)
+            except Exception as e:
+                print( "Base task handler exception %s" % str(e))
+    
+    def _dispatchMethod(self, cmd, task):
+        pass
+    
+class StoreTaskHandler(BaseTaskHandler):
+    
+    def __init__(self, name, _agentStorageInstance):
+        self._storage   = _agentStorageInstance
+        BaseTaskHandler.__init__(name)
+        self._commandList = [task_commands.CMD_STORE]
+    
+    def _dispatchMethod(self, cmd, task):
+        agentId = task[1][0]
+        data    = task[1][2]
+        if cmd is task_commands.CMD_STORE:
+            self._store(agentId, data)
             
+    def __store(self, agentId, data):
+        itemId  = 'data_'+ agentId
+        self._storage.writeItem(itemId, json.dumps(data))
