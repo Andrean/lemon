@@ -19,6 +19,8 @@ class TaskManager(threading.Thread):
         Constructor
         '''
         self._TaskQueue = queue.Queue()
+        self._lock  = threading.Lock()
+        threading.Thread.__init__(self)
         
     def run(self):
         pass
@@ -31,8 +33,15 @@ class TaskManager(threading.Thread):
     
     def _addTask(self, task):
         try:
+            self._dolock()
             self._TaskQueue.put(task)
+            self._unlock()
         except Exception as ex:
             print(ex)
-            
+    
+    def _dolock(self):
+        self._lock.acquire()
+        
+    def _unlock(self):
+        self._lock.release()
             
