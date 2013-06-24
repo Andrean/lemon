@@ -30,6 +30,7 @@ class TaskManager(threading.Thread):
         
     def run(self):
         self._running   = True
+        self._logger.info("Task manager started")
         while(self._running):
             if self._checkForTasks():
                 self._process()

@@ -24,12 +24,13 @@ class Server(threading.Thread):
 
     def run(self):
         try:
+            print("i am a new server instance with id: "+str(self._getId())+"\n");
             agentHandler = AgentHandler(self._tmInstance)
             self._xmlrpcListener.register_instance(agentHandler)
             self._xmlrpcListener.serve_forever()            
         except XMLRPCExitException:
             print("xmlrpc server shutdown")
-        print("i am a new server instance with id: "+str(self._getId())+"\n");
+        
         
     
     def shutdownListener(self):

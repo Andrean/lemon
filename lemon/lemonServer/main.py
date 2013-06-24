@@ -8,7 +8,7 @@ import webInterfaceListener
 import main_config
 import configparser
 import logging.config
-
+from task import TaskManager
 
 if __name__ == '__main__':
     
@@ -19,11 +19,18 @@ if __name__ == '__main__':
         main_config.writeDefaultConfig(config)
     logging.config.fileConfig(config['LOGGING']['file'])
     
+    #create loggers
+    mainLogger              = logging.getLogger('MAIN')
+    taskLogger              = logging.getLogger('TASK')
+    # creating task manager instance
+    taskManager             = TaskManager(taskLogger, config)
+    taskManager.start()
     # creating interface instances
-    agentServerInstance      = server.Server(20, config);
-    httpInterfaceInstance    = webInterfaceListener.httpListener();
+    agentServerInstance     = server.Server(20, config, taskManager);
+    httpInterfaceInstance   = webInterfaceListener.httpListener();
     
     #starting instances
+    
     agentServerInstance.start();
     httpInterfaceInstance.start();
     
