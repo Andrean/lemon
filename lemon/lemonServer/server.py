@@ -18,7 +18,7 @@ class Server(threading.Thread):
         self.__instanceId = _id;
         self._config    = _cfg
         cfg_ainterface  = self._config['AGENT_INTERFACE']
-        self._xmlrpcListener = xmlrpcAgentListener((cfg_ainterface['xmlrpc_address'], int(cfg_ainterface['xmlrpc_port'])))
+        self._xmlrpcListener = xmlrpcAgentListener((str(cfg_ainterface['xmlrpc_address']), int(cfg_ainterface['xmlrpc_port'])))
         threading.Thread.__init__(self);
 
     def run(self):

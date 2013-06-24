@@ -44,6 +44,7 @@ class TaskManager(threading.Thread):
         if self._TaskQueue.empty():
             return False
         return True
+    
     def _addTask(self, task):
         try:
             self._dolock()
