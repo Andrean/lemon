@@ -7,7 +7,6 @@ import server
 import webInterfaceListener
 import main_config
 import configparser
-import logging
 import logging.config
 
 
@@ -21,7 +20,7 @@ if __name__ == '__main__':
     logging.config.fileConfig(config['LOGGING']['file'])
     
     # creating interface instances
-    agentServerInstance      = server.Server(20);
+    agentServerInstance      = server.Server(20, config);
     httpInterfaceInstance    = webInterfaceListener.httpListener();
     
     #starting instances

@@ -8,11 +8,19 @@ from xmlrpcAgentListener import xmlrpcAgentListener
 from xmlrpcAgentListener import XMLRPCExitException
 from agentInterface import AgentHandler
 
+
 class Server(threading.Thread):
     '''
     classdocs
     '''
-    __instanceId    = 0;
+    
+    def __init__(self, _id, _cfg):
+        self.__instanceId = _id;
+        self._config    = _cfg
+        cfg_ainterface  = self._config['AGENT_INTERFACE']
+        self._xmlrpcListener = xmlrpcAgentListener((cfg_ainterface['xmlrpc_address'], int(cfg_ainterface['xmlrpc_port'])))
+        threading.Thread.__init__(self);
+
     def run(self):
         try:
             self._xmlrpcListener.register_instance(AgentHandler())
@@ -29,11 +37,5 @@ class Server(threading.Thread):
         return self.__instanceId;
 
 
-    def __init__(self, _id):
-        self.__instanceId = _id;
-        self._xmlrpcListener = xmlrpcAgentListener(('test-note.kontur', 8000))
-        threading.Thread.__init__(self);
-        '''
-        Constructor
-        '''
+    
         
