@@ -28,3 +28,6 @@ class StorageNotCreatedException(LemonException):
 
 class ServerExitException(LemonException):
     pass
+
+class HandlerAlreadyInListException(LemonException):
+    pass
