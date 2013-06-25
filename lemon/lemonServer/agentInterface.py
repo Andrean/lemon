@@ -5,6 +5,7 @@ Created on 19.06.2013
 '''
 
 import common.IdGenerator
+import common.timer
 import time
 import task_commands
 
@@ -39,7 +40,11 @@ class AgentHandler(object):
         '''
         self._TaskManager   = _taskmanager
         self._sessionStorage = {}
-        self._expireTime = 20 * MINUTES
+        self._expireTime    = 20 * MINUTES
+        self._interval      = 5 * SECONDS 
+        expiredSessionsTimer   = common.timer.RepeatedTimer(self._interval, self._checkExpiredSessions)
+        expiredSessionsTimer.start()
+        
         
     def startSession(self, _agentId):
         _sessionId = common.IdGenerator.GenerateSessionID()
@@ -61,8 +66,11 @@ class AgentHandler(object):
                 
         
     def _checkExpiredSessions(self):
-        pass
+        removeList = [k for k, v in self._sessionStorage.items() if v['expire'] < time.time()]
+        for k in removeList:
+            self._sessionStorage.pop(k)
             
+           
     
     
     
