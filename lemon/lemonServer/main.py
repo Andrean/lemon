@@ -61,3 +61,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         agentServerInstance.shutdownListener()
         taskManager.shutdown()
+        logging.shutdown()
