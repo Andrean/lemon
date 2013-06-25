@@ -14,8 +14,9 @@ class Server(threading.Thread):
     classdocs
     '''
     
-    def __init__(self, _id, _cfg, _TaskManager):
+    def __init__(self, _id, _logger, _cfg, _TaskManager):
         self._tmInstance    = _TaskManager
+        self._logger        = _logger
         self.__instanceId = _id;
         self._config    = _cfg
         cfg_ainterface  = self._config['AGENT_INTERFACE']
@@ -27,14 +28,18 @@ class Server(threading.Thread):
             print("i am a new server instance with id: "+str(self._getId())+"\n");
             agentHandler = AgentHandler(self._tmInstance)
             self._xmlrpcListener.register_instance(agentHandler)
+            self._logger.info('xmlrpc listener starting')
             self._xmlrpcListener.serve_forever()            
         except XMLRPCExitException:
             print("xmlrpc server shutdown")
+        self._logger.info('server instance with id {0} was stopped'.format(self._getId()))
         
         
     
     def shutdownListener(self):
+        self._logger.info('attempting to shutdown agent xmlrpcListener')
         self._xmlrpcListener.shutdown()
+        self._logger.info('agent xmlrpcListener is shutdown')
                 
     def _getId(self):
         return self.__instanceId;
