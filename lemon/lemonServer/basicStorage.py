@@ -15,10 +15,10 @@ from exception.lemonException import StorageNotCreatedException
 def synchronized(f):
     '''Synchronization method decorator.'''
 
-    def new_function(self, *args, **kw):
+    def new_function(self, *args, **kwargs):
         self._lock.acquire()
         try:
-            return f(*args, **kw)
+            return f(self, *args, **kwargs)
         finally:
             self._lock.release()
     return new_function

@@ -42,7 +42,8 @@ class TaskManager(threading.Thread):
     
     def addTask(self, agentId, command, data):
         taskId  = str(uuid.uuid4())
-        task    = [taskId,[agentId,command, data]]
+        timestamp   = time.time()
+        task    = [taskId,[agentId,command, timestamp, data]]
         self._logger.debug('add task %s' % taskId)
         self._addTask(task)
         
@@ -103,7 +104,7 @@ class BaseTaskHandler(object):
             try:
                 self._dispatchMethod(task_cmd, task)
             except Exception as e:
-                print( "Base task handler exception %s" % str(e))
+                print( "Base task handler exception: %s" % str(e))
     
     def _dispatchMethod(self, cmd, task):
         pass
@@ -117,10 +118,10 @@ class StoreTaskHandler(BaseTaskHandler):
     
     def _dispatchMethod(self, cmd, task):
         agentId = task[1][0]
-        data    = task[1][2]
+        data    = task[1][3]
         if cmd is task_commands.CMD_STORE:
             self._store(agentId, data)
             
-    def __store(self, agentId, data):
+    def _store(self, agentId, data):
         itemId  = 'data_'+ agentId
         self._storage.writeItem(itemId, json.dumps(data))
