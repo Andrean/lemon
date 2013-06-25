@@ -74,6 +74,10 @@ class Storage(threading.Thread):
         fileName = self._getFilename(item_id);
         return self._write(fileName, content);
     
+    def appendToItem(self, item_id, content):
+        fileName = self._getFilename(item_id);
+        return self._append(fileName, content);
+    
     def deleteItem(self, item_id):
         fileName = self._getFilename(item_id);
         return self._delete(fileName)
@@ -98,6 +102,18 @@ class Storage(threading.Thread):
     def _write(self, file, content):
         try:
             f = open(file, 'wb')
+            f.write(bytes(content, self._encoding))
+            return True
+        except Exception as ex:
+            tb = sys.exc_info()[2]
+            self._logger.error(ex.with_traceback(tb))
+        finally:
+            f.close()
+    
+    @synchronized    
+    def _append(self, file, content):
+        try:
+            f = open(file, 'ab+')
             f.write(bytes(content, self._encoding))
             return True
         except Exception as ex:
