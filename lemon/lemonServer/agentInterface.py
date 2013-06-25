@@ -28,6 +28,7 @@ class AgentHandler(object):
         self._TaskManager   = _taskmanager
         self._sessionStorage = {}
         self._expireTime = 20 * MINUTES
+        
     def startSession(self, _agentId):
         _sessionId = common.IdGenerator.GenerateSessionID()
         self._sessionStorage[_agentId] = {'id':_sessionId, 'expire': time.time() + self._expireTime}
@@ -37,6 +38,7 @@ class AgentHandler(object):
     def postData(self, key, _dictData):
         agentId    = key[0]
         sessionId  = key[1]
+        
         try:
             if self._sessionStorage[agentId] != sessionId:
                 return NOT_IDENTIFIED  

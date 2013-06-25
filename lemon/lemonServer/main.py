@@ -8,6 +8,10 @@ import webInterfaceListener
 import main_config
 import configparser
 import logging.config
+import task
+import time
+import basicStorage
+import exception.lemonException
 from task import TaskManager
 
 if __name__ == '__main__':
@@ -22,17 +26,38 @@ if __name__ == '__main__':
     #create loggers
     mainLogger              = logging.getLogger('MAIN')
     taskLogger              = logging.getLogger('TASK')
+    serverLogger            = logging.getLogger('MAIN')
+    mainStorageLogger       = logging.getLogger('STORAGE')
     # creating task manager instance
     taskManager             = TaskManager(taskLogger, config)
     taskManager.start()
+    # creating storage instances
+    try:
+        mainStorageInstance = basicStorage.Storage('.storage', mainStorageLogger, config['STORAGE'])
+        mainLogger.info('main storage instance created')        
+    except exception.lemonException.StorageNotCreatedException as storageException:
+        mainLogger.error('storage not created {}'.format(storageException))
+        logging.shutdown()
+        exit(0)
+    
+    # create task handlers
+    storeTaskHandler        = task.StoreTaskHandler('storeTaskHandler',mainStorageInstance)
+    
+    #connect task handlers to task manager
+    taskManager.connectHandler(storeTaskHandler)
+    
     # creating interface instances
-    agentServerInstance     = server.Server(20, config, taskManager);
+    agentServerInstance     = server.Server(20, serverLogger, config, taskManager);
     httpInterfaceInstance   = webInterfaceListener.httpListener();
     
     #starting instances
-    
     agentServerInstance.start();
     httpInterfaceInstance.start();
     
     #shutdown agent listener
-    agentServerInstance.shutdownListener()
+    try:
+        while(True):
+            time.sleep(0.5)
+    except KeyboardInterrupt:
+        agentServerInstance.shutdownListener()
+        taskManager.shutdown()
