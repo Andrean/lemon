@@ -12,6 +12,17 @@ import time
 from exception.lemonException import StorageNotCreatedException 
 
 
+def synchronized(f):
+    '''Synchronization method decorator.'''
+
+    def new_function(self, *args, **kw):
+        self._lock.acquire()
+        try:
+            return f(*args, **kw)
+        finally:
+            self._lock.release()
+    return new_function
+
 class Storage(threading.Thread):
     '''
     Class using different files for every item
@@ -70,9 +81,9 @@ class Storage(threading.Thread):
     def quit(self):
         self._running = False
     
+    @synchronized
     def _read(self, file):
         try:
-            self._dolock()
             f = open(file, 'rb');
             content = f.read()
             f.close()
@@ -82,12 +93,10 @@ class Storage(threading.Thread):
         except Exception as ex:
             tb  = sys.exc_info()[2]
             self._logger.error(ex.with_traceback(tb))
-        finally:
-            self._unlock()
-                      
+        
+    @synchronized              
     def _write(self, file, content):
         try:
-            self._dolock()
             f = open(file, 'wb')
             f.write(bytes(content, self._encoding))
             return True
@@ -96,15 +105,12 @@ class Storage(threading.Thread):
             self._logger.error(ex.with_traceback(tb))
         finally:
             f.close()
-            self._unlock()
             
-        
+    @synchronized
     def _delete(self, file):
         try:
-            self._dolock()
             os.remove(file)
             self._logger.debug("file {0} deleted".format(file))
-            self._unlock()
             return True
         except Exception as e:
             tb = sys.exc_info()[2]
@@ -112,11 +118,4 @@ class Storage(threading.Thread):
                 
     def _getFilename(self, item_id):
         return self._path + '/' + self._storageID + str(item_id);
-        
-    def _dolock(self):
-        self._lock.acquire()
-        
-    def _unlock(self):
-        self._lock.release()
-        
     
