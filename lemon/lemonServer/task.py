@@ -118,9 +118,10 @@ class StoreTaskHandler(BaseTaskHandler):
     
     def _dispatchMethod(self, cmd, task):
         agentId = task[1][0]
+        timestamp   = task[1][2]
         data    = task[1][3]
         if cmd is task_commands.CMD_STORE:
-            self._store(agentId, data)
+            self._store(agentId, {'time':timestamp, 'data': data})
             
     def _store(self, agentId, data):
         itemId  = 'data_'+ agentId
