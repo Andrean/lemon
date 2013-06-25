@@ -12,6 +12,17 @@ import exception.lemonException as lemonException
 import task_commands
 import json
 
+def synchronized(f):
+    '''Synchronization method decorator.'''
+
+    def new_function(self, *args, **kwargs):
+        self._lock.acquire()
+        try:
+            return f(self, *args, **kwargs)
+        finally:
+            self._lock.release()
+    return new_function
+
 class TaskManager(threading.Thread):
     '''
     This manager manage task: read, write, add content and other
@@ -74,19 +85,12 @@ class TaskManager(threading.Thread):
             return False
         return True
     
+    @synchronized
     def _addTask(self, task):
         try:
-            self._dolock()
             self._TaskQueue.put(task)
-            self._unlock()
         except Exception as ex:
             print(ex)
-    
-    def _dolock(self):
-        self._lock.acquire()
-        
-    def _unlock(self):
-        self._lock.release()
         
         
 class BaseTaskHandler(object):
