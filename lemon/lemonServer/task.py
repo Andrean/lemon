@@ -38,10 +38,12 @@ class TaskManager(threading.Thread):
                 self._process()
             else:
                 time.sleep(0.1)
+        self._logger.info('Task Manager was successfully shutdown')
     
     def addTask(self, agentId, command, data):
         taskId  = str(uuid.uuid4())
         task    = [taskId,[agentId,command, data]]
+        self._logger.debug('add task %s' % taskId)
         self._addTask(task)
         
     def connectHandler(self, _handler):
@@ -49,6 +51,11 @@ class TaskManager(threading.Thread):
             raise lemonException.HandlerAlreadyInListException()
         else:
             self._handlerList[_handler.getName()] = _handler
+            self._logger.debug('handler %s connected' % _handler.getName())
+            
+    def shutdown(self):
+        self._logger.info('attempting to shutdown TaskManager')
+        self._running   = False
         
     def _process(self):
         task = self._TaskQueue.get()
@@ -83,8 +90,8 @@ class TaskManager(threading.Thread):
         
 class BaseTaskHandler(object):
     
-    def __init__(self, name):
-        self._name  = name
+    def __init__(self, _name):
+        self._name  = _name
         self._commandList   = []
         
     def getName(self):
@@ -105,7 +112,7 @@ class StoreTaskHandler(BaseTaskHandler):
     
     def __init__(self, name, _agentStorageInstance):
         self._storage   = _agentStorageInstance
-        BaseTaskHandler.__init__(name)
+        BaseTaskHandler.__init__(self, name)
         self._commandList = [task_commands.CMD_STORE]
     
     def _dispatchMethod(self, cmd, task):

@@ -9,7 +9,7 @@ from socketserver import ThreadingMixIn
 from xmlrpc.server import SimpleXMLRPCServer
 from exception.lemonException import ServerExitException
 
-class xmlrpcAgentListener(ThreadingMixIn, SimpleXMLRPCServer ):
+class xmlrpcAgentListener( ThreadingMixIn, SimpleXMLRPCServer ):
     pass
 
 class XMLRPCExitException(ServerExitException):
