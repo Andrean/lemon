@@ -11,10 +11,20 @@ import task_commands
 SECONDS  = 1
 MINUTES  = 60*SECONDS
 
-NOT_IDENTIFIED  = 2
 
 
+ERROR_NOT_IDENTIFIED  = '0000002'
+ERROR_NOT_AUTHORIZED  = '0000002'
 
+def checkAuthorization(method):
+    def wrapper(self, agentId=None, sessionId=None, *args, **kwargs):
+        if agentId not in self._sessionStorage.keys():
+            return ERROR_NOT_AUTHORIZED
+        if self._sessionStorage[agentId]['id'] != sessionId:
+            return ERROR_NOT_IDENTIFIED
+        return method(self, agentId, *args, **kwargs)
+    return wrapper 
+        
 class AgentHandler(object):
     '''
     classdocs
@@ -34,17 +44,8 @@ class AgentHandler(object):
         self._sessionStorage[_agentId] = {'id':_sessionId, 'expire': time.time() + self._expireTime}
         return _sessionId
     
-    
-    def postData(self, key, _dictData):
-        agentId    = key[0]
-        sessionId  = key[1]
-        
-        try:
-            if self._sessionStorage[agentId] != sessionId:
-                return NOT_IDENTIFIED  
-        except KeyError:
-            return
-        
+    @checkAuthorization
+    def postData(self, agentId, sessionId, _dictData):
         self._TaskManager.addTask(agentId, task_commands.CMD_STORE, _dictData)
                 
         
