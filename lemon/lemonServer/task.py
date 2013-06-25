@@ -125,4 +125,4 @@ class StoreTaskHandler(BaseTaskHandler):
             
     def _store(self, agentId, data):
         itemId  = 'data_'+ agentId
-        self._storage.writeItem(itemId, json.dumps(data))
+        self._storage.appendToItem(itemId, json.dumps(data))
