@@ -10,7 +10,7 @@ import configparser
 import logging.config
 import task
 import time
-import basicStorage
+import storage
 import StorageManager
 import exception.lemonException
 from task import TaskManager
@@ -31,29 +31,35 @@ if __name__ == '__main__':
     mainStorageLogger       = logging.getLogger('STORAGE')
     # creating task manager instance
     taskManager             = TaskManager(taskLogger, config)
-    taskManager.start()
-    # creating storage instances
+#    taskManager.start()
+    # creating storage manager
     try:
         #mainStorageInstance = basicStorage.Storage('.storage', mainStorageLogger, config['STORAGE'])
-        storageManagerInstance  = StorageManager.StorageManager(mainStorageLogger, config['STORAGE']); 
+        storageManagerInstance  = StorageManager.StorageManager(mainStorageLogger, config['STORAGE']);
         mainLogger.info('main storage instance created')        
     except exception.lemonException.StorageNotCreatedException as storageException:
         mainLogger.error('storage not created {}'.format(storageException))
         logging.shutdown()
         exit(0)
     
+    # new storage instance
+    stEntities, id          = storageManagerInstance.getInstance()
+    stEntities.set_default_collection('entities')
+    # testing storage instance
+    print(stEntities.getCollections())
+    print([v for v in stEntities.find({'name':'computer2'})])
     # create task handlers
     storeTaskHandler        = task.StoreTaskHandler('storeTaskHandler',storageManagerInstance)
     
     #connect task handlers to task manager
-    taskManager.connectHandler(storeTaskHandler)
+ #   taskManager.connectHandler(storeTaskHandler)
     
     # creating interface instances
     agentServerInstance     = server.Server(20, serverLogger, config, taskManager);
     httpInterfaceInstance   = webInterfaceListener.httpListener();
     
     #starting instances
-    storageManagerInstance.start();
+    
     agentServerInstance.start();
     httpInterfaceInstance.start();
     
@@ -63,5 +69,5 @@ if __name__ == '__main__':
             time.sleep(0.5)
     except KeyboardInterrupt:
         agentServerInstance.shutdownListener()
-        taskManager.shutdown()
+ #       taskManager.shutdown()
         logging.shutdown()
