@@ -11,6 +11,7 @@ import logging.config
 import task
 import time
 import basicStorage
+import StorageManager
 import exception.lemonException
 from task import TaskManager
 
@@ -33,7 +34,8 @@ if __name__ == '__main__':
     taskManager.start()
     # creating storage instances
     try:
-        mainStorageInstance = basicStorage.Storage('.storage', mainStorageLogger, config['STORAGE'])
+        #mainStorageInstance = basicStorage.Storage('.storage', mainStorageLogger, config['STORAGE'])
+        storageManagerInstance  = StorageManager.StorageManager(mainStorageLogger, config['STORAGE']); 
         mainLogger.info('main storage instance created')        
     except exception.lemonException.StorageNotCreatedException as storageException:
         mainLogger.error('storage not created {}'.format(storageException))
@@ -41,7 +43,7 @@ if __name__ == '__main__':
         exit(0)
     
     # create task handlers
-    storeTaskHandler        = task.StoreTaskHandler('storeTaskHandler',mainStorageInstance)
+    storeTaskHandler        = task.StoreTaskHandler('storeTaskHandler',storageManagerInstance)
     
     #connect task handlers to task manager
     taskManager.connectHandler(storeTaskHandler)
@@ -51,6 +53,7 @@ if __name__ == '__main__':
     httpInterfaceInstance   = webInterfaceListener.httpListener();
     
     #starting instances
+    storageManagerInstance.start();
     agentServerInstance.start();
     httpInterfaceInstance.start();
     
