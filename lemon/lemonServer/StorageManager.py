@@ -6,6 +6,7 @@ Created on 21.06.2013
 
 import pymongo
 import threading
+import re
 
 class StorageManager(threading.Thread):
     
@@ -64,14 +65,27 @@ class StorageManager(threading.Thread):
         try:
             return self._db[collection].find(query)
         except pymongo.errors.PyMongoError as err:
-            self._logger.error("PyMongoError is excepted during find by query {0}: {1}".format(str(query), str(err)))
+            self._logger.error("PyMongoError was excepted during find by query {0}: {1}".format(str(query), str(err)))
     
     def findOne(self, collection, query):
         try:
             return self._db[collection].find_one(query)
         except pymongo.errors.PyMongoError as err:
-            self._logger.error("PyMongoError is excepted during find_one by query {0}: {1}".format(str(query), str(err)))
+            self._logger.error("PyMongoError was excepted during find_one by query {0}: {1}".format(str(query), str(err)))
     
-            
+    def getCollections(self, query):
+        try:
+            colls = self._db.collection_names()
+            return [x for x in colls if re.match(query, x) ]
+        except pymongo.errors.PyMongoError as err:
+            self._logger.error("PyMongoError was excepted during getting collections: {0}".format(str(err)))
+    
+    def createCollection(self, name):
+        try:
+            self._db.create_collection(name)
+        except pymongo.errors.PyMongoError as err:
+            self._logger.error("PyMongoError was excepted during creating collection {0}: {1}".format(str(name), str(err)))
+    
+    
             
     
