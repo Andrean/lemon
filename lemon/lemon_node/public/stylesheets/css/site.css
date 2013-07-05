@@ -1,0 +1,357 @@
+body {
+    background-color: #fff;
+}
+.metrouicss .page {
+    margin: auto;
+    background-color: #fff;
+	
+}
+
+.metrouicss .page .page-header .page-header-bar {
+	position:relative;
+	top:80px;
+}
+.metrouicss .page .secondary {
+	width: 1600px !important;
+	margin: auto;
+}
+.metrouicss .fontsize30 {
+	font-size: 30px;
+}
+.metrouicss .fontsize40 {
+	font-size: 100px;
+}
+.metrouicss .page .page-header .page-header-content {
+	margin: auto;	
+}
+.metrouicss .page .page-header {
+	padding-bottom:10px;
+	
+}
+.metrouicss .with-rightpanel {
+	margin-right: 300px;
+	
+}
+.metrouicss .logo {
+    height: 100px;
+	width: 200px;
+	position:relative;
+	display:block;
+	
+}
+.use-icon{
+	font-family: icoMoon;
+}
+.page-content {
+	position: relative;
+	overflow: auto;
+	top: 0;
+	padding-top: 5px;
+	
+}
+.entity_info_header {
+	position:relative;
+	padding-left: 10px;
+	padding-top: 4pt;
+	width: 100%;
+	min-height: 40px;
+	text-align: left;
+	background-image: -webkit-linear-gradient(left, #603cba 0%,#603cba 220px, white 100%);	
+		
+}
+.page-entity-info  {
+	position: relative;
+	margin: 0;
+	overflow: auto;
+	top: -9px;
+	width: 100%;
+	height: 100%;
+}
+.page-entity-info .sidebar{
+	position: fixed;
+	top: 156px;
+	bottom:0;
+	left:0;
+	width: 220px;
+	z-index: 1000;
+	background-image: -webkit-linear-gradient(top, #603cba 0%,#603cba 50%,white 100%);
+	
+}
+.page-entity-info .sidebar .sidebar-menu-item-wrapper{
+	height: 50px;
+	display: block;
+	width: 220px;		
+	
+}
+.page-entity-info .sidebar ul{
+	list-style: none;
+	display: block;
+	margin-left: 0px;
+	margin-bottom: 0px;
+	
+}
+.page-entity-info .sidebar ul li{
+	min-height: 30px;
+	line-height: 20px;
+}
+.page-entity-info .sidebar ul li:hover{
+	background-color: #7651D2;
+}
+.page-entity-info .sidebar  li > div > a{
+	padding: 10px;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 12px;
+	margin: auto;
+	height: 50px;
+	display:block;
+	color: white;
+}
+
+.page-entity-info .sidebar  li > div > a > [class^="iconi-"]{
+	font-size: 28px;
+	width: 40px;
+	display: inline-block;
+	margin-right: 5px;
+	text-align:center;
+	
+}
+.page-entity-info .sidebar  li.active  > div  > a{
+	background: white;
+	color: black;		
+}
+.page-entity-info .sidebar a:hover {
+	text-decoration: none;
+}
+.page-entity-info .sidebar  li > div > a > span{
+	position: relative;
+	top: -5px;
+}
+
+.page-entity-info  .page-panels{
+	margin-left: 220px;
+	width: auto;
+}
+.page-entity-info  .frames{
+	width: auto;
+}
+.page-entity-info  .frames .frame{
+	display: none;
+	padding: 20px;
+	width: 100%;
+	height: auto;
+}
+.page-entity-info  .frames .frame.active{
+	display: block;	
+}
+
+.metrouicss .page .page-control .entity_info li {
+	min-width: 120px;
+	
+}
+.metrouicss .page .page-control .entity_info li a {
+	text-align: center;
+	width: 100%;
+	
+}
+.metrouicss .logo-header {
+    position: absolute;	
+	margin-left: 18px;
+	font-size: 40pt;
+	bottom:27pt;
+}
+.metrouicss .logo-header-small {
+    position: absolute;	
+	margin-left: 22px;
+	letter-spacing: 1.4pt;
+	font-size: 10pt;
+	bottom:0pt;
+}
+
+.metrouicss .servers-group {
+	position: relative;
+	width: auto;
+	margin-right: 10px;
+}
+.metrouicss .servers-group  .servers-group-content{
+	padding: 10px;	
+	min-height: 100px;	
+	overflow: auto;
+}
+.metrouicss .right-panel{
+	position: relative;
+	float:right;
+	display:block;
+	width: 300px;
+	margin: 0
+}
+.metrouicss .right-panel-content{
+	min-height: 100px;	
+	overflow: auto;
+	padding: 10px;
+	
+}
+
+
+.browsers-icons img {
+    float: left;
+    margin-right: 20px;
+}
+
+
+.github-info {
+}
+
+
+#brand-name {
+    line-height: 24px;
+    margin-top: 2px;
+}
+
+
+hr {
+    border: 0;
+    border-bottom: 1px #ddd dotted;
+    color: #ddd;
+    background-color: #ddd;
+}
+
+#social{
+    margin-bottom: 90px;
+}
+#shareme .box{
+    margin:5% 8% 0 8%;
+    width:100%;
+    clear: both;
+}
+#shareme .box a{
+    color:#404040;
+    text-shadow: 0 1px 1px rgba(167,167,167,.4);
+}
+#shareme .box a:hover{
+    text-decoration:none;
+}
+#shareme .count {
+    font-weight:bold;
+    font-size:50px;
+    float:left;
+    border-right:2px solid #57b8d1;
+    line-height:40px;
+    padding-right:10px
+}
+#shareme .share {
+    float:left;
+    margin-left:10px;
+    font-size:20px;
+    width:82px;
+}
+#shareme .buttons {
+    position: absolute;
+    width:294px;
+    background-color:#fff;
+    border: 1px solid rgba(0,0,0,.2);
+    padding:10px;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
+    height: 100px;
+}
+#shareme .button {
+    float:left;
+    max-width:50px;
+    min-width:10px;
+    margin:0 15px 0 0;
+    background-color: transparent;
+}
+#shareme .facebook {
+    margin:0 4px 0 0;
+}
+
+#carousel1 {
+    height: 242px;
+}
+
+#sponsorBlock {
+    height: 300px;
+}
+
+#page-index .carousel .control {
+    top: auto;
+    left: auto;
+    bottom: -40px;
+}
+#page-index .carousel .control.left {
+    right: 100px;
+}
+#page-index .carousel .control.right {
+    right: 30px;
+}
+
+.metrouicss .charms,
+.metrouicss .app-bar,
+.metrouicss .message-dialog,
+.metrouicss .error-bar,
+.metrouicss .warning-bar,
+.metrouicss .info-bar {
+    position: absolute;
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+    .metrouicss .page {
+        width: 724px;
+    }
+    .metrouicss .hero-unit > img {
+        zoom: .6;
+    }
+    .metrouicss .browsers-icons img {
+        zoom: .8;
+    }
+
+}
+
+@media (max-width: 767px) {
+    .metrouicss .page {
+        width: 100%;
+    }
+
+    .metrouicss .hero-unit > img {
+        zoom: .6;
+    }
+
+    .metrouicss .modern-ui-logo {
+        width: 24px;
+        height: 24px;
+    }
+    .metrouicss .github-info {
+        margin-top: 5px;
+    }
+
+    .metrouicss a, .metrouicss .link {
+        font-size: 9pt;
+    }
+
+    .metrouicss h3 {
+        line-height: 11px;
+    }
+
+    .metrouicss .no-mobile {
+        display: none;
+    }
+
+    .metrouicss #carousel1 {
+        height: 300px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .metrouicss .hero-unit img {
+        display: none;
+    }
+
+    .metrouicss #jetbrains {
+        display: none;
+    }
+    .metrouicss #brand-name {
+        display: none;
+    }
+}

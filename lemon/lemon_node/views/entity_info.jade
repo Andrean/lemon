@@ -1,0 +1,39 @@
+extends layout
+block head
+	title Entity #{entity.name} information
+	script(src='/javascripts/sidebar_control.js')
+	script(src='/javascripts/page_server_info.js')
+block content
+	include page-header	
+	#page2.page
+		.page-content
+			#entity_header.entity_info_header
+				h3.fg-color-white #{entity.name} - information
+			.page-entity-info(data-role="sidebar-control")
+				#sidebar.sidebar
+					ul
+						li.active
+							.sidebar-menu-item-wrapper
+								a(href="#frame1") 
+									i.iconi-home										
+									span Dashboard
+						li
+							.sidebar-menu-item-wrapper
+								a(href="#frame2") 
+									i.iconi-stats-3
+									span Monitoring
+						li 
+							.sidebar-menu-item-wrapper
+								a(href="#frame3")
+									i.iconi-info-7
+									span Documentation
+				#panels.page-panels.frames
+					#frame1.frame.active(style="padding: 20px; ")
+						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Dashboard
+					#frame2.frame(style="padding: 20px; ")
+						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Monitoring
+					#frame3.frame(style="padding: 20px; ")
+						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Documentation
+			
+			
+			

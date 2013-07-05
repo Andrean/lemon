@@ -1,16 +1,31 @@
-doctype 5
-html(lang="ru")
-	head
-		title= title
-		link(rel='stylesheet', href='/stylesheets/css/modern.css', type='text/css')
-		link(rel='stylesheet', href='/stylesheets/css/modern-responsive.css', type='text/css')
-		link(rel='stylesheet', href='/stylesheets/css/site.css', type='text/css')
-		script(src='/javascripts/jquery/jquery-2.0.2.min.js')
-	body.metrouicss
-		#page1.page
-			#page-header.page-header.bg-color-blue
-				#page-header-content.page-header-content
-					span#logo.logo
-						h1.fg-color-white Lemon
-			#page-content.page-region
-				h1 just for test
+extends layout
+
+block head
+	title Lemon monitoring
+	script(src='/javascripts/main.js')
+block content
+	include page-header												
+	#page2.page.secondary.with-sidebar
+		include sidebar
+		#right-panel.right-panel
+			#right-panel-content.right-panel-content
+		#page-servers.page-region.with-rightpanel
+			#page-servers-content.page-region-content
+				.page-control(data-role="page-control")
+					ul(style="display:block; overflow:visible;")
+						li.active
+							a(href="#frame1") SYS-MSK
+						li
+							a(href="#frame2") Kontur
+						li
+							a(href="#frame3") Databases
+					.frames
+						#frame1.frame.active
+							.servers-group
+								#servers-box1.servers-group-content
+						#frame2.frame
+							.servers-group
+								#servers-box2.servers-group-content
+						#frame3.frame
+							.servers-group
+								#servers-box3.servers-group-content

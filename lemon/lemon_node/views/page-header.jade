@@ -1,0 +1,24 @@
+#page1.page
+	#page-header.page-header(class="#{bg_color}")
+		#page-header-content.page-header-content.grid
+			.row
+				.span3
+					#logo.logo
+						p.logo-header.fg-color-white Lemon
+						p.logo-header-small.fg-color-white lightweight monitoring
+				.span12(style='height:100px;')
+					#page-header-bar.page-header-bar
+						#bar.nav-bar(class="#{bg_color}")
+							#bar-inner.nav-bar-inner
+								ul.menu
+									li 
+										a(href="#") Monitoring										
+									li(data-role='dropdown')
+										a(href="#") Inventory
+										ul.dropdown-menu.bg-color-purple 
+											li 
+												a(href="#").fg-color-white Map
+									li
+										a(href="/") Administration
+									li
+										a(href="/") Documentation

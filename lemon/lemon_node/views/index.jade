@@ -1,5 +1,30 @@
 extends layout
 
+block head
+	title Lemon monitoring
 block content
-  h1= title
-  p Welcome to #{title}
+	include page-header												
+	#page2.page.secondary.with-sidebar
+		include sidebar
+		#right-panel.right-panel
+			#right-panel-content.right-panel-content
+		#page-servers.page-region.with-rightpanel
+			#page-servers-content.page-region-content
+				.page-control(data-role="page-control")
+					ul(style="display:block; overflow:visible;")
+						li.active
+							a(href="#frame1") SYS-MSK
+						li
+							a(href="#frame2") Kontur
+						li
+							a(href="#frame3") Databases
+					.frames
+						#frame1.frame.active
+							.servers-group
+								#servers-box1.servers-group-content
+						#frame2.frame
+							.servers-group
+								#servers-box2.servers-group-content
+						#frame3.frame
+							.servers-group
+								#servers-box3.servers-group-content

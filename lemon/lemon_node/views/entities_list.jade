@@ -1,0 +1,11 @@
+extends layout
+block head
+	title Entities information
+	script(src="/javascripts/server_tile.js")
+block content
+	include page-header	
+	#page2.page
+		.page-region
+			.page-region-content
+				each entity in tiles
+					include server_tile
