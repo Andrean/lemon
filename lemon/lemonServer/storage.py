@@ -104,9 +104,9 @@ class Storage(threading.Thread):
     
     def createCollection(self, collection_name):
         try:
-            self._db.create_collection(name)
+            self._db.create_collection(collection_name)
         except pymongo.errors.PyMongoError as err:
-            self._logger.error("PyMongoError was excepted during creating collection {0}: {1}".format(str(name), str(err)))
+            self._logger.error("PyMongoError was excepted during creating collection {0}: {1}".format(str(collection_name), str(err)))
     
     
             
