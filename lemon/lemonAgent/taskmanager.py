@@ -9,10 +9,9 @@ import uuid
 import time
 from collections import namedtuple
 
-STATE   = {}
-setattr(STATE, 'INIT', 0)
-setattr(STATE, 'RUNNING', 1)
-setattr(STATE, 'STOPPED', 2)
+_state   = namedtuple('STATE',['INIT','RUNNING','STOPPED'])
+
+STATE   = _state(0, 1 , 2)
 
 TASK_COMMANDS   = namedtuple('TASK_COMMANDS',['GET_COUNTER', 'STORE', 'SEND', 'RECV', 'CHECK'])
 

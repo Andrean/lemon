@@ -12,13 +12,13 @@ import time
 from exception.lemonException import StorageNotCreatedException 
 
 
-def synchronized(f):
+def synchronized(func):
     '''Synchronization method decorator.'''
 
     def new_function(self, *args, **kwargs):
         self._lock.acquire()
         try:
-            return f(self, *args, **kwargs)
+            return func(self, *args, **kwargs)
         finally:
             self._lock.release()
     return new_function

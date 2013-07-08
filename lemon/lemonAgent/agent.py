@@ -7,6 +7,10 @@ Created on 08.07.2013
 import configparser
 import logging.config
 import os
+import storage
+import taskmanager
+import interface
+import scheduler
 
 
 CONFIG_PATH = 'conf'
@@ -41,12 +45,12 @@ if __name__ == '__main__':
     faceLogger  = logging.getLogger('INTERFACE')
     
     # creating and starting main instances
-    #    storageInstance  = storage.Storage()
-    #    storageInstance.start()
-    #    xmlrpc_client    = interface.XMLRPC_CLient()
-    #    xmlrpc_client.start()
-    #    tmInstance       = taskmanager.TaskManager()
-    #    tmInstance.start()
+    storageInstance  = storage.Storage(stLogger, config['STORAGE'])
+    storageInstance.start()
+    #xmlrpc_client    = interface.XMLRPC_CLient()
+    #xmlrpc_client.start()
+    tmInstance       = taskmanager.TaskManager(tmLogger, config)
+    tmInstance.start()
     #    schedulerInstance    = scheduler.Scheduler()
     #    scheduler.start()
     
