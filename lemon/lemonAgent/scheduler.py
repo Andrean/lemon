@@ -17,6 +17,7 @@ class Scheduler(threading.Thread):
         '''
         self._logger    = _logger
         self._config    = _config
+        self._schedule  = {}
         
         threading.Thread.__init__(self)
         
