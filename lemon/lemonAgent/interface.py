@@ -24,21 +24,21 @@ class XMLRPC_Client(threading.Thread):
     def __init__(self, _logger, _config, _agentID):
         self._logger    = _logger
         self._config    = _config
-        self._started   = False
+        self._running   = False
         self._agentID   = _agentID
         self._server_addr   = ('localhost', 8000)
         threading.Thread.__init__(self)
         
     def run(self):
         conn    = self._connection    = xmlrpc.client.ServerProxy('http://{0}:{1}'.format(self._server_addr[0]. self._server_addr[1]))
-        self._started = True
+        self._running = True
         
-        while(self._started):
+        while(self._running):
             time.sleep(0.01)
             
         
     def quit(self):
-        self._started = False
+        self._running = False
         
     def set_session(self):
         self._sessionID = self._connection.startSession(self._agentID)
@@ -56,6 +56,6 @@ class XMLRPC_Client(threading.Thread):
         pass
         
     def isReady(self):
-        if self._started:
+        if self._running:
             return True
         return False

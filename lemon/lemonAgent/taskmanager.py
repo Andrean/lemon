@@ -26,14 +26,14 @@ class TaskManager(threading.Thread):
         self._config    = _config
         self._taskQueue = queue.Queue()
         self._tasks     = {}
-        self._taskTemplate  = {'__self': 0,'__id': None, 'state': STATE.STOPPED, 'exit_code': None, 'result': None}
+        self._taskTemplate  = {'__self': 0, '__id': None, 'state': STATE.STOPPED, 'exit_code': None, 'result': None}
         self._lock  = threading.Lock()
         threading.Thread.__init__(self)
         
     def run(self):
-        self._started   = True
+        self._running   = True
         self._logger.info('Task Manager started')
-        while self._started:
+        while self._running:
             self._process()
         self._logger.info('Task Manager shutdown')    
         
@@ -41,9 +41,8 @@ class TaskManager(threading.Thread):
     def _process(self):
         if self._taskQueue.empty() is False:
             task    = self._taskQueue.get()
-            self._tasks[task.id]  = self._taskTemplate
-            self._tasks[task.id]['__id']    = task.id
-            task.start(self._tasks[task.id])
+            self._logger.debug('Trying to start task {0}'.format(task.id))
+            task.start()
         else:
             time.sleep(0.01)
         
@@ -51,9 +50,12 @@ class TaskManager(threading.Thread):
     def add_task(self, _task):         
         self._taskQueue.put(_task)
         
-    def new_task(self, _func):
-        task    = Task(_func)
-        self._logger.debug('Adding new task into queue. Task id {0}'.format(task.id))
+    def new_task(self, _func, **kwargs):
+        _id                          = uuid.uuid4()
+        self._tasks[_id]             = self._taskTemplate
+        self._tasks[_id]['__id']     = _id
+        task                        = Task(_id, self._tasks[_id], self._logger, _func, kwargs)
+        self._logger.debug('Adding new task into queue. Task id {0}'.format(_id))
         self.add_task(task)
     
     def remove_task(self, task_id):
@@ -67,19 +69,24 @@ class TaskManager(threading.Thread):
         
 class Task(threading.Thread):
     
-    def __init__(self, _func):
-        self.id    = uuid.uuid4()
-        self.func    = _func
+    def __init__(self, _id ,_tm, _logger, _func, kwargs):
+        self.id    = _id
+        self.func  = _func
+        self.tm    = _tm
+        self.kwargs = kwargs
+        self._logger    = _logger
+        threading.Thread.__init__(self)
         
     
-    def run(self, tm, _logger):
-        logger      = _logger
-        taskNote    = tm
+    def run(self):
+        logger      = self._logger
+        taskNote    = self.tm
         taskNote['__self']    = self
         taskNote['state']     = STATE.RUNNING
         try:
+            self.func(self, self.kwargs)
             logger.info('task {0} started'.format(self.id))
-            print('i am task: {0}'.format(str(self.id)))
+            #print('i am task: {0}'.format(str(self.id)))
             taskNote['result'] = 1
             taskNote['exit_code'] = 0
         except Exception as e:

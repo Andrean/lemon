@@ -51,6 +51,7 @@ if __name__ == '__main__':
     #xmlrpc_client.start()
     tmInstance       = taskmanager.TaskManager(tmLogger, config)
     tmInstance.start()
+    tmInstance.new_task(lambda t, kwargs : print("task {0}".format(t.id)))
     #    schedulerInstance    = scheduler.Scheduler()
     #    scheduler.start()
     
