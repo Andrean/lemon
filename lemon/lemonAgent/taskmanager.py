@@ -60,7 +60,7 @@ class TaskManager(threading.Thread):
         _id                          = uuid.uuid4()
         self._tasks[_id]             = self._taskTemplate
         self._tasks[_id]['__id']     = _id
-        task                        = Task(_id, self._tasks[_id], self._logger, task_templates.CMD[_func], kwargs)
+        task                        = Task(_id, self._tasks[_id], self._logger, self, task_templates.CMD[_func], kwargs)
         self._logger.debug('Adding new task into queue. Task id {0}'.format(_id))
         self.add_task(task)
     
@@ -75,10 +75,11 @@ class TaskManager(threading.Thread):
         
 class Task(threading.Thread):
     
-    def __init__(self, _id ,_tm, _logger, _func, kwargs):
+    def __init__(self, _id ,_tm, _logger, _parent, _func, kwargs):
         self.id    = _id
         self.func  = _func
         self.tm    = _tm
+        self._parent   = _parent
         self.kwargs = kwargs
         self._logger    = _logger
         threading.Thread.__init__(self)

@@ -63,7 +63,8 @@ if __name__ == '__main__':
     
     schedulerInstance.waitReady()
     
-    #schedulerInstance.add('testPrint', 'templ_task6', None, 10,  los='', t=True)
+    schtask = {'func':'testPrint', 'name':'templ_task6', 'start_time': None, 'interval': 10,  'kwargs': {'los':'', 't':True}}
+    tmInstance.new_task('addScheduledTask', schtask)
     
         
         

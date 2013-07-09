@@ -56,7 +56,7 @@ class Scheduler(threading.Thread):
         while self._running is not True:
             time.sleep(0.1)
             
-    def add(self, func_type, name='default', start_time=None, interval = 5*MINUTES,  **kwargs):
+    def add(self, func_type, name='default', start_time=None, interval = 5*MINUTES,  kwargs=None):
         schtask = {}
         if start_time is None:
             start_time  = time.time()
@@ -83,9 +83,7 @@ class Scheduler(threading.Thread):
     def _loadStorage(self):
         try: 
             items   = self._storage.readStr(MASK + MAIN)
-            if items is None:
-                self._storage.writeItem(MASK + MAIN, json.dumps([]))
-            else:
+            if items is not None:
                 headers   = json.loads(items)
                 for key in headers:
                     item    = json.loads(self._storage.readStr(MASK + key))
