@@ -31,29 +31,34 @@ class TaskManager(threading.Thread):
         threading.Thread.__init__(self)
         
     def run(self):
-        pass
+        self._started   = True
+        self._logger.info('Task Manager started')
+        while self._started:
+            self._process()
+        self._logger.info('Task Manager shutdown')    
+        
     
     def _process(self):
-        self._running   = True
-        while(self._running):
-            if self._taskQueue.empty() is False:
-                task    = self._taskQueue.get()
-                self._tasks[task.id]  = self._taskTemplate
-                self._tasks[task.id]['__id']    = task.id
-                task.start(self._tasks[task.id])
-            else:
-                time.sleep(0.01)
-            
+        if self._taskQueue.empty() is False:
+            task    = self._taskQueue.get()
+            self._tasks[task.id]  = self._taskTemplate
+            self._tasks[task.id]['__id']    = task.id
+            task.start(self._tasks[task.id])
+        else:
+            time.sleep(0.01)
+        
         
     def add_task(self, _task):         
         self._taskQueue.put(_task)
         
     def new_task(self, _func):
         task    = Task(_func)
+        self._logger.debug('Adding new task into queue. Task id {0}'.format(task.id))
         self.add_task(task)
     
     def remove_task(self, task_id):
         self._tasks.pop(task_id) 
+        self._logger.debug('Task {0} successfully removed '.format(task_id))
         
     def quit(self):
         self._running   = False
@@ -67,15 +72,18 @@ class Task(threading.Thread):
         self.func    = _func
         
     
-    def run(self, tm):
-        taskNote  = tm
+    def run(self, tm, _logger):
+        logger      = _logger
+        taskNote    = tm
         taskNote['__self']    = self
         taskNote['state']     = STATE.RUNNING
         try:
+            logger.info('task {0} started'.format(self.id))
             print('i am task: {0}'.format(str(self.id)))
             taskNote['result'] = 1
             taskNote['exit_code'] = 0
         except Exception as e:
+            logger.error('Error occured in task {0}: {1}'.format(self.id, str(e)))
             taskNote['exit_code'] = 1
             taskNote['result'] = e 
         
