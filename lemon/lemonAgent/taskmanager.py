@@ -8,6 +8,7 @@ import queue
 import uuid
 import time
 from collections import namedtuple
+import task_templates
 
 _state   = namedtuple('STATE',['INIT','RUNNING','STOPPED'])
 
@@ -28,6 +29,11 @@ class TaskManager(threading.Thread):
         self._tasks     = {}
         self._taskTemplate  = {'__self': 0, '__id': None, 'state': STATE.STOPPED, 'exit_code': None, 'result': None}
         self._lock  = threading.Lock()
+        self.storageInstance    =   None
+        self.interfaceInstance  =   None
+        self.taskmanagerInstance    = self
+        self.contractorLayer        = None
+        self.scheduler              = None
         threading.Thread.__init__(self)
         
     def run(self):
@@ -50,11 +56,11 @@ class TaskManager(threading.Thread):
     def add_task(self, _task):         
         self._taskQueue.put(_task)
         
-    def new_task(self, _func, **kwargs):
+    def new_task(self, _func, kwargs=None):
         _id                          = uuid.uuid4()
         self._tasks[_id]             = self._taskTemplate
         self._tasks[_id]['__id']     = _id
-        task                        = Task(_id, self._tasks[_id], self._logger, _func, kwargs)
+        task                        = Task(_id, self._tasks[_id], self._logger, task_templates.CMD[_func], kwargs)
         self._logger.debug('Adding new task into queue. Task id {0}'.format(_id))
         self.add_task(task)
     

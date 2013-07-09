@@ -11,6 +11,7 @@ import storage
 import taskmanager
 import interface
 import scheduler
+import time
 
 
 CONFIG_PATH = 'conf'
@@ -49,9 +50,20 @@ if __name__ == '__main__':
     storageInstance.start()
     #xmlrpc_client    = interface.XMLRPC_CLient()
     #xmlrpc_client.start()
+    
     tmInstance       = taskmanager.TaskManager(tmLogger, config)
     tmInstance.start()
-    tmInstance.new_task(lambda t, kwargs : print("task {0}".format(t.id)))
-    #    schedulerInstance    = scheduler.Scheduler()
-    #    scheduler.start()
     
+    schedulerInstance    = scheduler.Scheduler(schLogger, config, storageInstance, tmInstance)
+    schedulerInstance.start()
+    
+    tmInstance.storageInstance  = storageInstance
+    tmInstance.scheduler        = schedulerInstance
+    
+    
+    schedulerInstance.waitReady()
+    
+    #schedulerInstance.add('testPrint', 'templ_task6', None, 10,  los='', t=True)
+    
+        
+        

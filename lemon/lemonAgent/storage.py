@@ -67,11 +67,18 @@ class Storage(threading.Thread):
     # return byte content from file
     def readItem(self, item_id):
         fileName = self._getFilename(item_id);
+        self._logger.debug('Read item {0}'.format(item_id))
         return self._read(fileName);
+    
+    def readStr(self, item_id):
+        fileName = self._getFilename(item_id);
+        self._logger.debug('Read str item {0}'.format(item_id))
+        return str(self._read(fileName), self._encoding)
     
     # transform content to byte sequence and write it into file
     def writeItem(self, item_id, content):
         fileName = self._getFilename(item_id);
+        self._logger.debug('Write item {0} with content {0}'.format(item_id, str(content)))
         return self._write(fileName, content);
     
     def appendToItem(self, item_id, content):
