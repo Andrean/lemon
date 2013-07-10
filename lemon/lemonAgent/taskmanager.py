@@ -9,6 +9,7 @@ import uuid
 import time
 from collections import namedtuple
 import task_templates
+import lemon
 
 _state   = namedtuple('STATE',['INIT','RUNNING','STOPPED'])
 
@@ -17,14 +18,12 @@ STATE   = _state(0, 1 , 2)
 TASK_COMMANDS   = namedtuple('TASK_COMMANDS',['GET_COUNTER', 'STORE', 'SEND', 'RECV', 'CHECK'])
 
 
-class TaskManager(threading.Thread):
+class TaskManager(lemon.BaseAgentLemon):
     '''
     classdocs
     '''
 
     def __init__(self, _logger, _config):
-        self._logger    = _logger
-        self._config    = _config
         self._taskQueue = queue.Queue()
         self._tasks     = {}
         self._taskTemplate  = {'__self': 0, '__id': None, 'state': STATE.STOPPED, 'exit_code': None, 'result': None}
@@ -34,7 +33,7 @@ class TaskManager(threading.Thread):
         self.taskmanagerInstance    = self
         self.contractorLayer        = None
         self.scheduler              = None
-        threading.Thread.__init__(self)
+        lemon.BaseAgentLemon.__init__(self, _logger, _config)
         
     def run(self):
         self._running   = True
@@ -68,8 +67,6 @@ class TaskManager(threading.Thread):
         self._tasks.pop(task_id) 
         self._logger.debug('Task {0} successfully removed '.format(task_id))
         
-    def quit(self):
-        self._running   = False
            
           
         

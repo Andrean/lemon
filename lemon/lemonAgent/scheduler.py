@@ -7,6 +7,7 @@ import threading
 import time
 import json
 import uuid
+import lemon
 
 MASK    = 'schedule_'
 MAIN    = 'items'
@@ -20,7 +21,7 @@ HOURS   = 60*MINUTES
 DAYS    = 24*HOURS
 
 
-class Scheduler(threading.Thread):
+class Scheduler(lemon.BaseAgentLemon):
     '''
     classdocs
     '''
@@ -30,14 +31,11 @@ class Scheduler(threading.Thread):
         '''
         Constructor
         '''
-        self._logger    = _logger
-        self._config    = _config
         self._storage   = _storageInstance
         self._taskManager   = _taskmanagerInstance
         self._schedule  = {}
         self._scheduleModified  = False
-        self._running   = False
-        threading.Thread.__init__(self)
+        lemon.BaseAgentLemon.__init__(self, _logger, _config)
         
     def run(self):
         self._logger.info('Scheduler started')
@@ -51,10 +49,6 @@ class Scheduler(threading.Thread):
             if it > STORE_INTERVAL :
                 it = 0
                 self._store_schedule()
-            
-    def waitReady(self):
-        while self._running is not True:
-            time.sleep(0.1)
             
     def add(self, func_type, name='default', start_time=None, interval = 5*MINUTES,  kwargs=None):
         schtask = {}
@@ -109,7 +103,3 @@ class Scheduler(threading.Thread):
     def _startTask(self, key, task):
         self._taskManager.new_task(task['func'], task['args'])
         self._logger.info('task {0} successfully send to task manager'.format(str(key)))
-    
-    
-    def quit(self):
-        self._running   = False

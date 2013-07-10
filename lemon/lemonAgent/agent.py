@@ -73,5 +73,13 @@ if __name__ == '__main__':
     schtask = {'func':'testPrint', 'name':'templ_task6', 'start_time': None, 'interval': 10,  'kwargs': {'los':'', 't':True}}
     tmInstance.new_task('addScheduledTask', schtask)
     
+    try:
+        while True:
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        schedulerInstance.quit()
+        tmInstance.quit()
+        storageInstance.quit()
+        
         
         

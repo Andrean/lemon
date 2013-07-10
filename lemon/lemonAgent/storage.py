@@ -9,6 +9,7 @@ import os
 import common.IdGenerator
 import threading
 import time
+import lemon
 from exception.lemonException import StorageNotCreatedException 
 
 
@@ -23,7 +24,7 @@ def synchronized(func):
             self._lock.release()
     return new_function
 
-class Storage(threading.Thread):
+class Storage(lemon.BaseAgentLemon):
     '''
     Class using different files for every item
     '''
@@ -31,10 +32,9 @@ class Storage(threading.Thread):
         '''
         Constructor
         '''
+        lemon.BaseAgentLemon.__init__(self, _logger, _config)
         self._lock  = threading.Lock()
         self._encoding  = 'utf-8'
-        self._logger    = _logger
-        self._config    = _config
         try:
             self._path  = self._config['data_path']
         except KeyError as k:
@@ -49,8 +49,6 @@ class Storage(threading.Thread):
             self._write(self._path + preinitFile, self._storageID)
         else:
             self._storageID = str(self._storageID, self._encoding)
-        
-        threading.Thread.__init__(self)
         self._logger.info("storage created with Id " + self._storageID)
         
                  
@@ -62,7 +60,6 @@ class Storage(threading.Thread):
         while(self._running):
             time.sleep(0.1)
         self._logger.info("shutdown storage {0}".format(self._storageID))
-        print(self._storageID)
         
     # return byte content from file
     def readItem(self, item_id):
