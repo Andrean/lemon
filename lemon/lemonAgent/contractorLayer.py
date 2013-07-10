@@ -4,7 +4,6 @@ Created on 08.07.2013
 @author: vau
 '''
 
-import threading
 import time
 import json
 import lemon
@@ -13,8 +12,7 @@ MASK    = "contractor_layer"
 
 class Layer(lemon.BaseAgentLemon):
     '''
-    Через данный класс как уровень осуществляются все обращения к вспомогательным скриптам - контракторам
-    Также данный класс управляет запуском контракторов, хранит всю информацию о запущенных контракторах
+    This class is layer where stored info about subprocesses as contractors, used to read perfomance counters
     '''
 
 
@@ -35,6 +33,21 @@ class Layer(lemon.BaseAgentLemon):
             time.sleep(0.01) 
         self._logger.info("Layer stopped")
         
+    def addContractor(self):
+        pass
+    
+    def removeContractor(self):
+        pass 
+    
+    def getStat(self):
+        pass
+    
+    def startContractors(self, contractor_list):
+        pass
+    
+    def stopContractors(self, contractor_list):
+        pass
+    
     def _load(self):
         try:
             value   = self._storage.readStr(MASK)

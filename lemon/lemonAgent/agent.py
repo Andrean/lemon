@@ -12,6 +12,7 @@ import taskmanager
 import interface
 import scheduler
 import time
+import contractorLayer
 
 
 CONFIG_PATH = 'conf'
@@ -51,12 +52,16 @@ if __name__ == '__main__':
     schLogger   = logging.getLogger('SCHEDULER')
     stLogger    = logging.getLogger('STORAGE')
     faceLogger  = logging.getLogger('INTERFACE')
+    contrLogger = logging.getLogger('CONTRACTOR')
     
     # creating and starting main instances
     storageInstance  = storage.Storage(stLogger, config['STORAGE'])
     storageInstance.start()
     #xmlrpc_client    = interface.XMLRPC_CLient()
     #xmlrpc_client.start()
+    
+    contrLayer       = contractorLayer.Layer(contrLogger, config['CONTRACTOR'], storageInstance)
+    contrLayer.start()
     
     tmInstance       = taskmanager.TaskManager(tmLogger, config['TASK_MANAGER'])
     tmInstance.start()
