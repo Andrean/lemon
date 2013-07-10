@@ -29,8 +29,8 @@ class TaskManager(threading.Thread):
         self._tasks     = {}
         self._taskTemplate  = {'__self': 0, '__id': None, 'state': STATE.STOPPED, 'exit_code': None, 'result': None}
         self._lock  = threading.Lock()
-        self.storageInstance    =   None
-        self.interfaceInstance  =   None
+        self.storageInstance        = None
+        self.interfaceInstance      = None
         self.taskmanagerInstance    = self
         self.contractorLayer        = None
         self.scheduler              = None
@@ -60,7 +60,7 @@ class TaskManager(threading.Thread):
         _id                          = uuid.uuid4()
         self._tasks[_id]             = self._taskTemplate
         self._tasks[_id]['__id']     = _id
-        task                        = Task(_id, self._tasks[_id], self._logger, self, task_templates.CMD[_func], kwargs)
+        task                         = Task(_id, self._tasks[_id], self._logger, self, task_templates.CMD[_func], kwargs)
         self._logger.debug('Adding new task into queue. Task id {0}'.format(_id))
         self.add_task(task)
     

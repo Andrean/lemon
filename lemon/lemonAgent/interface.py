@@ -26,11 +26,12 @@ class XMLRPC_Client(threading.Thread):
         self._config    = _config
         self._running   = False
         self._agentID   = _agentID
-        self._server_addr   = ('localhost', 8000)
+        self._server_addr   = _config['xmlrpc_server_addr']
+        self._server_port   = _config['xmlrpc_server_port']
         threading.Thread.__init__(self)
         
     def run(self):
-        conn    = self._connection    = xmlrpc.client.ServerProxy('http://{0}:{1}'.format(self._server_addr[0]. self._server_addr[1]))
+        conn    = self._connection    = xmlrpc.client.ServerProxy('http://{0}:{1}'.format(self._server_addr. self._server_port))
         self._running = True
         
         while(self._running):

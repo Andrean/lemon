@@ -21,10 +21,17 @@ def writeDefaultConfig(config):
     config.add_section('STORAGE')
     storageConfig                   = config['STORAGE']
     storageConfig['data_path']      = 'data/storage/'
-    config.add_section('WEBSTORAGE')
+    config.add_section('SCHEDULER')
+    config.add_section('TASK_MANAGER')
+    config.add_section('INTERFACE')
+    interfaceConfig                 = config['INTERFACE']
+    interfaceConfig['xmlrpc_server_addr'] = 'localhost'
+    interfaceConfig['xmlrpc_server_port'] = '8000' 
+    config.add_section('CONTRACTOR')
     config.add_section('LOGGING')
     loggingConfig                   = config['LOGGING']
     loggingConfig['file']           = CONFIG_PATH + '/logging.conf'
+    
     if not os.path.exists(CONFIG_PATH):
         os.makedirs(CONFIG_PATH)        
     
@@ -51,10 +58,10 @@ if __name__ == '__main__':
     #xmlrpc_client    = interface.XMLRPC_CLient()
     #xmlrpc_client.start()
     
-    tmInstance       = taskmanager.TaskManager(tmLogger, config)
+    tmInstance       = taskmanager.TaskManager(tmLogger, config['TASK_MANAGER'])
     tmInstance.start()
     
-    schedulerInstance    = scheduler.Scheduler(schLogger, config, storageInstance, tmInstance)
+    schedulerInstance    = scheduler.Scheduler(schLogger, config['SCHEDULER'], storageInstance, tmInstance)
     schedulerInstance.start()
     
     tmInstance.storageInstance  = storageInstance
