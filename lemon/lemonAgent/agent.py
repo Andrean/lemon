@@ -76,7 +76,11 @@ if __name__ == '__main__':
     schedulerInstance.waitReady()
     
     schtask = {'func':'testPrint', 'name':'templ_task6', 'start_time': None, 'interval': 10,  'kwargs': {'los':'', 't':True}}
-    tmInstance.new_task('addScheduledTask', schtask)
+    #tmInstance.new_task('addScheduledTask', schtask)
+    
+    script  = 'print("Testing!)'
+    #contrLayer.addContractor('one_test', script)
+    contrLayer.startContractors(['one_test'])
     
     try:
         while True:
