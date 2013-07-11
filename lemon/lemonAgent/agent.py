@@ -13,6 +13,7 @@ import interface
 import scheduler
 import time
 import contractorLayer
+import uuid
 
 
 CONFIG_PATH = 'conf'
@@ -42,12 +43,19 @@ def writeDefaultConfig(config):
 
 if __name__ == '__main__':
     
+    FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
+    logging.basicConfig(format=FORMAT)
+    
     config  = configparser.ConfigParser()
+    logging.info("Try to read config file...")
     config.read(CONFIG_FILE)
     if len(config.sections()) < 1:
+        logging.info("Configuration file not found. Creating default config file...")
         writeDefaultConfig(config)
+        logging.info("Configuration file was created successfully in {0}".format(CONFIG_FILE))
     logging.config.fileConfig(config['LOGGING']['file'])
     
+    logging.info("Getting other loggers from configuration file")
     logger      = logging.getLogger('MAIN')
     tmLogger    = logging.getLogger('TASK_MANAGER')
     schLogger   = logging.getLogger('SCHEDULER')
@@ -55,27 +63,46 @@ if __name__ == '__main__':
     faceLogger  = logging.getLogger('INTERFACE')
     contrLogger = logging.getLogger('CONTRACTOR')
     
+    logger.info('Loggers were getting')
     # creating and starting main instances
     storageInstance  = storage.Storage(stLogger, config['STORAGE'])
+    logger.info('Storage was created')
     storageInstance.start()
-    #xmlrpc_client    = interface.XMLRPC_CLient()
-    #xmlrpc_client.start()
-    
-    contrLayer       = contractorLayer.Layer(contrLogger, config['CONTRACTOR'], storageInstance)
-    contrLayer.start()
-    
+    logger.info('Storage instance started')
+    logger.info('Getting agent id from storage...')
+    agentID          = storageInstance.readStr('agent_id')
+    if agentID is None:
+        agentID      = uuid.uuid4()
+        storageInstance.writeItem('agent_id', str(agentID))
+        logger.info('Agent id not found. New id was generated. Agent ID: {0}'.format(agentID))
+    else:
+        logger.info('Agent ID is {0}'.format(agentID))
+        
     tmInstance       = taskmanager.TaskManager(tmLogger, config['TASK_MANAGER'])
     tmInstance.start()
+    logger.info('Task manager instance was created and started')
     
+    contrLayer       = contractorLayer.Layer(contrLogger, config['CONTRACTOR'], storageInstance)
+    logger.info('Contractors Layer was created')
     schedulerInstance    = scheduler.Scheduler(schLogger, config['SCHEDULER'], storageInstance, tmInstance)
-    schedulerInstance.start()
+    logger.info('Scheduler was created')
+    xmlrpc_client    = interface.XMLRPC_Client(faceLogger, config['INTERFACE'], agentID, tmInstance)
+    logger.info('XMLRPC Client was created')    
+    tmInstance.storageInstance      = storageInstance
+    tmInstance.interfaceInstance    = xmlrpc_client
+    tmInstance.scheduler            = schedulerInstance
     
-    tmInstance.storageInstance  = storageInstance
-    tmInstance.scheduler        = schedulerInstance
+    logger.info('Starting instances...')
+    def logStarting(instance, instanceName):
+        instance.start()
+        logger.info('Starting {0}'.format(instanceName))
+        instance.waitReady()
+        logger.info('{0} started'.format(instanceName))
+    logStarting(contrLayer, 'Contractor Layer')
+    logStarting(xmlrpc_client, 'XMLRPC Client')
+    logStarting(schedulerInstance, 'Scheduler')
     
-    
-    schedulerInstance.waitReady()
-    
+   
     schtask = {'func':'testPrint', 'name':'templ_task6', 'start_time': None, 'interval': 10,  'kwargs': {'los':'', 't':True}}
     #tmInstance.new_task('addScheduledTask', schtask)
     
@@ -90,7 +117,7 @@ if __name__ == '__main__':
             time.sleep(0.1)
             contractors  = contrLayer.getStat()
             for k,v in contractors.items():
-                if v['state'] == 2 and (k not in completed):
+                if v['state'] == contractorLayer.STATE.STOPPED and (k not in completed):
                     completed.append(k)
                     print(contractors[k])           
     except KeyboardInterrupt:

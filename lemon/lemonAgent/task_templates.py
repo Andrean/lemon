@@ -16,7 +16,12 @@ def addScheduledTask(t, kwargs):
     scheduler       = t._parent.scheduler
     scheduler.add(func_name, schtask_name, start_time, interval, func_kwargs)
     
-
+def getNewData(t, kwargs):
+    i           = t._parent.interfaceInstance
+    new_data    = i.get('new')
+    for k in new_data:
+        print(i.get(k))
+    
 def testPrint(t, kwargs):
     print(kwargs['los'])
     try:
@@ -28,6 +33,7 @@ def testPrint(t, kwargs):
 
         
 CMD = {}
-CMD['runCounter']   = runCounter
-CMD['testPrint']    = testPrint
-CMD['addScheduledTask']    = addScheduledTask
+CMD['runCounter']           = runCounter
+CMD['testPrint']            = testPrint
+CMD['addScheduledTask']     = addScheduledTask
+CMD['getNewData']           = getNewData

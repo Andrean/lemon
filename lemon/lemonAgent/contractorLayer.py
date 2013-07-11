@@ -80,7 +80,6 @@ class Layer(lemon.BaseAgentLemon):
     
     def startContractors(self, contractor_list):
         keys_contr  = []
-        print(self._contractors)
         for key, v  in self._contractors.items():
             for k in contractor_list:
                 if v['name'] == k:
@@ -115,7 +114,6 @@ class Layer(lemon.BaseAgentLemon):
     def _load(self):
         try:
             value   = self._storage.readStr(MASK)
-            print(value)
             if value is not None:
                 self._contractors   = json.loads(value)
         except Exception as e:
@@ -156,7 +154,9 @@ class Contractor(lemon.BaseAgentLemon):
         self._place['exit_code']    = 0
         self._place['result']       = result
         self._place['duration_time']    = time.time() - (self._place['start_time'])
-        self._logger.debug("Contractor {0} completes work. Time length: {1}".format(self._place['__id'], self._place['duration_time']))
+        self._logger.debug("Contractor {0} completes work. Time length: {1}. Result: {2}".format(self._place['__id'], 
+                                                                                                 self._place['duration_time'],
+                                                                                                 str(result, 'cp1251')))
     
     def _writeErrorStatus(self, error):
         self._place['exit_code']    = error.returncode

@@ -70,7 +70,10 @@ class Storage(lemon.BaseAgentLemon):
     def readStr(self, item_id):
         fileName = self._getFilename(item_id);
         self._logger.debug('Read str item {0}'.format(item_id))
-        return str(self._read(fileName), self._encoding)
+        try:
+            return str(self._read(fileName), self._encoding)
+        except TypeError:
+            return None
     
     # transform content to byte sequence and write it into file
     def writeItem(self, item_id, content):
