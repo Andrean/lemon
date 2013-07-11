@@ -25,6 +25,7 @@ def writeDefaultConfig(config):
     config.add_section('SCHEDULER')
     config.add_section('TASK_MANAGER')
     config.add_section('INTERFACE')
+    config.add_section('CONTRACTOR')
     interfaceConfig                 = config['INTERFACE']
     interfaceConfig['xmlrpc_server_addr'] = 'localhost'
     interfaceConfig['xmlrpc_server_port'] = '8000' 
@@ -82,9 +83,16 @@ if __name__ == '__main__':
     #contrLayer.addContractor('one_test', script)
     contrLayer.startContractors(['one_test'])
     
+    
     try:
+        completed   = []
         while True:
             time.sleep(0.1)
+            contractors  = contrLayer.getStat()
+            for k,v in contractors.items():
+                if v['state'] == 2 and (k not in completed):
+                    completed.append(k)
+                    print(contractors[k])           
     except KeyboardInterrupt:
         schedulerInstance.quit()
         tmInstance.quit()

@@ -17,6 +17,7 @@ MASK    = "contractor_layer"
 _state   = namedtuple('STATE',['INIT','RUNNING','STOPPED'])
 
 STATE   = _state(0, 1 , 2)
+PYTHON_PATH = 'python.exe'
 
 class Layer(lemon.BaseAgentLemon):
     '''
@@ -57,7 +58,9 @@ class Layer(lemon.BaseAgentLemon):
                         'state': STATE.INIT,
                         'args': [], 
                         'result': None, 
-                        'exit_code': None }
+                        'exit_code': None,
+                        'start_time' : None,
+                        'duration_time': None}
         self._contractors[c_id] = contractor
         self._write(c_id + '.py', stream)
         self._store()
@@ -73,6 +76,8 @@ class Layer(lemon.BaseAgentLemon):
     def getStat(self):
         return self._contractors
     
+    
+    
     def startContractors(self, contractor_list):
         keys_contr  = []
         print(self._contractors)
@@ -84,7 +89,7 @@ class Layer(lemon.BaseAgentLemon):
             path    = self._contractors[k]['path']
             args    = self._contractors[k]['args']
             self._start(k, path, args)
-            self._logger.info('Started contractor {0} with id {1}'.format(self._contractors[k]['name'], self._contractors[k]['__id']))
+            self._logger.info('Started contractor \'{0}\' with id {1}'.format(self._contractors[k]['name'], self._contractors[k]['__id']))
     
     def stopContractors(self, contractor_list):
         for k in contractor_list:
@@ -130,13 +135,35 @@ class Contractor(lemon.BaseAgentLemon):
         self._call_args = [path]
         self._call_args.extend(args)
         lemon.BaseAgentLemon.__init__(self, _logger, _config)
-        self._logger.info("contractor {0} created".format(self._place['__id']))
+        self._logger.info("Contractor {0} created".format(self._place['__id']))
     
     def run(self):
-        self.running    = True
-        self.out    = ""
-        self.err    = ""
-        print(self._call_args)
-        exit_code   = subprocess.call(["python.exe", self._call_args[0]])
-        print('exit_code: {0}'.format(str(exit_code)))
-        print('stdout: {0}\nstderr: {1} '.format(str(self.out), str(self.err)))
+        self.running    = True        
+        try:
+            self._writeStartStatus()
+            stdout   = subprocess.check_output([PYTHON_PATH, self._call_args[0]], stderr=subprocess.STDOUT, shell=True, timeout = 30)
+            self._writeStopStatus(stdout)
+        except subprocess.CalledProcessError as e:
+            self._writeErrorStatus(e)
+        self._place['state']    = STATE.STOPPED
+        
+    def _writeStartStatus(self):
+        self._place['state']        = STATE.RUNNING
+        self._place['start_time']   = time.time()
+        self._logger.debug('Contractor {0} started at {1}'.format(self._place['__id'], self._place['start_time']))
+        
+    def _writeStopStatus(self, result):
+        self._place['exit_code']    = 0
+        self._place['result']       = result
+        self._place['duration_time']    = time.time() - (self._place['start_time'])
+        self._logger.debug("Contractor {0} completes work. Time length: {1}".format(self._place['__id'], self._place['duration_time']))
+    
+    def _writeErrorStatus(self, error):
+        self._place['exit_code']    = error.returncode
+        self._place['result']       = error.output
+        self._logger.error('Error occurred while executing contractor {0}, name \'{1}\'. Error: {2}'.format(
+                                                                                                       self._place['__id'], 
+                                                                                                       self._place['name'],
+                                                                                                       str(error.output, 'cp1251')
+                                                                                                       ))
+    
