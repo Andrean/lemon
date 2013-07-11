@@ -7,6 +7,7 @@ Created on 08.07.2013
 import threading
 import time
 import xmlrpc.client
+import lemon
 
 
 ERROR_NOT_IDENTIFIED  = '0000001'
@@ -14,33 +15,32 @@ ERROR_NOT_AUTHORIZED  = '0000002'
 
 TASK_SUCCESSFULLY_ADDED = '11'
 
+REQUEST_INTERVAL        = 1
 
-class XMLRPC_Client(threading.Thread):
+class XMLRPC_Client(lemon.BaseAgentLemon):
     '''
     classdocs
     '''
 
 
-    def __init__(self, _logger, _config, _agentID):
+    def __init__(self, _logger, _config, _agentID, task_manager):
         self._logger    = _logger
         self._config    = _config
         self._running   = False
         self._agentID   = _agentID
+        self._taskManager        = task_manager
         self._server_addr   = _config['xmlrpc_server_addr']
         self._server_port   = _config['xmlrpc_server_port']
-        threading.Thread.__init__(self)
+        self._last_refresh  = 0
+        lemon.BaseAgentLemon.__init__(self,_logger,_config)
         
     def run(self):
-        conn    = self._connection    = xmlrpc.client.ServerProxy('http://{0}:{1}'.format(self._server_addr. self._server_port))
+        conn    = self._connection    = xmlrpc.client.ServerProxy('http://{0}:{1}'.format(self._server_addr, self._server_port))
         self._running = True
         
         while(self._running):
             time.sleep(0.01)
             
-        
-    def quit(self):
-        self._running = False
-        
     def set_session(self):
         self._sessionID = self._connection.startSession(self._agentID)
         
@@ -53,10 +53,16 @@ class XMLRPC_Client(threading.Thread):
             return True
         return False
     
-    def get(self, key):
-        pass
+    def get(self, key=None):
+        try:
+            if key is None:
+                result  = self._connection.refresh()
+                if result - self._last_refresh > 0:
+                    self._last_refresh  = result
+                    self._taskManager.new_task('getNewData')
+            else:
+                result  = self._connection.get(key)
+                
+        except Exception as e:
+            self._logger.exception(e)
         
-    def isReady(self):
-        if self._running:
-            return True
-        return False
