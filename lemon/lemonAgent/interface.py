@@ -15,7 +15,7 @@ ERROR_NOT_AUTHORIZED  = '0000002'
 
 TASK_SUCCESSFULLY_ADDED = '11'
 
-REQUEST_INTERVAL        = 1
+
 
 class XMLRPC_Client(lemon.BaseAgentLemon):
     '''

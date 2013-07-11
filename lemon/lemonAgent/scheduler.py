@@ -62,6 +62,11 @@ class Scheduler(lemon.BaseAgentLemon):
         schtask['task']         = {'func': func_type, 'args': kwargs}
         self._add_to_schedule(schtask['__id'], schtask)
         self._store(schtask['__id'], schtask)
+        
+    def getScheduledTask(self, name):
+        for v in self._schedule.values():
+            if v['name']    == name:
+                return v        
 
     def _add_to_schedule(self, _key, _schtask):
         self._schedule[_key] = _schtask

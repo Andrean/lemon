@@ -22,6 +22,10 @@ def getNewData(t, kwargs):
     for k in new_data:
         print(i.get(k))
     
+def refresh(t, kwargs):
+    i           = t._parent.interfaceInstance
+    i.get()    
+    
 def testPrint(t, kwargs):
     print(kwargs['los'])
     try:
@@ -37,3 +41,4 @@ CMD['runCounter']           = runCounter
 CMD['testPrint']            = testPrint
 CMD['addScheduledTask']     = addScheduledTask
 CMD['getNewData']           = getNewData
+CMD['refresh']              = refresh

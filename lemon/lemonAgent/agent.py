@@ -103,15 +103,25 @@ if __name__ == '__main__':
     logStarting(schedulerInstance, 'Scheduler')
     
    
-    schtask = {'func':'testPrint', 'name':'templ_task6', 'start_time': None, 'interval': 10,  'kwargs': {'los':'', 't':True}}
+    if(schedulerInstance.getScheduledTask('refresh') is None):
+        refreshServer = {  'func': 'refresh',
+                           'name': 'refresh',
+                           'interval': 1,
+                           'start_time': None,
+                           'kwargs': {}
+                           }
+        tmInstance.new_task('addScheduledTask', refreshServer)
+        
+    #schtask = {'func':'testPrint', 'name':'templ_task6', 'start_time': None, 'interval': 10,  'kwargs': {'los':'', 't':True}}
     #tmInstance.new_task('addScheduledTask', schtask)
     
-    script  = 'print("Testing!)'
+    #script  = 'print("Testing!)'
     #contrLayer.addContractor('one_test', script)
-    contrLayer.startContractors(['one_test'])
+    #contrLayer.startContractors(['one_test'])
     
     
     try:
+        logger.info('LEMON AGENT STARTED')
         completed   = []
         while True:
             time.sleep(0.1)
