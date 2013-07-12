@@ -7,6 +7,7 @@ Created on 21.06.2013
 import uuid
 import storage
 import time
+import exception.lemonException as le
 
 class StorageManager():
     
@@ -25,8 +26,8 @@ class StorageManager():
             stInstance.start()
             self._storagePool.append(st);
             return stInstance, st['id']
-        except Exception as e:
-            self._logger("Exception while starting new storage instance with id '{0}': {1}".format(st['id']), str(e))
+        except le.StorageNotCreatedException as e:
+            self._logger.exception(e)
     
     def stopInstance(self, _id):
         for instance in self._storagePool:

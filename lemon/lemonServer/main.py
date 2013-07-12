@@ -10,7 +10,6 @@ import configparser
 import logging.config
 import task
 import time
-import storage
 import StorageManager
 import exception.lemonException
 from task import TaskManager
@@ -33,17 +32,15 @@ if __name__ == '__main__':
     taskManager             = TaskManager(taskLogger, config)
 #    taskManager.start()
     # creating storage manager
-    try:
-        #mainStorageInstance = basicStorage.Storage('.storage', mainStorageLogger, config['STORAGE'])
-        storageManagerInstance  = StorageManager.StorageManager(mainStorageLogger, config['STORAGE']);
-        mainLogger.info('main storage instance created')        
-    except exception.lemonException.StorageNotCreatedException as storageException:
-        mainLogger.error('storage not created {}'.format(storageException))
-        logging.shutdown()
-        exit(0)
+    storageManagerInstance  = StorageManager.StorageManager(mainStorageLogger, config['STORAGE']);
+    mainLogger.info('Storage Manager was created')        
     
     # new storage instance
-    stEntities, id          = storageManagerInstance.getInstance()
+    stEntities          = storageManagerInstance.getInstance()
+    if stEntities is None:
+        mainLogger.error('stEntities is None. Exiting')
+        exit(1)
+
     stEntities.set_default_collection('entities')
     # testing storage instance
     print(stEntities.getCollections())

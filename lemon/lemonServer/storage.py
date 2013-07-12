@@ -8,6 +8,7 @@ import threading
 import re
 import pymongo
 import time
+import exception.lemonException
 
 class Storage(threading.Thread):
     
@@ -32,12 +33,10 @@ class Storage(threading.Thread):
             self._test  = 1
         except pymongo.errors.ConnectionFailure as err:
             self._logger.error("Cannot establish connection to database on {0}:{1}: {2}".format(mongodb_addr, mongodb_port, err));
+            raise exception.lemonException.StorageNotCreatedException("Cannot create storage")
         except KeyError:
             self._logger.error("Database '{0}' is not exists".format(db_name));
-            exit(1);
-        except Exception as err:
-            self._logger.error("An exception raised during connection to database: {0}".format(err));
-            exit(1);
+            exit(1);        
 
         threading.Thread.__init__(self)
         
@@ -107,7 +106,3 @@ class Storage(threading.Thread):
             self._db.create_collection(collection_name)
         except pymongo.errors.PyMongoError as err:
             self._logger.error("PyMongoError was excepted during creating collection {0}: {1}".format(str(collection_name), str(err)))
-    
-    
-            
-     
