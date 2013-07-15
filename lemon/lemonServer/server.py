@@ -7,6 +7,7 @@ import threading;
 from xmlrpcAgentListener import xmlrpcAgentListener
 from xmlrpcAgentListener import XMLRPCExitException
 from agentInterface import AgentHandler
+from interface import CommandInterface
 
 
 class Server(threading.Thread):
@@ -31,7 +32,8 @@ class Server(threading.Thread):
     def run(self):
         try:
             print("i am a new server instance with id: "+str(self._getId())+"\n");
-            agentHandler = AgentHandler(self._tmInstance)
+            cmdInterface    = CommandInterface(self._tmInstance)
+            agentHandler = AgentHandler(self._tmInstance, cmdInterface)
             self._xmlrpcListener.register_instance(agentHandler)
             self._logger.info('xmlrpc listener starting')
             self._xmlrpcListener.serve_forever()            

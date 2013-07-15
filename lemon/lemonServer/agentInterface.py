@@ -25,39 +25,35 @@ class AgentHandler(object):
     '''
 
 
-    def __init__(self, _taskmanager):
+    def __init__(self, _taskmanager, interface):
         '''
         Constructor
         '''
         self._TaskManager   = _taskmanager
-        self._sessionStorage = {}
-        self._expireTime    = 20 * MINUTES
-        self._interval      = 5 * SECONDS 
-        expiredSessionsTimer   = common.timer.RepeatedTimer(self._interval, self._checkExpiredSessions)
-        expiredSessionsTimer.start()
+        self._commandInterface  = interface
+        
         
     
-    def postData(self, agentId, sessionId, _dictData):
+    def postData(self, agentId, _dictData):
         self._TaskManager.addTask(agentId, task_commands.CMD_STORE, _dictData)
         return TASK_SUCCESSFULLY_ADDED
     
-    def refresh(self, agentId, sessionId):
+    def refresh(self, agentId):
+        result  = self._commandInterface.getLastUpdateTime()
+        return result
+    
+    def get(self, agentId, key):
+        if key == 'new':
+            print('Getting key "new" from agent {0}'.format(agentId))
+    
+    def getUpdate(self, agentId, _dictData):
         pass
     
-    def get(self, agentId, sessionId):
-        pass
-    
-    def getUpdate(self, agentId, sessionId, _dictData):
-        pass
-    
-    def getConfig(self, agentId, sessionId, _dictData):
+    def getConfig(self, agentId, _dictData):
         pass
                 
         
-    def _checkExpiredSessions(self):
-        removeList = [k for k, v in self._sessionStorage.items() if v['expire'] < time.time()]
-        for k in removeList:
-            self._sessionStorage.pop(k)
+   
             
            
     

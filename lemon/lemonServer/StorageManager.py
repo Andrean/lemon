@@ -25,7 +25,7 @@ class StorageManager():
             st  = {'id': uuid.uuid4(), 'status': 'running', '_': stInstance};
             stInstance.start()
             self._storagePool.append(st);
-            return stInstance, st['id']
+            return stInstance
         except le.StorageNotCreatedException as e:
             self._logger.exception(e)
     
