@@ -31,8 +31,6 @@ class AgentHandler(object):
         '''
         self._TaskManager   = _taskmanager
         self._commandInterface  = interface
-        
-        
     
     def postData(self, agentId, _dictData):
         self._TaskManager.addTask(agentId, task_commands.CMD_STORE, _dictData)
@@ -44,7 +42,11 @@ class AgentHandler(object):
     
     def get(self, agentId, key):
         if key == 'new':
-            print('Getting key "new" from agent {0}'.format(agentId))
+            return self._commandInterface.getNewCommands()
+        elif key == 'all':
+            return self._commandInterface.getCurrentCommands()
+        else:
+            return self._commandInterface.getItem(key)
     
     def getUpdate(self, agentId, _dictData):
         pass

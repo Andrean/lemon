@@ -95,6 +95,7 @@ class Task(threading.Thread):
             taskNote['exit_code'] = 0
         except Exception as e:
             logger.error('Error occured in task {0}: {1}'.format(self.id, str(e)))
+            logger.exception(e)
             taskNote['exit_code'] = 1
             taskNote['result'] = e 
         

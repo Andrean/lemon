@@ -5,6 +5,7 @@ Created on 12.07.2013
 '''
 
 import time
+import json
 
 class CommandInterface(object):
     '''
@@ -17,7 +18,16 @@ class CommandInterface(object):
         Constructor
         '''
         self._taskManager   = taskManager
-        self._commands  = {}
+        self._commands  = {'add_scheduled_task': {'agents': 'all', 
+                                                  'timestamp': time.time(), 
+                                                  'content': {
+                                                               'func': 'testPrint',
+                                                               'name': 'testPrint',
+                                                               'interval': 5*60,
+                                                               'start_time': None,
+                                                               'kwargs': {'los': 'test', 't': True}
+                                                              }}}
+        self._new       = ['add_scheduled_task']
         self._current   = {}
         self._refresh   = time.time()
            
@@ -28,11 +38,18 @@ class CommandInterface(object):
         return  self._refresh
     
     def getCurrentCommands(self):
-        pass
+        return self._commands
     
     def getNewCommands(self):
+        return self._new
+    
+    def getItem(self, key):
+        try:
+            return json.dumps(self._commands[key])
+        except KeyError:
+            return None
+    
+    def updateCommands(self, commandsDict):
         pass
     
-    def getItem(self):
-        pass
     

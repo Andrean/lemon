@@ -106,7 +106,7 @@ if __name__ == '__main__':
     if(schedulerInstance.getScheduledTask('refresh') is None):
         refreshServer = {  'func': 'refresh',
                            'name': 'refresh',
-                           'interval': 1,
+                           'interval': 5,
                            'start_time': None,
                            'kwargs': {}
                            }

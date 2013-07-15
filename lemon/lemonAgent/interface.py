@@ -6,6 +6,7 @@ Created on 08.07.2013
 
 import threading
 import time
+
 import xmlrpc.client
 import lemon
 
@@ -60,6 +61,7 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
                     self._logger.exception(e)                               
             else:
                 result  = self._connection.get(self._agentID, key)
+                return result
         except Exception as e:
             self._logger.exception(e)
         
