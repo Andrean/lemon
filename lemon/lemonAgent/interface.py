@@ -41,14 +41,8 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
         while(self._running):
             time.sleep(0.01)
             
-    def set_session(self):
-        self._sessionID = self._connection.startSession(self._agentID)
-        
     def post(self, data):
-        code    = self._connection.postData(self._agentID, self._sessionID, data)
-        if code is ERROR_NOT_AUTHORIZED:
-            self.set_session()
-            code = self._connection.postData(self._agentID, self._sessionID, data)
+        code    = self._connection.postData(self._agentID, data)
         if code is TASK_SUCCESSFULLY_ADDED:
             return True
         return False
@@ -56,13 +50,16 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
     def get(self, key=None):
         try:
             if key is None:
-                result  = self._connection.refresh()
-                if result - self._last_refresh > 0:
-                    self._last_refresh  = result
-                    self._taskManager.new_task('getNewData')
+                try:
+                    result  = self._connection.refresh(self._agentID)
+                    print(result)
+                    if result - self._last_refresh > 0:
+                        self._last_refresh  = result
+                        self._taskManager.new_task('getNewData')
+                except Exception as e:
+                    self._logger.exception(e)                               
             else:
-                result  = self._connection.get(key)
-                
+                result  = self._connection.get(self._agentID, key)
         except Exception as e:
             self._logger.exception(e)
         

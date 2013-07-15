@@ -24,7 +24,7 @@ def getNewData(t, kwargs):
     
 def refresh(t, kwargs):
     i           = t._parent.interfaceInstance
-    i.get()    
+    result  = i.get()    
     
 def testPrint(t, kwargs):
     print(kwargs['los'])
