@@ -5,7 +5,7 @@ Created on 12.07.2013
 '''
 
 import time
-import json
+
 
 class CommandInterface(object):
     '''
@@ -34,18 +34,21 @@ class CommandInterface(object):
     def load(self):
         pass
     
+    def post(self, dict_data):
+        pass
+    
     def getLastUpdateTime(self):
         return  self._refresh
     
-    def getCurrentCommands(self):
+    def getCurrentCommands(self, agentId = None):
         return self._commands
     
-    def getNewCommands(self):
+    def getNewCommands(self, agentId = None):
         return self._new
     
-    def getItem(self, key):
+    def getItem(self, agentId, key):
         try:
-            return json.dumps(self._commands[key])
+            return self._commands[key]
         except KeyError:
             return None
     

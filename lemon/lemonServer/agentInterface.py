@@ -6,6 +6,7 @@ Created on 19.06.2013
 
 import common.timer
 import time
+import json
 import task_commands
 
 SECONDS  = 1
@@ -32,8 +33,8 @@ class AgentHandler(object):
         self._TaskManager   = _taskmanager
         self._commandInterface  = interface
     
-    def postData(self, agentId, _dictData):
-        self._TaskManager.addTask(agentId, task_commands.CMD_STORE, _dictData)
+    def postData(self, agentId, json_data):
+        self._commandInterface.post(agentId, json.loads(json_data))
         return TASK_SUCCESSFULLY_ADDED
     
     def refresh(self, agentId):
@@ -41,12 +42,17 @@ class AgentHandler(object):
         return result
     
     def get(self, agentId, key):
+        result = ""
         if key == 'new':
-            return self._commandInterface.getNewCommands()
+            result = self._commandInterface.getNewCommands(agentId)
         elif key == 'all':
-            return self._commandInterface.getCurrentCommands()
+            result = self._commandInterface.getCurrentCommands(agentId)
         else:
-            return self._commandInterface.getItem(key)
+            print(key)
+            result =  self._commandInterface.getItem(agentId, key)
+            print(result)
+        print('dump ' + json.dumps(result))
+        return json.dumps(result)
     
     def getUpdate(self, agentId, _dictData):
         pass

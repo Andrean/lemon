@@ -6,7 +6,7 @@ Created on 08.07.2013
 
 import threading
 import time
-
+import json
 import xmlrpc.client
 import lemon
 
@@ -43,7 +43,7 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
             time.sleep(0.01)
             
     def post(self, data):
-        code    = self._connection.postData(self._agentID, data)
+        code    = self._connection.postData(self._agentID, json.dumps(data))
         if code is TASK_SUCCESSFULLY_ADDED:
             return True
         return False
@@ -60,7 +60,7 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
                 except Exception as e:
                     self._logger.exception(e)                               
             else:
-                result  = self._connection.get(self._agentID, key)
+                result  = json.loads(self._connection.get(self._agentID, key))
                 return result
         except Exception as e:
             self._logger.exception(e)

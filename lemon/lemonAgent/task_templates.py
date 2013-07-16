@@ -20,13 +20,12 @@ def addScheduledTask(t, kwargs):
 def getNewData(t, kwargs):
     i           = t._parent.interfaceInstance
     new_data    = i.get('new')
-    print('result new '+str(new_data))
+    print('Found new commands: '+str(new_data))
     for k in new_data:
-        item = json.loads(i.get(k))
+        print(k)
+        item = i.get(k)       
         __dispatcher(t, {'command': k, 'item': item})
         
-        
-    
 def __dispatcher(t, kwargs):
     try:
         print(kwargs)
