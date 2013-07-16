@@ -10,7 +10,7 @@ import os
 import storage
 import taskmanager
 import interface
-import scheduler
+import scheduler.scheduler as scheduler
 import time
 import contractorLayer
 import uuid
@@ -112,6 +112,7 @@ if __name__ == '__main__':
                            }
         tmInstance.new_task('addScheduledTask', refreshServer)
         
+    
     #schtask = {'func':'testPrint', 'name':'templ_task6', 'start_time': None, 'interval': 10,  'kwargs': {'los':'', 't':True}}
     #tmInstance.new_task('addScheduledTask', schtask)
     
