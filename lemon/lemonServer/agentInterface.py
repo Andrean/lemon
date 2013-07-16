@@ -48,10 +48,7 @@ class AgentHandler(object):
         elif key == 'all':
             result = self._commandInterface.getCurrentCommands(agentId)
         else:
-            print(key)
             result =  self._commandInterface.getItem(agentId, key)
-            print(result)
-        print('dump ' + json.dumps(result))
         return json.dumps(result)
     
     def getUpdate(self, agentId, _dictData):

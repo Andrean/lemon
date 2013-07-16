@@ -80,6 +80,7 @@ if __name__ == '__main__':
         
     tmInstance       = taskmanager.TaskManager(tmLogger, config['TASK_MANAGER'])
     tmInstance.start()
+    tmInstance.agentID  = agentID
     logger.info('Task manager instance was created and started')
     
     contrLayer       = contractorLayer.Layer(contrLogger, config['CONTRACTOR'], storageInstance)
@@ -102,16 +103,8 @@ if __name__ == '__main__':
     logStarting(xmlrpc_client, 'XMLRPC Client')
     logStarting(schedulerInstance, 'Scheduler')
     
-   
-    if(schedulerInstance.getScheduledTask('refresh') is None):
-        refreshServer = {  'func': 'refresh',
-                           'name': 'refresh',
-                           'interval': 5,
-                           'start_time': None,
-                           'kwargs': {}
-                           }
-        tmInstance.new_task('addScheduledTask', refreshServer)
-        
+    for schtask in schedulerInstance.getNotInitiatedDefaultTasks():
+        tmInstance.new_task('addScheduledTask', schtask)     
     
     #schtask = {'func':'testPrint', 'name':'templ_task6', 'start_time': None, 'interval': 10,  'kwargs': {'los':'', 't':True}}
     #tmInstance.new_task('addScheduledTask', schtask)

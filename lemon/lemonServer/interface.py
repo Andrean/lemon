@@ -5,7 +5,7 @@ Created on 12.07.2013
 '''
 
 import time
-
+import task_commands
 
 class CommandInterface(object):
     '''
@@ -34,8 +34,14 @@ class CommandInterface(object):
     def load(self):
         pass
     
-    def post(self, dict_data):
-        pass
+    def post(self, agentID, dict_data):
+        print(dict_data)
+        agent_info  = {'agent': {'__id': agentID, 'received_id': dict_data['agent']['__id']}}
+        agent_info['agent']['start_timestamp']  = time.time()
+        agent_info['agent']['state']    = dict_data['agent']['state']
+        agent_info['agent']['ip']       = dict_data['agent']['ip'] 
+        print(agent_info)
+        # TODO: store in database
     
     def getLastUpdateTime(self):
         return  self._refresh

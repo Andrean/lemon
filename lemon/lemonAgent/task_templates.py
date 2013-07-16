@@ -4,6 +4,7 @@ Task templates, which used to do some useful actions
 @author: vau
 '''
 import json
+import socket
 
 def runCounter(t, counter_id, kwargs):
     pass
@@ -16,6 +17,14 @@ def addScheduledTask(t, kwargs):
     func_kwargs     = kwargs['kwargs']
     scheduler       = t._parent.scheduler
     scheduler.add(func_name, schtask_name, start_time, interval, func_kwargs)
+    
+def sendSelfStat(t, kwargs):
+    agentID = t._parent.agentID
+    i       = t._parent.interfaceInstance
+    info    = {'agent': {'__id': agentID, 'state': 'started'}}
+    ip      = socket.gethostbyname(socket.gethostname())
+    info['agent']['ip'] = ip
+    i.post(info)
     
 def getNewData(t, kwargs):
     i           = t._parent.interfaceInstance
@@ -40,12 +49,10 @@ def __dispatcher(t, kwargs):
     print(command)
     
     if command == 'add_scheduled_task':
-        print('Scheduling')
         schedulerInstance   = t._parent.scheduler
         if schedulerInstance.getScheduledTask(content['name']) is not None:
-            print('task "{0}" exists'.format(command))
+            print('task "{0}" exists'.format(content['name']))
         else:
-            print('Adding new scheduled task')
             t._parent.new_task('addScheduledTask', content)
         
     
@@ -69,3 +76,4 @@ CMD['testPrint']            = testPrint
 CMD['addScheduledTask']     = addScheduledTask
 CMD['getNewData']           = getNewData
 CMD['refresh']              = refresh
+CMD['sendSelfStat']         = sendSelfStat

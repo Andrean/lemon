@@ -8,6 +8,7 @@ import time
 import json
 import uuid
 import lemon
+import scheduler.default_tasks as tasks
 
 MASK    = 'schedule_'
 MAIN    = 'items'
@@ -66,11 +67,19 @@ class Scheduler(lemon.BaseAgentLemon):
     def getScheduledTask(self, name):
         for v in self._schedule.values():
             if v['name']    == name:
-                return v        
+                return v
+            
+    def getNotInitiatedDefaultTasks(self):
+        for taskName, task in tasks.tasks.items():
+            if self.getScheduledTask(taskName) is None:
+                yield task
 
     def _add_to_schedule(self, _key, _schtask):
         self._schedule[_key] = _schtask
-        self._scheduleModified  = True        
+        self._scheduleModified  = True  
+        
+    def _remove_from_schedule(self, _key): 
+        self._schedule.pop(_key)     
         
     def _store(self, key, obj):
         try:
@@ -94,11 +103,19 @@ class Scheduler(lemon.BaseAgentLemon):
     def _process(self):
         timestamp   = time.time()
         keys    = list(self._schedule.keys())
+        remove_list = []
         for k in keys:
-            if self._schedule[k]['last_time'] + self._schedule[k]['interval'] < timestamp:
-                self._schedule[k]['last_time']  = time.time()
+            if self._schedule[k]['interval'] == 0:
                 self._startTask(k, self._schedule[k]['task'])
                 self._logger.info('scheduled task {0} started'.format(str(k)))
+                remove_list.append(k)
+            elif self._schedule[k]['last_time'] + self._schedule[k]['interval'] < timestamp:
+                self._startTask(k, self._schedule[k]['task'])
+                self._logger.info('scheduled task {0} started'.format(str(k)))
+                self._schedule[k]['last_time']  = time.time()
+        for remove_name in remove_list:
+            self._remove_from_schedule(remove_name)
+                
                 
     def _store_schedule(self):
         if self._scheduleModified:

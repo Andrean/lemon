@@ -33,6 +33,7 @@ class TaskManager(lemon.BaseAgentLemon):
         self.taskmanagerInstance    = self
         self.contractorLayer        = None
         self.scheduler              = None
+        self.agentID                = None
         lemon.BaseAgentLemon.__init__(self, _logger, _config)
         
     def run(self):
