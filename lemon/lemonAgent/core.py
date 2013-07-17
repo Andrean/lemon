@@ -12,6 +12,8 @@ import configparser
 import logging.config
 import os
 import uuid
+import threading
+import time
 
 
 # configuration base parameters
@@ -96,6 +98,10 @@ class Core(object):
         
     def _updateStat(self):
         self.__initAgentID()
+        if self._stat['agent']['start_timestamp'] is None:
+            self._stat['agent']['start_timestamp'] = time.time()
+        threads = threading.active_count()
+        self._stat['agent']['threads']  = threads
             
     def _startInstances(self):
         self._corelogger.info('start instances')

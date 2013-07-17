@@ -17,13 +17,13 @@ def addScheduledTask(t, kwargs):
     interval        = kwargs['interval']
     func_kwargs     = kwargs['kwargs']
     scheduler       = t._parent.scheduler
-    scheduler.add(func_name, schtask_name, start_time, interval, func_kwargs)
+    if scheduler.getScheduledTask(schtask_name) is None:
+        scheduler.add(func_name, schtask_name, start_time, interval, func_kwargs)
     
 def updateStat(t, kwargs):
     try:
         if kwargs['core']:
-            core.getCoreInstance().updateStat()
-            print('update stat')
+            core.getCoreInstance().updateStat()            
     except KeyError:
         pass
     
