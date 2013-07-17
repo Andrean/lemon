@@ -26,6 +26,7 @@ class BaseAgentLemon(threading.Thread):
         self._running   = False
         threading.Thread.__init__(self)
         self.__changeInstanceState('initiated')
+        self._info['instance']  = self
         
     @changeStateDecorator    
     def run(self):
