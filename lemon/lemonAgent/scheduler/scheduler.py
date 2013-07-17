@@ -7,6 +7,7 @@ import time
 import json
 import uuid
 import lemon
+import core
 import scheduler.default_tasks as tasks
 
 MASK    = 'schedule_'
@@ -27,21 +28,24 @@ class Scheduler(lemon.BaseAgentLemon):
     '''
 
 
-    def __init__(self, _logger, _config, _storageInstance, _taskmanagerInstance):
+    def __init__(self, _logger, _config, _info):
         '''
         Constructor
         '''
-        self._storage   = _storageInstance
-        self._taskManager   = _taskmanagerInstance
+        self._storage   = None
+        self._taskManager   = None
         self._schedule  = {}
         self._removed_from_schedule = []
         self._scheduleModified  = False
-        lemon.BaseAgentLemon.__init__(self, _logger, _config)
+        lemon.BaseAgentLemon.__init__(self, _logger, _config, _info)
         
     def run(self):
+        
+        self._storage       = core.getCoreInstance().getInstance('STORAGE')
+        self._taskManager   = core.getCoreInstance().getInstance('TASK_MANAGER')
         self._logger.info('Scheduler started')
         self._loadStorage()
-        self._running   = True
+        self._setReady()
         it  = 0
         while self._running:
             self._process()
@@ -123,6 +127,7 @@ class Scheduler(lemon.BaseAgentLemon):
             self._storage.writeItem(MASK + MAIN, json.dumps(list(self._schedule.keys())))
             for key in self._removed_from_schedule:
                 self._storage.deleteItem(MASK+key)
+            self._removed_from_schedule = []
             self._scheduleModified = False
                 
     def _startTask(self, key, task):

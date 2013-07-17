@@ -10,6 +10,7 @@ import lemon
 import uuid
 import os
 import subprocess
+import core
 from collections import namedtuple
 
 MASK    = "contractor_layer"
@@ -25,13 +26,13 @@ class Layer(lemon.BaseAgentLemon):
     '''
 
 
-    def __init__(self, _logger, _config, _storageInstance):
+    def __init__(self, _logger, _config, _info):
         '''
         Constructor
         '''
-        self._storage   = _storageInstance
+        self._storage   = None
         self._contractors   = {}
-        lemon.BaseAgentLemon.__init__(self, _logger, _config)
+        lemon.BaseAgentLemon.__init__(self, _logger, _config, _info)
         self.contractors_path   = 'contractors/'
         try:
             self.contractors_path   = self._config['path']
@@ -41,10 +42,11 @@ class Layer(lemon.BaseAgentLemon):
         self._logger.info("Contractor layer initialized")
         
     def run(self):
+        self._storage       = core.getCoreInstance().getInstance('STORAGE')
         if not os.path.exists(self.contractors_path):
             os.makedirs(self.contractors_path)
         self._load()
-        self._running   = True
+        self._setReady()
         self._logger.info("Layer started")
         while self._running:
             time.sleep(0.01) 

@@ -4,11 +4,11 @@ Created on 08.07.2013
 @author: vau
 '''
 
-import threading
 import time
 import json
 import xmlrpc.client
 import lemon
+import core
 
 
 ERROR_NOT_IDENTIFIED  = '0000001'
@@ -24,20 +24,22 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
     '''
 
 
-    def __init__(self, _logger, _config, _agentID, task_manager):
+    def __init__(self, _logger, _config, _info):
         self._logger    = _logger
         self._config    = _config
         self._running   = False
-        self._agentID   = _agentID
-        self._taskManager        = task_manager
+        self._agentID   = None
+        self._taskManager   = None
         self._server_addr   = _config['xmlrpc_server_addr']
         self._server_port   = _config['xmlrpc_server_port']
         self._last_refresh  = 0
-        lemon.BaseAgentLemon.__init__(self,_logger,_config)
+        lemon.BaseAgentLemon.__init__(self,_logger,_config, _info)
         
     def run(self):
-        conn    = self._connection    = xmlrpc.client.ServerProxy('http://{0}:{1}'.format(self._server_addr, self._server_port))
-        self._running = True
+        self._taskManager   = core.getCoreInstance().getInstance('TASK_MANAGER')
+        self._agentID       = core.getCoreInstance().getItem('agent')['__id']
+        self._connection    = xmlrpc.client.ServerProxy('http://{0}:{1}'.format(self._server_addr, self._server_port))
+        self._setReady()
         
         while(self._running):
             time.sleep(0.01)

@@ -10,6 +10,7 @@ import time
 from collections import namedtuple
 import task_templates
 import lemon
+import core
 
 _state   = namedtuple('STATE',['INIT','RUNNING','STOPPED'])
 
@@ -23,21 +24,24 @@ class TaskManager(lemon.BaseAgentLemon):
     classdocs
     '''
 
-    def __init__(self, _logger, _config):
+    def __init__(self, _logger, _config, _info):
         self._taskQueue = queue.Queue()
         self._tasks     = {}
         self._taskTemplate  = {'__self': 0, '__id': None, 'state': STATE.STOPPED, 'exit_code': None, 'result': None}
         self._lock  = threading.Lock()
-        self.storageInstance        = None
-        self.interfaceInstance      = None
         self.taskmanagerInstance    = self
-        self.contractorLayer        = None
-        self.scheduler              = None
-        self.agentID                = None
-        lemon.BaseAgentLemon.__init__(self, _logger, _config)
+        
+        lemon.BaseAgentLemon.__init__(self, _logger, _config, _info)
         
     def run(self):
-        self._running   = True
+        c   =   core.getCoreInstance()
+        self.storageInstance        = c.getInstance('STORAGE')
+        self.interfaceInstance      = c.getInstance('INTERFACE')
+        self.contractorLayer        = c.getInstance('CONTRACTOR')
+        self.scheduler              = c.getInstance('SCHEDULER')
+        self.agentID                = c.getItem('agent')['__id']
+        
+        self._setReady()
         self._logger.info('Task Manager started')
         while self._running:
             self._process()

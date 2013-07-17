@@ -28,11 +28,12 @@ class Storage(lemon.BaseAgentLemon):
     '''
     Class using different files for every item
     '''
-    def __init__(self, _logger, _config, preinitFile='.storage'):
+    def __init__(self, _logger, _config, _info):
         '''
         Constructor
         '''
-        lemon.BaseAgentLemon.__init__(self, _logger, _config)
+        preinitFile = '.storage'
+        lemon.BaseAgentLemon.__init__(self, _logger, _config, _info)
         self._lock  = threading.Lock()
         self._encoding  = 'utf-8'
         try:
@@ -53,7 +54,7 @@ class Storage(lemon.BaseAgentLemon):
         
                  
     def run(self):
-        self._running = True
+        self._setReady()
         self._logger.info("storage {0} started".format(self._storageID))
         if not os.path.exists(self._config['data_path']):
             os.makedirs(self._config['data_path'])
