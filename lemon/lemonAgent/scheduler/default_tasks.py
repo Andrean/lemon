@@ -20,4 +20,5 @@ updateCoreStat      = formSchTask('updateStat', 'Update core stat', 10, None, {'
 tasks   = {}
 tasks['refresh']    = refreshServer
 tasks['sendSelfInfoOnStart']    = sendSelfInfoOnStart
+tasks['sendSelfInfo']           = sendSelfInfo
 tasks['updateCoreStat']         = updateCoreStat
