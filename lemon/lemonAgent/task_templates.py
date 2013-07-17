@@ -5,6 +5,7 @@ Task templates, which used to do some useful actions
 '''
 import json
 import socket
+import core
 
 def runCounter(t, counter_id, kwargs):
     pass
@@ -17,6 +18,14 @@ def addScheduledTask(t, kwargs):
     func_kwargs     = kwargs['kwargs']
     scheduler       = t._parent.scheduler
     scheduler.add(func_name, schtask_name, start_time, interval, func_kwargs)
+    
+def updateStat(t, kwargs):
+    try:
+        if kwargs['core']:
+            core.getCoreInstance().updateStat()
+            print('update stat')
+    except KeyError:
+        pass
     
 def sendSelfStat(t, kwargs):
     agentID = t._parent.agentID
@@ -77,3 +86,4 @@ CMD['addScheduledTask']     = addScheduledTask
 CMD['getNewData']           = getNewData
 CMD['refresh']              = refresh
 CMD['sendSelfStat']         = sendSelfStat
+CMD['updateStat']           = updateStat

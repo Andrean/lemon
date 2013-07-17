@@ -153,6 +153,10 @@ class Core(object):
             return self._instances[name]['instance']
         except KeyError as e:
             self._corelogger.error('Cannot get instance "{0}"'.format(str(e)))
+            
+    def terminateInstances(self):
+        for k in COMPONENTS.reverse():
+            self._instances[k]['instance'].quit()
     
     def getItem(self, item):
         try:
@@ -160,6 +164,9 @@ class Core(object):
         except KeyError as e:
             self._corelogger.error('Cannot get item "{0}"'.format(str(e)))
             
+    def updateStat(self):
+        self._updateStat()
+        
     def start(self):
         self._loadConfig()
         self._initStat()
@@ -168,6 +175,9 @@ class Core(object):
         self._startStorage()
         self._updateStat()
         self._startInstances()
+        
+    def stop(self):
+        self.terminateInstances()
         
     
     

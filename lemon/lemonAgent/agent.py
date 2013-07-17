@@ -5,7 +5,7 @@ Created on 08.07.2013
 '''
 
 import core
-
+import time
 
 if __name__ == '__main__':
     
@@ -22,22 +22,16 @@ if __name__ == '__main__':
     #script  = 'print("Testing!)'
     #contrLayer.addContractor('one_test', script)
     #contrLayer.startContractors(['one_test'])
-    
-    '''
     try:
-        logger.info('LEMON AGENT STARTED')
-        completed   = []
+        print('LEMON AGENT')
+    #    completed   = []
         while True:
             time.sleep(0.1)
-            contractors  = contrLayer.getStat()
-            for k,v in contractors.items():
-                if v['state'] == contractorLayer.STATE.STOPPED and (k not in completed):
-                    completed.append(k)
-                    print(contractors[k])           
+    #        contractors  = contrLayer.getStat()
+    #        for k,v in contractors.items():
+    #            if v['state'] == contractorLayer.STATE.STOPPED and (k not in completed):
+    #                completed.append(k)
+    #                print(contractors[k])           
     except KeyboardInterrupt:
-        schedulerInstance.quit()
-        tmInstance.quit()
-        storageInstance.quit()
-    '''    
-        
+        c.stop()
         
