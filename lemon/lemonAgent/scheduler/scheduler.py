@@ -3,7 +3,6 @@ Created on 08.07.2013
 
 @author: vau
 '''
-import threading
 import time
 import json
 import uuid
@@ -35,6 +34,7 @@ class Scheduler(lemon.BaseAgentLemon):
         self._storage   = _storageInstance
         self._taskManager   = _taskmanagerInstance
         self._schedule  = {}
+        self._removed_from_schedule = []
         self._scheduleModified  = False
         lemon.BaseAgentLemon.__init__(self, _logger, _config)
         
@@ -79,7 +79,8 @@ class Scheduler(lemon.BaseAgentLemon):
         self._scheduleModified  = True  
         
     def _remove_from_schedule(self, _key): 
-        self._schedule.pop(_key)     
+        self._schedule.pop(_key)
+        self._removed_from_schedule.append(_key)     
         
     def _store(self, key, obj):
         try:
@@ -120,6 +121,8 @@ class Scheduler(lemon.BaseAgentLemon):
     def _store_schedule(self):
         if self._scheduleModified:
             self._storage.writeItem(MASK + MAIN, json.dumps(list(self._schedule.keys())))
+            for key in self._removed_from_schedule:
+                self._storage.deleteItem(MASK+key)
             self._scheduleModified = False
                 
     def _startTask(self, key, task):
