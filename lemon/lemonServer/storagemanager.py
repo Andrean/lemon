@@ -7,17 +7,20 @@ Created on 21.06.2013
 import uuid
 import storage
 import time
+import lemon
 import exception.lemonException as le
 
-class StorageManager():
+class StorageManager(lemon.BaseServerComponent):
     
-    def __init__(self, logger, cfg):
-        '''
-        Constructor
-        '''
+    def __init__(self, _logger, _cfg, _info):
         self._storagePool  = []
-        self._logger    = logger
-        self._config    = cfg    
+        lemon.BaseServerComponent.__init__(self, _logger, _cfg, _info)    
+            
+    def run(self):
+        self._setReady()
+        self._logger.info('storage manager started')
+        while self._running:
+            time.sleep(0.1)
             
     def getInstance(self):
         try:

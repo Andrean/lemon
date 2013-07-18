@@ -11,6 +11,7 @@ import time
 import exception.lemonException as lemonException
 import task_commands
 import json
+import lemon
 
 def synchronized(f):
     '''Synchronization method decorator.'''
@@ -23,26 +24,20 @@ def synchronized(f):
             self._lock.release()
     return new_function
 
-class TaskManager(threading.Thread):
+class TaskManager(lemon.BaseServerComponent):
     '''
     This manager manage task: read, write, add content and other
     '''
 
 
-    def __init__(self, logger, cfg):
-        '''
-        Constructor
-        '''
+    def __init__(self, _logger, _config, _info):
         self._TaskQueue = queue.Queue()
         self._lock  = threading.Lock()
-        self._logger    = logger
-        self._config    = cfg
-        self._running   = False
         self._handlerList   = {}
-        threading.Thread.__init__(self)
+        lemon.BaseServerComponent.__init__(self, _logger, _config, _info)
         
     def run(self):
-        self._running   = True
+        self._setReady()
         self._logger.info("Task manager started")
         while(self._running):
             if self._checkForTasks():

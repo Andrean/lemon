@@ -35,7 +35,6 @@ class CommandInterface(object):
         pass
     
     def post(self, agentID, dict_data):
-        print(dict_data)
         agent_info  = {'agent': {'__id': agentID, 'received_id': dict_data['agent']['__id']}}
         agent_info['agent']['start_timestamp']  = time.time()
         agent_info['agent']['state']    = dict_data['agent']['state']

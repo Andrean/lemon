@@ -3,40 +3,38 @@ Created on 13.06.2013
 
 @author: vau
 '''
-import threading;
 from xmlrpcAgentListener import xmlrpcAgentListener
 from xmlrpcAgentListener import XMLRPCExitException
 from agentInterface import AgentHandler
-from interface import CommandInterface
+import interface
+import lemon
+import uuid
+import core
 
-
-class Server(threading.Thread):
+class Server(lemon.BaseServerComponent):
     '''
     classdocs
     '''
     
-    def __init__(self, _id, _logger, _cfg, _TaskManager):
-        self._tmInstance    = _TaskManager
-        self._logger        = _logger
-        self.__instanceId   = _id;
-        self._config        = _cfg
-        cfg_ainterface      = self._config['AGENT_INTERFACE']
-        self._xmlrpcListener    = xmlrpcAgentListener(
-                                                      (
-                                                       str(cfg_ainterface['xmlrpc_address']), 
-                                                       int(cfg_ainterface['xmlrpc_port'])
-                                                       )
-                                                      )
-        threading.Thread.__init__(self);
+    def __init__(self, _logger, _config, _info):
+        lemon.BaseServerComponent.__init__(self, _logger, _config, _info)
+        self._tmInstance    = None
+        self.__instanceId   = uuid.uuid4();
+        cfg                 = self._config
+        self._xmlrpcListener    = xmlrpcAgentListener((str(cfg['xmlrpc_address']), int(cfg['xmlrpc_port'])))       
 
     def run(self):
         try:
+            _core   = core.getInstance()
+            self._tmInstance    = _core.getInstance('TASK_MANAGER')
             print("i am a new server instance with id: "+str(self._getId())+"\n");
-            cmdInterface    = CommandInterface(self._tmInstance)
+            cmdInterface    = interface.CommandInterface(self._tmInstance)
             agentHandler = AgentHandler(self._tmInstance, cmdInterface)
             self._xmlrpcListener.register_instance(agentHandler)
+            self._setReady()
             self._logger.info('xmlrpc listener starting')
-            self._xmlrpcListener.serve_forever()            
+            self._xmlrpcListener.serve_forever()
+                        
         except XMLRPCExitException:
             print("xmlrpc server shutdown")
         self._logger.info('server instance with id {0} was stopped'.format(self._getId()))
