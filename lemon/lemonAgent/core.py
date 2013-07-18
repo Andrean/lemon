@@ -21,7 +21,7 @@ CONFIG_PATH = 'conf'
 CONFIG_FILE = CONFIG_PATH + '/agent.conf'
 
 # Do not change order of instances. Important: storage must be first, task_manager - second
-COMPONENTS  = ['STORAGE','TASK_MANAGER', 'SCHEDULER', 'INTERFACE', 'CONTRACTOR']
+COMPONENTS  = ['TASK_MANAGER', 'SCHEDULER', 'INTERFACE', 'CONTRACTOR']
 AGENT_COMPONENTS   = {  'STORAGE': storage.Storage, 
                         'TASK_MANAGER': taskmanager.TaskManager, 
                         'SCHEDULER': scheduler.Scheduler, 
@@ -106,10 +106,9 @@ class Core(object):
     def _startInstances(self):
         self._corelogger.info('start instances')
         for name in COMPONENTS:
-            if self._instances[name]['instance'].is_alive() is not True:
-                self._instances[name]['instance'].start()
-                self._instances[name]['instance'].waitReady()
-                self._corelogger.info('start "{0}"'.format(name))
+            self._instances[name]['instance'].start()
+            self._instances[name]['instance'].waitReady()
+            self._corelogger.info('start "{0}"'.format(name))
                 
     def _startStorage(self):
         name    = 'STORAGE'
