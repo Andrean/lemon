@@ -22,7 +22,7 @@ class xmlrpcHandler(object):
         self._commandInterface  = interface
     
     def postData(self, agentId, json_data):
-        self._commandInterface.post(agentId, json.loads(json_data))
+        self._commandInterface.receive(agentId, json.loads(json_data))
         return TASK_SUCCESSFULLY_ADDED
     
     def refresh(self, agentId):
@@ -72,7 +72,7 @@ class CommandInterface(object):
     def load(self):
         pass
     
-    def post(self, agentID, dict_data):
+    def receive(self, agentID, dict_data):
         agent_info  = {'agent': {'__id': agentID, 'received_id': dict_data['agent']['__id']}}
         agent_info['agent']['start_timestamp']  = time.time()
         agent_info['agent']['state']    = dict_data['agent']['state']

@@ -12,6 +12,7 @@ import exception.lemonException as lemonException
 import task_commands
 import json
 import lemon
+import core
 
 def synchronized(f):
     '''Synchronization method decorator.'''
@@ -37,6 +38,8 @@ class TaskManager(lemon.BaseServerComponent):
         lemon.BaseServerComponent.__init__(self, _logger, _config, _info)
         
     def run(self):
+        cr      = core.getCoreInstance()
+        self._storageManager    = cr.getInstance('STORAGE')
         self._setReady()
         self._logger.info("Task manager started")
         while(self._running):

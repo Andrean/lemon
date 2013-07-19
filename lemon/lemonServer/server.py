@@ -26,8 +26,8 @@ class Server(lemon.BaseServerComponent):
         try:
             _core   = core.getCoreInstance()
             self._tmInstance    = _core.getInstance('TASK_MANAGER')
-            cmdInterface    = interface.CommandInterface(self._tmInstance)
-            agentHandler = interface.xmlrpcHandler(self._tmInstance, cmdInterface)
+            cmdInterface        = interface.CommandInterface(self._tmInstance)
+            agentHandler        = interface.xmlrpcHandler(self._tmInstance, cmdInterface)
             self._xmlrpcListener.register_instance(agentHandler)
             self._setReady()
             self._logger.info('xmlrpc listener starting')
@@ -38,8 +38,6 @@ class Server(lemon.BaseServerComponent):
             print("xmlrpc server shutdown")
         self._logger.info('server instance with id {0} was stopped'.format(self._getId()))
         
-        
-    
     def shutdownListener(self):
         self._logger.info('attempting to shutdown agent xmlrpcListener')
         self._xmlrpcListener.shutdown()
