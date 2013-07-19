@@ -45,6 +45,10 @@ class Server(lemon.BaseServerComponent):
         self._xmlrpcListener.shutdown()
         self._logger.info('agent xmlrpcListener is shutdown')
                 
+    def quit(self):
+        super(Server, self).quit()
+        self.shutdownListener()
+        
     def _getId(self):
         return self.__instanceId;
 
