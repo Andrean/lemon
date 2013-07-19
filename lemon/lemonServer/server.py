@@ -3,9 +3,8 @@ Created on 13.06.2013
 
 @author: vau
 '''
-from xmlrpcAgentListener import xmlrpcAgentListener
-from xmlrpcAgentListener import XMLRPCExitException
-from agentInterface import AgentHandler
+from xmlrpcListener import xmlrpcListener
+from xmlrpcListener import XMLRPCExitException
 import interface
 import lemon
 import uuid
@@ -21,18 +20,18 @@ class Server(lemon.BaseServerComponent):
         self._tmInstance    = None
         self.__instanceId   = uuid.uuid4();
         cfg                 = self._config
-        self._xmlrpcListener    = xmlrpcAgentListener((str(cfg['xmlrpc_address']), int(cfg['xmlrpc_port'])))       
+        self._xmlrpcListener    = xmlrpcListener((str(cfg['xmlrpc_address']), int(cfg['xmlrpc_port'])))       
 
     def run(self):
         try:
-            _core   = core.getInstance()
+            _core   = core.getCoreInstance()
             self._tmInstance    = _core.getInstance('TASK_MANAGER')
-            print("i am a new server instance with id: "+str(self._getId())+"\n");
             cmdInterface    = interface.CommandInterface(self._tmInstance)
-            agentHandler = AgentHandler(self._tmInstance, cmdInterface)
+            agentHandler = interface.xmlrpcHandler(self._tmInstance, cmdInterface)
             self._xmlrpcListener.register_instance(agentHandler)
             self._setReady()
             self._logger.info('xmlrpc listener starting')
+            print("i am a new server instance with id: "+str(self._getId())+"\n");
             self._xmlrpcListener.serve_forever()
                         
         except XMLRPCExitException:

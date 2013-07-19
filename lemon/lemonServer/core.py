@@ -19,15 +19,16 @@ SERVER_COMPONENTS   = {'STORAGE': storagemanager.StorageManager, 'TASK_MANAGER':
 
 CORE_INSTANCE   = None
 
-def getInstance():
+
+def getCoreInstance():
     return CORE_INSTANCE
 
-def setInstance(instance):
+def setCoreInstance(instance):
     global CORE_INSTANCE
     CORE_INSTANCE = instance
     
 def getInstanceTemplate(name):
-    t   = { 'instance': None, 'start_timestamp': None, 'end_timestamp': None, 'state': 'initial', 'threads': 0, 'errors': 0 }
+    t   = { 'name': name, 'instance': None, 'start_timestamp': None, 'end_timestamp': None, 'state': "noninit", 'threads': 0, 'errors': 0 }
     return t
 
 class Core(object):

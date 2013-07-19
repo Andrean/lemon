@@ -6,10 +6,11 @@ Created on 13.06.2013
 import core
 
 if __name__ == '__main__':
-    
+
     c = core.Core()
-    core.setInstance(c)
+    core.setCoreInstance(c)
     c.start()
+    print(c._instances)
     
     '''
     

@@ -5,11 +5,49 @@ Created on 12.07.2013
 '''
 
 import time
-import task_commands
+import json
+
+SECONDS  = 1
+MINUTES  = 60*SECONDS
+
+TASK_SUCCESSFULLY_ADDED = '11'
+
+
+class xmlrpcHandler(object):
+    '''
+    low interface for agents
+    '''
+    def __init__(self, _taskmanager, interface):
+        self._TaskManager   = _taskmanager
+        self._commandInterface  = interface
+    
+    def postData(self, agentId, json_data):
+        self._commandInterface.post(agentId, json.loads(json_data))
+        return TASK_SUCCESSFULLY_ADDED
+    
+    def refresh(self, agentId):
+        result  = self._commandInterface.getLastUpdateTime()
+        return result
+    
+    def get(self, agentId, key):
+        result = ""
+        if key == 'new':
+            result = self._commandInterface.getNewCommands(agentId)
+        elif key == 'all':
+            result = self._commandInterface.getCurrentCommands(agentId)
+        else:
+            result =  self._commandInterface.getItem(agentId, key)
+        return json.dumps(result)
+    
+    def getUpdate(self, agentId, _dictData):
+        pass
+    
+    def getConfig(self, agentId, _dictData):
+        pass
 
 class CommandInterface(object):
     '''
-    classdocs
+    high interface for server 
     '''
 
 

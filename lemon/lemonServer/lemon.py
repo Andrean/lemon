@@ -19,6 +19,7 @@ class BaseServerComponent(threading.Thread):
         self._info      = _info
         self._running   = False
         threading.Thread.__init__(self)
+        self.setName(self._info['name'] + '_thread')
         self.__changeInstanceState('initiated')
         self._info['instance']  = self
         
