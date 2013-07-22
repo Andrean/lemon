@@ -7,9 +7,17 @@ import json
 import socket
 import core
 
+
+CMD = {}
+
+def add(f):
+    CMD[f.__name__] = f
+
+@add
 def runCounter(t, counter_id, kwargs):
     pass
 
+@add
 def addScheduledTask(t, kwargs):
     func_name       = kwargs['func']
     schtask_name    = kwargs['name']
@@ -19,14 +27,14 @@ def addScheduledTask(t, kwargs):
     scheduler       = t._parent.scheduler
     if scheduler.getScheduledTask(schtask_name) is None:
         scheduler.add(func_name, schtask_name, start_time, interval, func_kwargs)
-    
+@add   
 def updateStat(t, kwargs):
     try:
         if kwargs['core']:
             core.getCoreInstance().updateStat()            
     except KeyError:
         pass
-    
+@add    
 def sendSelfStat(t, kwargs):
     agentID = t._parent.agentID
     i       = t._parent.interfaceInstance
@@ -34,7 +42,7 @@ def sendSelfStat(t, kwargs):
     ip      = socket.gethostbyname(socket.gethostname())
     info['agent']['ip'] = ip
     i.post(info)
-    
+@add    
 def getNewData(t, kwargs):
     i           = t._parent.interfaceInstance
     new_data    = i.get('new')
@@ -64,11 +72,11 @@ def __dispatcher(t, kwargs):
         else:
             t._parent.new_task('addScheduledTask', content)
         
-    
+@add    
 def refresh(t, kwargs):
     i           = t._parent.interfaceInstance
     i.get()    
-    
+@add    
 def testPrint(t, kwargs):
     print(kwargs['los'])
     try:
@@ -76,14 +84,3 @@ def testPrint(t, kwargs):
             print('i am task with id '+str(t.id))
     except KeyError:
         pass
-    
-
-        
-CMD = {}
-CMD['runCounter']           = runCounter
-CMD['testPrint']            = testPrint
-CMD['addScheduledTask']     = addScheduledTask
-CMD['getNewData']           = getNewData
-CMD['refresh']              = refresh
-CMD['sendSelfStat']         = sendSelfStat
-CMD['updateStat']           = updateStat
