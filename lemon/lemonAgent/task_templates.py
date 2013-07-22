@@ -41,6 +41,7 @@ def sendSelfStat(t, kwargs):
     info    = {'agent': {'__id': agentID, 'state': 'started'}}
     ip      = socket.gethostbyname(socket.gethostname())
     info['agent']['ip'] = ip
+    info['data']    = {}
     i.post(info)
 @add    
 def getNewData(t, kwargs):
