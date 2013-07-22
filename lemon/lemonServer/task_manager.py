@@ -12,6 +12,7 @@ import exception.lemonException as lemonException
 import tasks
 import lemon
 import core
+import sys
 
 def synchronized(f):
     '''Synchronization method decorator.'''
@@ -107,7 +108,7 @@ class BaseTaskHandler(object):
             try:
                 self._dispatchMethod(task_cmd, task)
             except Exception as e:
-                print( "Base task handler exception: %s" % str(e))
+                self._taskmanager._logger.exception('Exception in task cmd '+ task_cmd, e)
     
     def _dispatchMethod(self, cmd, task):
         pass

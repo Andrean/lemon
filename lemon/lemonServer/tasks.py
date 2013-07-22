@@ -13,16 +13,24 @@ def add(f):
     
 @add
 def storeAgentData(tm, dict_data):
-    print('i am storage data ' + str(dict_data))
-    '''
+    agent_data  = dict_data['agent']
+    agent_id    = agent_data['__id']
+    entity_id   = agent_id
+    state       = agent_data['state']
+    start_time  = agent_data['start_timestamp']
+    data        = 'null'
     st  = tm._storageManager.getInstance()
-    entity_id   = dict_data['agent']['__id']
     st.set_default_collection(entity_id)
-    query   = "{'name': 'agent'}"
-    doc  = "{'name': 'agent' , '__id': '{0}', 'data': {1} }".format(entity_id, json.dumps(dict_data))
+    query   = {'type': 'current'}
+    result  = [v for v in st.find(query)]
+    doc_d   = {'type': 'current', 'agent_id': agent_id,'state': state, 'start_time':start_time, 'end_time':None, 'data': data }
     
-    st.update(query, doc)
-    '''
+    if len(result) < 1:
+        print(result)
+        st.insert(doc_d)
+    else:
+        st.update(query, doc_d)
+    
     
 @add
 def addScheduledTask(tm, dict_data):
