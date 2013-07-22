@@ -77,7 +77,7 @@ class CommandInterface(object):
         agent_info['agent']['start_timestamp']  = time.time()
         agent_info['agent']['state']    = dict_data['agent']['state']
         agent_info['agent']['ip']       = dict_data['agent']['ip'] 
-        print(agent_info)
+        self._taskManager.addTask('storeAgentData', agent_info)
         # TODO: store in database
     
     def getLastUpdateTime(self):

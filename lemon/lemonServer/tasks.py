@@ -6,15 +6,24 @@
 
 import json 
 
-def storeAgentData(tm, dict_data):
-    st  = tm._storageManager.getInstance()
-    st.set_default_collection('entities')
-    entity_id   = dict_data['agent']['__id']
-    query   = "{'entity_id': '{0}'}".format(entity_id)
-    doc  = "{'entity_id': {0} , 'data': {1} }".format(entity_id, json.dumps(dict_data))
-    
-    #st.update(query, doc)
-    
+CMD = {}
 
+def add(f):
+    CMD[f.__name__] = f
+    
+@add
+def storeAgentData(tm, dict_data):
+    print('i am storage data ' + str(dict_data))
+    '''
+    st  = tm._storageManager.getInstance()
+    entity_id   = dict_data['agent']['__id']
+    st.set_default_collection(entity_id)
+    query   = "{'name': 'agent'}"
+    doc  = "{'name': 'agent' , '__id': '{0}', 'data': {1} }".format(entity_id, json.dumps(dict_data))
+    
+    st.update(query, doc)
+    '''
+    
+@add
 def addScheduledTask(tm, dict_data):
     pass

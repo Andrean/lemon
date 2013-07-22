@@ -9,8 +9,7 @@ import queue
 import uuid
 import time
 import exception.lemonException as lemonException
-import task_commands
-import json
+import tasks
 import lemon
 import core
 
@@ -49,10 +48,10 @@ class TaskManager(lemon.BaseServerComponent):
                 time.sleep(0.1)
         self._logger.info('Task Manager was successfully shutdown')
     
-    def addTask(self, agentId, command, data):
+    def addTask(self, proc, *args):
         taskId  = str(uuid.uuid4())
         timestamp   = time.time()
-        task    = [taskId,[agentId,command, timestamp, data]]
+        task    = {'id': taskId, 'start_timestamp': timestamp, 'end_timestamp': None, 'proc': proc, 'args' : args}
         self._logger.debug('add task %s' % taskId)
         self._addTask(task)
         
@@ -61,6 +60,7 @@ class TaskManager(lemon.BaseServerComponent):
             raise lemonException.HandlerAlreadyInListException()
         else:
             self._handlerList[_handler.getName()] = _handler
+            _handler._taskmanager   = self
             self._logger.debug('handler %s connected' % _handler.getName())
             
     def shutdown(self):
@@ -69,7 +69,7 @@ class TaskManager(lemon.BaseServerComponent):
         
     def _process(self):
         task = self._TaskQueue.get()
-        taskId = task[0]
+        taskId = task['id']
         try:
             self._logger.debug("Task {0} is processed".format(taskId))
             for taskHandler in self._handlerList.values():
@@ -94,6 +94,7 @@ class TaskManager(lemon.BaseServerComponent):
 class BaseTaskHandler(object):
     
     def __init__(self, _name):
+        self._taskmanager  = None
         self._name  = _name
         self._commandList   = []
         
@@ -101,7 +102,7 @@ class BaseTaskHandler(object):
         return self._name
     
     def do(self, task):
-        task_cmd = task[1][1]
+        task_cmd = task['proc']
         if task_cmd in self._commandList:
             try:
                 self._dispatchMethod(task_cmd, task)
@@ -113,20 +114,15 @@ class BaseTaskHandler(object):
     
 class StoreTaskHandler(BaseTaskHandler):
     
-    def __init__(self, name, _agentStorageInstance):
-        self._storage   = _agentStorageInstance
+    def __init__(self, name):
         BaseTaskHandler.__init__(self, name)
-        self._commandList = [task_commands.CMD_STORE]
+        self._commandList = ['storeAgentData']
     
     def _dispatchMethod(self, cmd, task):
-        agentId = task[1][0]
-        timestamp   = task[1][2]
-        data    = task[1][3]
-        if cmd is task_commands.CMD_STORE:
-            self._store(agentId, {'time':timestamp, 'data': data})
+        start_timestamp   = task['start_timestamp']
+        args    = task['args']
+        if cmd in self._commandList:
+            tasks.CMD[cmd](self._taskmanager, *args)
             
-    def _store(self, agentId, data):
-        itemId  = 'data_'+ agentId
-        self._storage.appendToItem(itemId, json.dumps(data))
-        
+    
     

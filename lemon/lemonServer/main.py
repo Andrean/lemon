@@ -11,7 +11,6 @@ if __name__ == '__main__':
     core.setCoreInstance(c)
     c.start()
     print(c._instances)
-    
     '''
     
     # new storage instance

@@ -16,6 +16,7 @@ CONFIG_FILE = CONFIG_PATH + '/server.conf'
 
 COMPONENTS          = ['TASK_MANAGER', 'SERVER']
 SERVER_COMPONENTS   = {'STORAGE': storagemanager.StorageManager, 'TASK_MANAGER': task_manager.TaskManager, 'SERVER': server.Server } 
+TM_HANDLERS         = {'store': task_manager.StoreTaskHandler}
 
 CORE_INSTANCE   = None
 
@@ -83,6 +84,12 @@ class Core(object):
         for name in SERVER_COMPONENTS.keys():
             self._loggers[name] = logging.getLogger(name)
         self._clogger   = logging.getLogger('CORE')
+        
+    def _connectHandlers(self):
+        tmInstance  = self._instances['TASK_MANAGER']['instance']
+        for hndl_name, handler in TM_HANDLERS.items():
+            hndl    = handler(hndl_name)
+            tmInstance.connectHandler(hndl)
     
     def _initConfig(self):
         def writeDefaultConfig(config):
@@ -114,6 +121,7 @@ class Core(object):
         self._initLoggers()
         self._initInstances()
         self._startStorageManager()
-        self._startInstances()    
+        self._startInstances()  
+        self._connectHandlers()  
                             
         
