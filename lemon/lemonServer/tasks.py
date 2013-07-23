@@ -6,6 +6,7 @@
 
 import json 
 import time
+import core
 
 CMD = {}
 
@@ -56,6 +57,21 @@ def storeData(tm, dict_data):
     st      = tm._storageManager.getInstance()
     st.set_default_collection(entity_id)
     st.insert(doc)
+    
+@add
+def refreshServerStat(tm, *args):
+    print('REFRESH TEST')
+    st  = tm._storageManager.getInstance()
+    st.set_default_collection('server')
+    c   = core.getCoreInstance()
+    for name, inst in c._instances.items():
+        q   = {'component': name}
+        stat    = {}
+        for k, v in inst.items():
+            stat[k] = str(v)
+        doc = {'component': name, 'stat': stat}
+        st.update(q, doc)
+    
     
 @add
 def addScheduledTask(tm, dict_data):

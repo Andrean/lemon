@@ -112,7 +112,9 @@ class BaseTaskHandler(object):
                 self._taskmanager._logger.exception('Exception in task cmd '+ task_cmd, e)
     
     def _dispatchMethod(self, cmd, task):
-        pass
+        args    = task['args']
+        if cmd in self._commandList:
+            tasks.CMD[cmd](self._taskmanager, *args)
     
 class StoreTaskHandler(BaseTaskHandler):
     
@@ -125,5 +127,10 @@ class StoreTaskHandler(BaseTaskHandler):
         if cmd in self._commandList:
             tasks.CMD[cmd](self._taskmanager, *args)
             
+class SchedulerTaskHandler(BaseTaskHandler):
+    
+    def __init__(self, name):
+        BaseTaskHandler.__init__(self, name)
+        self._commandList = ['addScheduledTask', 'refreshServerStat']
     
     

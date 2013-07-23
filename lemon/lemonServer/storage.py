@@ -63,6 +63,9 @@ class Storage(threading.Thread):
         if collection is None:
             collection  = self._collection
         try:
+            item    = self.findOne(query)
+            if item is None:
+                return self.insert(doc)
             return self._db[collection].update(query, doc)
         except pymongo.errors.PyMongoError as err:
             self._logger.error("PyMongoError raised on update doc {0} in collection {1}: {2}".format(str(doc), str(collection), str(err)))

@@ -7,6 +7,7 @@ import time
 import uuid
 import lemon
 import core
+import scheduler.tasks
 
 #import scheduler.default_tasks as tasks
 
@@ -41,6 +42,7 @@ class Scheduler(lemon.BaseServerComponent):
         self._logger.info('Scheduler started')
         self._loadStorage()
         self._setReady()
+        self.loadDefaultTasks()
         it  = 0
         while self._running:
             self._process()
@@ -49,6 +51,11 @@ class Scheduler(lemon.BaseServerComponent):
             if it > STORE_INTERVAL :
                 it = 0
                 self._store_schedule()
+    
+    def loadDefaultTasks(self):
+        default_tasks   = scheduler.tasks.CMD
+        for task in default_tasks:
+            self._taskManager.addTask('addScheduledTask', task)   
             
     def add(self, func_type, name='default', start_time=None, interval = 5*MINUTES,  kwargs=None):
         schtask = {}
@@ -83,9 +90,13 @@ class Scheduler(lemon.BaseServerComponent):
         
     def _store(self, key, obj):
         try:
-            q       = {'name': str(key)}
-            storing = {'name': str(key), 'task': obj}
-            self._storage.insert(q, storing)
+            q       = {'name': key}
+            storing = {'name': key, 'task': obj}
+            item    = self._storage.findOne(q)
+            if item:
+                self._storage.update(q, storing)
+            else:
+                self._storage.insert(storing)
             self._store_schedule()              
         except Exception as e:
             self._logger.error('Error occured in _store while storing {0}: {1}'.format(str(key), str(e)))
@@ -98,7 +109,7 @@ class Scheduler(lemon.BaseServerComponent):
                 headers   = items['list']
                 for key in headers:
                     item    = self._storage.findOne({'name': key})
-                    self._add_to_schedule(key, item)
+                    self._add_to_schedule(key, item['task'])
                 self._logger.info('schedule loaded')
             else:
                 self._storage.insert({'type': 'task_list', 'list': []})
@@ -133,5 +144,5 @@ class Scheduler(lemon.BaseServerComponent):
             self._scheduleModified = False
                 
     def _startTask(self, key, task):
-        self._taskManager.new_task(task['func'], task['args'])
+        self._taskManager.addTask(task['func'], task['args'])
         self._logger.info('task {0} successfully send to task manager'.format(str(key)))

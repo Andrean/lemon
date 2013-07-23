@@ -18,7 +18,7 @@ CONFIG_FILE = CONFIG_PATH + '/server.conf'
 
 COMPONENTS          = ['TASK_MANAGER', 'SERVER','SCHEDULER']
 SERVER_COMPONENTS   = {'STORAGE': storagemanager.StorageManager, 'TASK_MANAGER': task_manager.TaskManager, 'SERVER': server.Server, 'SCHEDULER': scheduler.Scheduler} 
-TM_HANDLERS         = {'store': task_manager.StoreTaskHandler}
+TM_HANDLERS         = {'store': task_manager.StoreTaskHandler, 'scheduler': task_manager.SchedulerTaskHandler}
 
 CORE_INSTANCE   = None
 
