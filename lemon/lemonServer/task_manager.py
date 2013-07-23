@@ -40,6 +40,7 @@ class TaskManager(lemon.BaseServerComponent):
     def run(self):
         cr      = core.getCoreInstance()
         self._storageManager    = cr.getInstance('STORAGE')
+        self._scheduler          = cr.getInstance('SCHEDULER')
         self._setReady()
         self._logger.info("Task manager started")
         while(self._running):
@@ -117,10 +118,9 @@ class StoreTaskHandler(BaseTaskHandler):
     
     def __init__(self, name):
         BaseTaskHandler.__init__(self, name)
-        self._commandList = ['storeAgentData']
+        self._commandList = ['storeAgentData', 'storeData', 'storeCurrentData']
     
     def _dispatchMethod(self, cmd, task):
-        start_timestamp   = task['start_timestamp']
         args    = task['args']
         if cmd in self._commandList:
             tasks.CMD[cmd](self._taskmanager, *args)

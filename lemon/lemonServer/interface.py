@@ -78,6 +78,8 @@ class CommandInterface(object):
         agent_info['agent']['state']    = dict_data['agent']['state']
         agent_info['agent']['ip']       = dict_data['agent']['ip'] 
         self._taskManager.addTask('storeAgentData', agent_info)
+        self._taskManager.addTask('storeData', dict_data)
+        self._taskManager.addTask('storeCurrentData', dict_data)
         # TODO: store in database
     
     def getLastUpdateTime(self):
