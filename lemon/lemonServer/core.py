@@ -7,15 +7,17 @@ Created on 18.07.2013
 import logging.config
 import storagemanager
 import task_manager
+import scheduler.scheduler as scheduler
 import server
 import os
 import configparser
 
+
 CONFIG_PATH = 'conf'
 CONFIG_FILE = CONFIG_PATH + '/server.conf'
 
-COMPONENTS          = ['TASK_MANAGER', 'SERVER']
-SERVER_COMPONENTS   = {'STORAGE': storagemanager.StorageManager, 'TASK_MANAGER': task_manager.TaskManager, 'SERVER': server.Server } 
+COMPONENTS          = ['TASK_MANAGER', 'SERVER','SCHEDULER']
+SERVER_COMPONENTS   = {'STORAGE': storagemanager.StorageManager, 'TASK_MANAGER': task_manager.TaskManager, 'SERVER': server.Server, 'SCHEDULER': scheduler.Scheduler} 
 TM_HANDLERS         = {'store': task_manager.StoreTaskHandler}
 
 CORE_INSTANCE   = None
@@ -69,8 +71,8 @@ class Core(object):
             self.__initInstance(name, cls)
             
     def _startStorageManager(self):
-        name    = 'STORAGE'
-        instance       = self._instances[name]['instance'] 
+        name            = 'STORAGE'
+        instance        = self._instances[name]['instance'] 
         instance.start()
         instance.waitReady()
         self._clogger.info('start '+str(name))
@@ -98,6 +100,7 @@ class Core(object):
             storageConfig['data_path']      = 'data/storage/'
             config.add_section('TASK_MANAGER')
             config.add_section('SERVER')
+            config.add_section('SCHEDULER')
             config.add_section('LOGGING')
             loggingConfig                   = config['LOGGING']
             loggingConfig['file']           = CONFIG_PATH + '/logging.conf'
