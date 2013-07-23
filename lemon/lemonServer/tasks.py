@@ -5,6 +5,7 @@
 '''
 
 import json 
+import time
 
 CMD = {}
 
@@ -30,7 +31,16 @@ def storeAgentData(tm, dict_data):
         st.insert(doc_d)
     else:
         st.update(query, doc_d)
-    
+        
+@add
+def storeData(tm, dict_data):
+    agent       = dict_data['agent']
+    entity_id   = agent['__id']
+    timestamp   = dict_data['time']
+    doc     = {'type': 'persistent', 'timestamp': timestamp, 'data': dict_data['data']}
+    st      = tm._storageManager.getInstance()
+    st.set_default_collection(entity_id)
+    st.insert(doc)
     
 @add
 def addScheduledTask(tm, dict_data):
