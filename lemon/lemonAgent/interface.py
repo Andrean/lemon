@@ -80,6 +80,7 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
         return self._formRequest(self._connection.postData, agentID, json_data)
         
     def post(self, data):
+        data['time']    = time.time()
         code    = self._reqPOSTDATA(self._agentID,  json.dumps(data))
         if code is TASK_SUCCESSFULLY_ADDED:
             return True
