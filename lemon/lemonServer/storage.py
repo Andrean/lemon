@@ -4,22 +4,25 @@ Created on 05.07.2013
 @author: vau
 '''
 
-import threading
 import re
 import pymongo
 import time
 import exception.lemonException
+import lemon
 
-class Storage(threading.Thread):
+
+def updateTimer(f):
+    def wrapper(self, *args, **kwargs):
+        self._info['last_used_time']    = time.time()
+        return f(self, *args, **kwargs)
+    return wrapper
+        
+class Storage(lemon.BaseServerComponent):
     
-    def __init__(self, _logger, _cfg):
-        '''
-        Constructor
-        '''
-        self._logger    = _logger
-        self._config    = _cfg
+    def __init__(self, _logger, _config, _info):
+        
+        lemon.BaseServerComponent.__init__(self, _logger, _config, _info)
         self._collection    = ""
-        self._running   = False
         
         mongodb_addr    = 'localhost';
         mongodb_port    = 27017;
@@ -29,28 +32,25 @@ class Storage(threading.Thread):
             self._logger.info("Connection to mongodb successfully established")
             self._db = self._client[db_name]
             self._logger.debug("Successfully connected to '{0}'".format(db_name))
-            self._running = True
             self._test  = 1
         except pymongo.errors.ConnectionFailure as err:
             self._logger.error("Cannot establish connection to database on {0}:{1}: {2}".format(mongodb_addr, mongodb_port, err));
             raise exception.lemonException.StorageNotCreatedException("Cannot create storage")
         except KeyError:
             self._logger.error("Database '{0}' is not exists".format(db_name));
-            exit(1);        
-
-        threading.Thread.__init__(self)
+            exit(1);            
         
-        
+    @updateTimer
     def run(self):
+        self._setReady()
         while(self._running):
             time.sleep(0.5)
-            
-    def quit(self):
-        self._running = False
     
+    @updateTimer        
     def set_default_collection(self, collection_name):
         self._collection = collection_name
-        
+    
+    @updateTimer    
     def insert(self, doc, collection = None ):
         if collection is None:
             collection  = self._collection
@@ -59,6 +59,7 @@ class Storage(threading.Thread):
         except pymongo.errors.DuplicateKeyError:
             self._logger.error("An duplicate key error raised on insert doc {0} to collection {1}".format(doc, collection));
     
+    @updateTimer
     def update(self, query, doc, collection = None):
         if collection is None:
             collection  = self._collection
@@ -70,6 +71,7 @@ class Storage(threading.Thread):
         except pymongo.errors.PyMongoError as err:
             self._logger.error("PyMongoError raised on update doc {0} in collection {1}: {2}".format(str(doc), str(collection), str(err)))
     
+    @updateTimer
     def remove(self, query, collection = None):
         if collection is None:
             collection  = self._collection
@@ -78,6 +80,7 @@ class Storage(threading.Thread):
         except pymongo.errors.PyMongoError as err:
             self._logger.error("PyMongoError raised on remove by query {0} in collection {1}: {2}".format(str(query), str(collection), str(err)))
     
+    @updateTimer
     def find(self, query, collection = None):
         if collection is None:
             collection  = self._collection
@@ -88,6 +91,7 @@ class Storage(threading.Thread):
         except KeyError:
             self._logger.error("Collection '{0}' is not found".format(str(collection)))
     
+    @updateTimer
     def findOne(self, query, collection = None):
         if collection is None:
             collection  = self._collection
@@ -96,6 +100,7 @@ class Storage(threading.Thread):
         except pymongo.errors.PyMongoError as err:
             self._logger.error("PyMongoError was excepted during find_one by query {0}: {1}".format(str(query), str(err)))
     
+    @updateTimer
     def getCollections(self, query='.*'):
         try:
             print(self._db)
@@ -104,6 +109,7 @@ class Storage(threading.Thread):
         except pymongo.errors.PyMongoError as err:
             self._logger.error("PyMongoError was excepted during getting collections: {0}".format(str(err)))
     
+    @updateTimer
     def createCollection(self, collection_name):
         try:
             self._db.create_collection(collection_name)
