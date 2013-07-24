@@ -10,12 +10,15 @@ import xmlrpc.client
 import lemon
 import core
 import queue
+import os
 
 
 ERROR_NOT_IDENTIFIED  = '0000001'
 ERROR_NOT_AUTHORIZED  = '0000002'
 
 TASK_SUCCESSFULLY_ADDED = '11'
+
+RECONNECT_INTERVAL      = 10
 
 
 class XMLRPC_Client(lemon.BaseAgentLemon):
@@ -36,7 +39,7 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
     def run(self):
         self._taskManager   = core.getCoreInstance().getInstance('TASK_MANAGER')
         self._agentID       = core.getCoreInstance().getItem('agent')['__id']
-        self._connection    = xmlrpc.client.ServerProxy('http://{0}:{1}'.format(self._server_addr, self._server_port))
+        self._createConnection(self._server_addr, self._server_port)
         self._setReady()
         
         while(self._running):
@@ -49,10 +52,23 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
         args    = req['args']
         callback    = req['callback']
         if callback:
-            result  = method(*args)
-            callback(result)
+            try:
+                result  = method(*args)
+                callback(result)
+            except ConnectionError as e:
+                self._logger.exception(e)
+                self._reconnect()
+                self._put(method,args,callback)
         req['ready']    = True
     
+    def _createConnection(self, addr, port):
+        self._connection    = xmlrpc.client.ServerProxy('http://{0}:{1}'.format(addr, port))
+        
+    def _reconnect(self):
+        print('Reconnecting...')
+        time.sleep(RECONNECT_INTERVAL)
+        self._createConnection(self._server_addr, self._server_port)
+        
     def _put(self, method, args=None, callback=None):
         request  = {'method': method, 'args': args, 'callback':callback, 'ready': False}
         self._reqQueue.put(request)
