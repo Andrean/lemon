@@ -8,69 +8,96 @@ import uuid
 import storage
 import time
 import lemon
+import queue
 import exception.lemonException as le
 
 
-GARBAGE_INTERVAL    = 200 # 100 секунд проверка пула стораджей на то , что они используются
 TIME_NOT_USED       = 20
 
 class StorageManager(lemon.BaseServerComponent):
     
     def __init__(self, _logger, _cfg, _info):
-        self._storagePool  = []
-        lemon.BaseServerComponent.__init__(self, _logger, _cfg, _info)    
+        lemon.BaseServerComponent.__init__(self, _logger, _cfg, _info)
+        self._storagePool   = []
+        self._taskQueue     = queue.Queue()
+            
             
     def run(self):
+        
+        self.createStoragePool()
         self._setReady()
-        last_clean  = time.time()
         self._logger.info('storage manager started')
         while self._running:
-            time.sleep(0.1)
-            if last_clean + GARBAGE_INTERVAL < time.time():
-                last_clean  = time.time()
-                self.cleanStoragePool()
+            time.sleep(0.01)
+            for k in self._storagePool:
+                self._process(k['instance'])
             
-    def cleanStoragePool(self):
-        self._removed_list  = []
-        for i, st_info in enumerate(self._storagePool):
-            if st_info['last_used_time'] + TIME_NOT_USED  < time.time():
-                st_info['instance'].quit()
-                self._removed_list.append(i)
-        print("CLEANING STORAGE POOL. {0} WILL BE DELETED".format(str(len(self._removed_list))))
-        if len(self._removed_list) > 0:
-            self._removed_list.reverse()
-            for i in self._removed_list:
-                self._storagePool.pop(i)
-            
-    def _getNonUsedInstance(self):
-        for st_info in self._storagePool:
-            if st_info['last_used_time'] + TIME_NOT_USED  < time.time():
-                st_info['last_used_time'] = time.time()
-                return st_info
+    def createStoragePool(self, _size = 10):
+        for _ in range(1,_size):
+            st  = {'id': uuid.uuid4(), 'name': 'storage_instance','state': 'noninit', '_': None, 'last_used_time': None};
+            instance  = storage.Storage(self._logger, self._config, st)
+            instance.start()
+            self._info['threads'] += 1
+            self._storagePool.append(st)            
         
     def getInstance(self):
-        try:
-            st  = self._getNonUsedInstance()
-            print("GETTING " + str(st))
-            if st is not None:
-                st['instance'].set_default_collection(None)
-                print('USING NOT USED STORAGE INSTANCE')
-                return st['instance']
-            st  = {'id': uuid.uuid4(), 'name': 'storage_instance','state': 'noninit', '_': None, 'last_used_time': None};
-            stInstance  = storage.Storage(self._logger, self._config, st )
-            stInstance.start()
-            self._info['threads']+= 1
-            self._storagePool.append(st);
-            return stInstance
+        try:            
+            st  = StorageGhost(self)
+            return st            
         except le.StorageNotCreatedException as e:
             self._logger.exception(e)
     
     def stopInstance(self, _id):
         for instance in self._storagePool:
             if instance['id'] == _id:
-                instance['_'].stop()
+                instance['instance'].stop()
                 instance['status'] = 'stopped'       
-                
-      
-    def quit(self):
-        self._running  = False;
+    
+    def put(self, db_request):
+        self._taskQueue.put(db_request)
+        
+    def _process(self, storageInstance):
+        req     = self._taskQueue.get()
+        method  = req['method']
+        args    = req['args']
+        cb      = req['callback']
+        res     = storageInstance.do(method, *args)
+        cb(res)
+        
+    
+ 
+class   StorageGhost(object):
+    def __init__(self, _storageManagerInstance):
+        self._sm    = _storageManagerInstance
+        self._collection    = None
+        
+    def _doREQUEST(self, method, *args):
+        res     = {'result': None, 'done': False}
+        def callback(response):
+            res['result']   = response
+            res['done']     = True
+        req     = {'method': method,'args': args, 'callback': callback}
+        self._sm.put(req)
+        while res['done'] is not True:
+            time.sleep(0.01)
+        return res['result']
+    
+    def set_default_collection(self, collection):
+        self._collection    = collection
+    
+    def update(self, query, doc):
+        return self._doREQUEST('update', query, doc, self._collection)
+        
+    def insert(self, doc):
+        return self._doREQUEST('insert', doc, self._collection)
+    
+    def remove(self, query):
+        return self._doREQUEST('remove', query, self._collection)
+    
+    def find(self, query):
+        return self._doREQUEST('find', query, self._collection)
+    
+    def findOne(self, query):
+        return self._doREQUEST('findOne', query, self._collection)
+    
+    

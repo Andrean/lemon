@@ -10,7 +10,7 @@ if __name__ == '__main__':
     c = core.Core()
     core.setCoreInstance(c)
     c.start()
-    print(c._instances)
+    #print(c._instances)
     '''
     
     # new storage instance

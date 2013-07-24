@@ -38,8 +38,10 @@ class Scheduler(lemon.BaseServerComponent):
         self._sm        = core.getCoreInstance().getInstance('STORAGE')
         self._storage   = self._sm.getInstance()
         self._storage.set_default_collection('scheduler')
+        print('Scheduler started')
         self._taskManager   = core.getCoreInstance().getInstance('TASK_MANAGER')
         self._logger.info('Scheduler started')
+        
         self._loadStorage()
         self._setReady()
         self.loadDefaultTasks()
@@ -113,6 +115,8 @@ class Scheduler(lemon.BaseServerComponent):
                 self._logger.info('schedule loaded')
             else:
                 self._storage.insert({'type': 'task_list', 'list': []})
+            print('schedule loaded')
+            self._logger.info('schedule loaded')
         except Exception as e:
             self._logger.error('Error occured in _loadStorage: {0}'.format(str(e)))
             

@@ -16,14 +16,13 @@ def updateTimer(f):
         self._info['last_used_time']    = time.time()
         return f(self, *args, **kwargs)
     return wrapper
-        
+
 class Storage(lemon.BaseServerComponent):
     
     def __init__(self, _logger, _config, _info):
         
         lemon.BaseServerComponent.__init__(self, _logger, _config, _info)
         self._collection    = ""
-        
         mongodb_addr    = 'localhost';
         mongodb_port    = 27017;
         db_name         = 'mydb';
@@ -38,13 +37,28 @@ class Storage(lemon.BaseServerComponent):
             raise exception.lemonException.StorageNotCreatedException("Cannot create storage")
         except KeyError:
             self._logger.error("Database '{0}' is not exists".format(db_name));
-            exit(1);            
+            exit(1);
+            
+        self._cmd           = {
+                               'update': self.update,
+                               'insert': self.insert,
+                               'remove': self.remove,
+                               'set_default_collection': self.set_default_collection,
+                               'find': self.find,
+                               'findOne': self.findOne
+                               }            
         
     @updateTimer
     def run(self):
         self._setReady()
         while(self._running):
             time.sleep(0.5)
+            
+    def do(self, method, *args):
+        print('Requesting method {0} with args {1}'.format(method,str(args)))
+        res = self._cmd[method](*args)
+        print("RESULT::::"+str(res))
+        return res
     
     @updateTimer        
     def set_default_collection(self, collection_name):
@@ -61,12 +75,15 @@ class Storage(lemon.BaseServerComponent):
     
     @updateTimer
     def update(self, query, doc, collection = None):
+        print('QUERY:  '+ str(query))
+        print('DOC:     '+ str(doc))
+        print('COLLECTION:   '+str(collection))
         if collection is None:
             collection  = self._collection
         try:
-            item    = self.findOne(query)
+            item    = self.findOne(query, collection)
             if item is None:
-                return self.insert(doc)
+                return self.insert(doc,collection)
             return self._db[collection].update(query, doc)
         except pymongo.errors.PyMongoError as err:
             self._logger.error("PyMongoError raised on update doc {0} in collection {1}: {2}".format(str(doc), str(collection), str(err)))
@@ -93,6 +110,7 @@ class Storage(lemon.BaseServerComponent):
     
     @updateTimer
     def findOne(self, query, collection = None):
+        
         if collection is None:
             collection  = self._collection
         try:
