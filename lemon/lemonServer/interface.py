@@ -29,10 +29,10 @@ class xmlrpcHandler(object):
         result  = self._commandInterface.getLastUpdateTime()
         return result
     
-    def get(self, agentId, key):
+    def get(self, agentId, key, *args):
         result = ""
         if key == 'new':
-            result = self._commandInterface.getNewCommands(agentId)
+            result = self._commandInterface.getNewCommands(args[0], agentId)
         elif key == 'all':
             result = self._commandInterface.getCurrentCommands(agentId)
         else:
@@ -57,7 +57,7 @@ class CommandInterface(object):
         '''
         self._taskManager   = taskManager
         self._commands  = {'add_scheduled_task': {'agents': 'all', 
-                                                  'timestamp': time.time(), 
+                                                  'add_timestamp': time.time(), 
                                                   'content': {
                                                                'func': 'testPrint',
                                                                'name': 'testPrint',
@@ -85,19 +85,29 @@ class CommandInterface(object):
     def getLastUpdateTime(self):
         return  self._refresh
     
-    def getCurrentCommands(self, agentId = None):
+    def getCurrentCommands(self,agentId=None):
         return self._commands
     
-    def getNewCommands(self, agentId = None):
-        return self._new
+    def getNewCommands(self, lastread_timestamp = 0, agentId=None,):
+        new = []
+        for name, item in self._commands.items():
+            if item['add_timestamp'] > lastread_timestamp:
+                new.append(name)  
+        print('NEW COMMANDS: '+str(new))
+        return new
     
     def getItem(self, agentId, key):
         try:
             return self._commands[key]
         except KeyError:
             return None
-    
-    def updateCommands(self, commandsDict):
-        pass
+
+    def add(self, itemname, item):
+        print('UPDATING COMMANDS')
+        self._commands[itemname] = item
+        self._refresh   = time.time()
+        self._commands[itemname]['add_timestamp']   = self._refresh 
+        print(self._commands)
+        
     
     

@@ -55,9 +55,9 @@ class Storage(lemon.BaseServerComponent):
             time.sleep(0.5)
             
     def do(self, method, *args):
-        print('Requesting method {0} with args {1}'.format(method,str(args)))
+        #print('Requesting method {0} with args {1}'.format(method,str(args)))
         res = self._cmd[method](*args)
-        print("RESULT::::"+str(res))
+        #print("RESULT::::"+str(res))
         return res
     
     @updateTimer        
@@ -75,9 +75,6 @@ class Storage(lemon.BaseServerComponent):
     
     @updateTimer
     def update(self, query, doc, collection = None):
-        print('QUERY:  '+ str(query))
-        print('DOC:     '+ str(doc))
-        print('COLLECTION:   '+str(collection))
         if collection is None:
             collection  = self._collection
         try:

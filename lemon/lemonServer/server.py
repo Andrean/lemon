@@ -20,14 +20,15 @@ class Server(lemon.BaseServerComponent):
         self._tmInstance    = None
         self.__instanceId   = uuid.uuid4();
         cfg                 = self._config
-        self._xmlrpcListener    = xmlrpcListener((str(cfg['xmlrpc_address']), int(cfg['xmlrpc_port'])))       
+        self._xmlrpcListener    = xmlrpcListener((str(cfg['xmlrpc_address']), int(cfg['xmlrpc_port'])))
+        self.cmdInterface   = None       
 
     def run(self):
         try:
             _core   = core.getCoreInstance()
             self._tmInstance    = _core.getInstance('TASK_MANAGER')
-            cmdInterface        = interface.CommandInterface(self._tmInstance)
-            agentHandler        = interface.xmlrpcHandler(self._tmInstance, cmdInterface)
+            self.cmdInterface   = interface.CommandInterface(self._tmInstance)
+            agentHandler        = interface.xmlrpcHandler(self._tmInstance, self.cmdInterface)
             self._xmlrpcListener.register_instance(agentHandler)
             self._setReady()
             self._logger.info('xmlrpc listener starting')

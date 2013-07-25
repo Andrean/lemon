@@ -39,7 +39,7 @@ class TaskManager(lemon.BaseServerComponent):
         
     def run(self):
         cr      = core.getCoreInstance()
-        self._storageManager    = cr.getInstance('STORAGE')
+        self._storageManager     = cr.getInstance('STORAGE')
         self._scheduler          = cr.getInstance('SCHEDULER')
         self._setReady()
         self._logger.info("Task manager started")
@@ -131,6 +131,6 @@ class SchedulerTaskHandler(BaseTaskHandler):
     
     def __init__(self, name):
         BaseTaskHandler.__init__(self, name)
-        self._commandList = ['addScheduledTask', 'refreshServerStat']
+        self._commandList = ['addScheduledTask', 'refreshServerStat','checkDBForUpdates','loadContractors']
     
     

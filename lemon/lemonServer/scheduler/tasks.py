@@ -18,6 +18,10 @@ def formSchTask(func, name, interval, start_time=None, kwargs={}):
                 }
     return _task
 
-refreshServerStat  =   formSchTask('refreshServerStat', 'Refreshing server state and statistics', 10, None)
+refreshServerStat   =   formSchTask('refreshServerStat', 'Refreshing server state and statistics', 10, None)
+checkManageUpdate   =   formSchTask('checkDBForUpdates', 'Check database for new update of commands and configuration', 10, None)
+loadContractors     =   formSchTask('loadContractors', 'Load all configuration info for agents from database',0, None ) 
 
 add(refreshServerStat)
+add(checkManageUpdate)
+add(loadContractors)

@@ -72,6 +72,35 @@ def refreshServerStat(tm, *args):
         doc = {'component': name, 'stat': stat}
         st.update(q, doc)
     
+@add
+def checkDBForUpdates(tm, *args):
+    print('CHECKING DATABASE')
+    st  = tm._storageManager.getInstance()
+    st.set_default_collection('server')
+    q   = {'type':'contractor'}
+    c   = core.getCoreInstance()
+    serverInstance  = c.getInstance('SERVER')
+    cmdi    = serverInstance.cmdInterface
+    for contractor in st.find(q):
+        if contractor['modified']:
+            contractor['modified'] = False
+            st.update({'_id': contractor['_id']}, contractor)
+            contractor['_id']   = None
+            cmdi.add(contractor['name'], contractor)
+            
+        
+@add
+def loadContractors(tm, *args):
+    print('LOAD CONTRACTORS')
+    st  = tm._storageManager.getInstance()
+    st.set_default_collection('server')
+    c   = core.getCoreInstance()
+    serverInstance  = c.getInstance('SERVER')
+    cmdi    = serverInstance.cmdInterface
+    q   = {'type': 'contractor'}
+    for contractor in st.find(q):
+        contractor['_id']   = None
+        cmdi.add(contractor['name'],contractor)
     
 @add
 def addScheduledTask(tm, dict_data):
