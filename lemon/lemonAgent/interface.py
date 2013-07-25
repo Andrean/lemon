@@ -10,7 +10,6 @@ import xmlrpc.client
 import lemon
 import core
 import queue
-import os
 
 
 ERROR_NOT_IDENTIFIED  = '0000001'
