@@ -46,7 +46,8 @@ def sendSelfStat(t, kwargs):
 @add    
 def getNewData(t, kwargs):
     i           = t._parent.interfaceInstance
-    new_data    = i.get('new')
+    last_refresh    = kwargs['last_refresh']
+    new_data    = i.get('new',last_refresh)
     print('Found new commands: '+str(new_data))
     for k in new_data:
         print(k)

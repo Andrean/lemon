@@ -88,8 +88,8 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
     def _reqREFRESH(self, agentID):
         return self._formRequest(self._connection.refresh, agentID)
         
-    def _reqGET(self, agentID, key):
-        return self._formRequest(self._connection.get, agentID, key)
+    def _reqGET(self, agentID, key, *args, **kwargs):
+        return self._formRequest(self._connection.get, agentID, key, *args, **kwargs)
     
     def _reqPOSTDATA(self, agentID, json_data):
         return self._formRequest(self._connection.postData, agentID, json_data)
@@ -101,19 +101,19 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
             return True
         return False
     
-    def get(self, key=None):
+    def get(self, key=None, *args):
         try:
             if key is None:
                 try:
                     result = self._reqREFRESH(self._agentID)
                     print(result)
                     if result - self._last_refresh > 0:
+                        self._taskManager.new_task('getNewData', {'last_refresh': self._last_refresh})
                         self._last_refresh  = result
-                        self._taskManager.new_task('getNewData')
                 except Exception as e:
                     self._logger.exception(e)                               
             else:
-                result  = json.loads(self._reqGET(self._agentID, key))
+                result  = json.loads(self._reqGET(self._agentID, key, *args))
                 return result
         except Exception as e:
             self._logger.exception(e)
