@@ -88,6 +88,12 @@ def addContractor(t, kwargs):
     content = kwargs['content']
     cLayer  = t._parent.contractorLayer
     cLayer.addContractor(name, content)
+
+@add
+def runContractor(t, kwargs):
+    contractor  = kwargs['contractor']
+    cLayer      = t._parent.contractorLayer
+    cLayer.startContractors([contractor])
     
 @add    
 def refresh(t, kwargs):
