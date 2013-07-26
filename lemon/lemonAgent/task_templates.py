@@ -38,11 +38,15 @@ def updateStat(t, kwargs):
 def sendSelfStat(t, kwargs):
     agentID = t._parent.agentID
     i       = t._parent.interfaceInstance
+    cLayer  = t._parent.contractorLayer
+    c_data  = cLayer.getStat()
+    print('STATISTICS:   ' + str(c_data))
     info    = {'agent': {'__id': agentID, 'state': 'started'}}
     ip      = socket.gethostbyname(socket.gethostname())
     info['agent']['ip'] = ip
-    info['data']    = {}
+    info['data']    = {'contractors': c_data}
     i.post(info)
+    
 @add    
 def getNewData(t, kwargs):
     i           = t._parent.interfaceInstance
@@ -84,9 +88,6 @@ def addContractor(t, kwargs):
     content = kwargs['content']
     cLayer  = t._parent.contractorLayer
     cLayer.addContractor(name, content)
-    cLayer.startContractors(['printCPU'])
-    print('!!!!!!!!!!!!!!!!!EXECUTE CONTRACTOR!!!\n'+ str(cLayer.getStat()))
-   
     
 @add    
 def refresh(t, kwargs):
