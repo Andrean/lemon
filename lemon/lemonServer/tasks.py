@@ -93,7 +93,14 @@ def updateContractors(tm, cfg):
             st.update({'_id': contractor['_id']}, contractor)
             contractor['_id']   = None
             item    = {'__agents':'all', 'content': contractor}
+            try:
+                if contractor['deleted']:
+                    cmdi.add(contractor['id'], 'del_contractor', item)                    
+                    return
+            except KeyError:
+                pass
             cmdi.add(contractor['id'], 'add_contractor', item)
+            
     
     q       = {'type': 'scheduled task'}
     for task in st.find(q):
@@ -104,6 +111,7 @@ def updateContractors(tm, cfg):
             task['_id'] = None
             item    = {'__agents':'all', 'content': task}
             cmdi.add(task['id'], 'add_scheduled_task', item)    
+            
             
 @add
 def addScheduledTask(tm, dict_data):
