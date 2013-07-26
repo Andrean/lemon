@@ -60,24 +60,39 @@ def __dispatcher(t, kwargs):
         command = kwargs['command']
         item = kwargs['item']
         content = item['content']
-        agents  = item['agents']
-        timestamp   = item['timestamp']
+        agents  = item['__agents']
+        timestamp   = item['__add_timestamp']
+        cmd_type    = item['__type']
     except KeyError as e:
         print(e)
         return
-    print(command)
+    print('COMMAND: ' + command)
     
-    if command == 'add_scheduled_task':
+    if cmd_type == 'add_scheduled_task':
         schedulerInstance   = t._parent.scheduler
         if schedulerInstance.getScheduledTask(content['name']) is not None:
             print('task "{0}" exists'.format(content['name']))
         else:
-            t._parent.new_task('addScheduledTask', content)
+            t._parent.new_task('addScheduledTask', content)    
+    elif cmd_type == 'add_contractor':
+        t._parent.new_task('addContractor', content)
         
+@add
+def addContractor(t, kwargs):
+    print('!!!!!!!!!!!!!!!!!!!!!!ADD CONTRACTOR: '+ str(kwargs))
+    name    = kwargs['name']
+    content = kwargs['content']
+    cLayer  = t._parent.contractorLayer
+    cLayer.addContractor(name, content)
+    cLayer.startContractors(['printCPU'])
+    print('!!!!!!!!!!!!!!!!!EXECUTE CONTRACTOR!!!\n'+ str(cLayer.getStat()))
+   
+    
 @add    
 def refresh(t, kwargs):
     i           = t._parent.interfaceInstance
-    i.get()    
+    i.get() 
+       
 @add    
 def testPrint(t, kwargs):
     print(kwargs['los'])

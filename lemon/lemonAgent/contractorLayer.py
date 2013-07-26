@@ -11,6 +11,7 @@ import uuid
 import os
 import subprocess
 import core
+import base64
 from collections import namedtuple
 
 MASK    = "contractor_layer"
@@ -53,7 +54,11 @@ class Layer(lemon.BaseAgentLemon):
         self._logger.info("Layer stopped")
         
     def addContractor(self, name, stream):
+        print('CONTRACTORS!!!!!   ' + str(self._contractors))
         c_id        = str(uuid.uuid4())
+        for item in self._contractors.values():
+            if item['name'] == name:
+                c_id    = item['__id']
         contractor  = { 'name': name, 
                         '__id': c_id, 
                         'path': c_id + '.py', 
@@ -99,7 +104,8 @@ class Layer(lemon.BaseAgentLemon):
             self._stop(path, args)
     
     def _start(self, k, path, args):
-        c    = Contractor(self._logger, self._config, self._contractors[k], self.contractors_path + path, args)
+        c_info  = {'instance': None, 'state': 'noninit'}
+        c    = Contractor(self._logger, self._config, c_info, self._contractors[k], self.contractors_path + path, args)
         c.start()
     
     def _stop(self, k, path):
@@ -117,7 +123,7 @@ class Layer(lemon.BaseAgentLemon):
         try:
             value   = self._storage.readStr(MASK)
             if value is not None:
-                self._contractors   = json.loads(value)
+                self._contractors   = json.loads(value)                
         except Exception as e:
             self._logger.exception("Error occured in _load", e)
             
@@ -127,14 +133,14 @@ class Layer(lemon.BaseAgentLemon):
             self._storage.writeItem(MASK, content)
         except Exception as e:
             self._logger.exception(e)
-    
+        
 class Contractor(lemon.BaseAgentLemon):
     
-    def __init__(self, _logger, _config, _place, path, args):
+    def __init__(self, _logger, _config, _info, _place, path, args):
         self._place = _place
         self._call_args = [path]
         self._call_args.extend(args)
-        lemon.BaseAgentLemon.__init__(self, _logger, _config)
+        lemon.BaseAgentLemon.__init__(self, _logger, _config, _info)
         self._logger.info("Contractor {0} created".format(self._place['__id']))
     
     def run(self):
@@ -154,7 +160,7 @@ class Contractor(lemon.BaseAgentLemon):
         
     def _writeStopStatus(self, result):
         self._place['exit_code']    = 0
-        self._place['result']       = result
+        self._place['result']       = str(result, 'cp1251')
         self._place['duration_time']    = time.time() - (self._place['start_time'])
         self._logger.debug("Contractor {0} completes work. Time length: {1}. Result: {2}".format(self._place['__id'], 
                                                                                                  self._place['duration_time'],
@@ -162,7 +168,7 @@ class Contractor(lemon.BaseAgentLemon):
     
     def _writeErrorStatus(self, error):
         self._place['exit_code']    = error.returncode
-        self._place['result']       = error.output
+        self._place['result']       = str(error.output,'cp1251')
         self._logger.error('Error occurred while executing contractor {0}, name \'{1}\'. Error: {2}'.format(
                                                                                                        self._place['__id'], 
                                                                                                        self._place['name'],

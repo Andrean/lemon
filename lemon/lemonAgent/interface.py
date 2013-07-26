@@ -78,10 +78,10 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
         def callback(_result):
             result['return']   = _result
         p_task  = self._put(method, args, callback)
-        print('BEGIN_' + str(p_task))
+    #    print('BEGIN_' + str(p_task))
         while p_task['ready'] is not True:
             time.sleep(0.01)
-        print('END_' + str(p_task))
+    #    print('END_' + str(p_task))
         return result['return']
         
         

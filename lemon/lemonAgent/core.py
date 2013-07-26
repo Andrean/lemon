@@ -37,7 +37,7 @@ def getCoreInstance():
     return core_instance
 
 def getTemplate():
-    t   =  {'instance': None, 
+    t   =  {    'instance': None, 
                 'state': 'not', 
                 'start_timestamp': None,
                 'end_timestamp': None, 
