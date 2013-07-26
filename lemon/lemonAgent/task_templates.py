@@ -80,6 +80,8 @@ def __dispatcher(t, kwargs):
             t._parent.new_task('addScheduledTask', content)    
     elif cmd_type == 'add_contractor':
         t._parent.new_task('addContractor', content)
+    elif cmd_type == 'del_contractor':
+        t._parent.new_task('delContractor', content) 
         
 @add
 def addContractor(t, kwargs):
@@ -88,6 +90,13 @@ def addContractor(t, kwargs):
     content = kwargs['content']
     cLayer  = t._parent.contractorLayer
     cLayer.addContractor(name, content)
+    
+@add
+def delContractor(t, kwargs):
+    print('!!!!!!!!!!!!!!!!!!!! DEL CONTRACTOR: '+ str(kwargs))
+    name    = kwargs['name']
+    cLayer  = t._parent.contractorLayer
+    cLayer.removeContractor(name)
 
 @add
 def runContractor(t, kwargs):
