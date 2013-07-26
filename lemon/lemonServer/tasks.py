@@ -73,7 +73,13 @@ def refreshServerStat(tm, *args):
         st.update(q, doc)
     
 @add
-def checkDBForUpdates(tm, *args):
+def updateContractors(tm, cfg):
+    onStart = False
+    try:
+        if cfg['onStart']:
+            onStart = True
+    except KeyError:
+        pass
     print('CHECKING DATABASE')
     st  = tm._storageManager.getInstance()
     st.set_default_collection('server')
@@ -82,26 +88,13 @@ def checkDBForUpdates(tm, *args):
     serverInstance  = c.getInstance('SERVER')
     cmdi    = serverInstance.cmdInterface
     for contractor in st.find(q):
-        if contractor['modified']:
+        if onStart or contractor['modified']:
             contractor['modified'] = False
             st.update({'_id': contractor['_id']}, contractor)
             contractor['_id']   = None
-            cmdi.add(contractor['name'], contractor)
+            item    = {'__agents':'all', 'content': contractor}
+            cmdi.add(contractor['id'], 'add_contractor', item)
             
-        
-@add
-def loadContractors(tm, *args):
-    print('LOAD CONTRACTORS')
-    st  = tm._storageManager.getInstance()
-    st.set_default_collection('server')
-    c   = core.getCoreInstance()
-    serverInstance  = c.getInstance('SERVER')
-    cmdi    = serverInstance.cmdInterface
-    q   = {'type': 'contractor'}
-    for contractor in st.find(q):
-        contractor['_id']   = None
-        cmdi.add(contractor['name'],contractor)
-    
 @add
 def addScheduledTask(tm, dict_data):
     func_name       = dict_data['func']

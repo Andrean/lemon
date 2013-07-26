@@ -61,6 +61,7 @@ class Scheduler(lemon.BaseServerComponent):
             
     def add(self, func_type, name='default', start_time=None, interval = 5*MINUTES,  kwargs=None):
         schtask = {}
+        print('ADDING TO SCHEDULE: '+str(name))
         if start_time is None:
             start_time  = time.time()
         schtask['__id'] = str(uuid.uuid4())
@@ -95,6 +96,7 @@ class Scheduler(lemon.BaseServerComponent):
             q       = {'name': key}
             storing = {'name': key, 'task': obj}
             item    = self._storage.findOne(q)
+            print('STORING TASK: '+ str(storing))
             if item:
                 self._storage.update(q, storing)
             else:

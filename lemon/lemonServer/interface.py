@@ -6,6 +6,7 @@ Created on 12.07.2013
 
 import time
 import json
+import uuid
 
 SECONDS  = 1
 MINUTES  = 60*SECONDS
@@ -56,8 +57,9 @@ class CommandInterface(object):
         Constructor
         '''
         self._taskManager   = taskManager
-        self._commands  = {'add_scheduled_task': {'agents': 'all', 
-                                                  'add_timestamp': time.time(), 
+        self._commands  = {'add_scheduled_task': {'__agents': 'all', 
+                                                  '__add_timestamp': time.time(),\
+                                                  '__type':'add_scheduled_task', 
                                                   'content': {
                                                                'func': 'testPrint',
                                                                'name': 'testPrint',
@@ -91,7 +93,7 @@ class CommandInterface(object):
     def getNewCommands(self, lastread_timestamp = 0, agentId=None,):
         new = []
         for name, item in self._commands.items():
-            if item['add_timestamp'] > lastread_timestamp:
+            if item['__add_timestamp'] > lastread_timestamp:
                 new.append(name)  
         print('NEW COMMANDS: '+str(new))
         return new
@@ -102,11 +104,13 @@ class CommandInterface(object):
         except KeyError:
             return None
 
-    def add(self, itemname, item):
-        print('UPDATING COMMANDS')
-        self._commands[itemname] = item
-        self._refresh   = time.time()
-        self._commands[itemname]['add_timestamp']   = self._refresh 
+    def add(self, c_id, cmd_type, item):
+        print('UPDATING COMMANDS: '+cmd_type)
+        key = c_id
+        self._refresh       = time.time()
+        self._commands[key] = item
+        self._commands[key]['__add_timestamp']   = self._refresh
+        self._commands[key]['__type']   = cmd_type 
         print(self._commands)
         
     

@@ -131,6 +131,6 @@ class SchedulerTaskHandler(BaseTaskHandler):
     
     def __init__(self, name):
         BaseTaskHandler.__init__(self, name)
-        self._commandList = ['addScheduledTask', 'refreshServerStat','checkDBForUpdates','loadContractors']
+        self._commandList = ['addScheduledTask', 'refreshServerStat','updateContractors']
     
     
