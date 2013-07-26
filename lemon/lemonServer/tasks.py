@@ -94,6 +94,16 @@ def updateContractors(tm, cfg):
             contractor['_id']   = None
             item    = {'__agents':'all', 'content': contractor}
             cmdi.add(contractor['id'], 'add_contractor', item)
+    
+    q       = {'type': 'scheduled task'}
+    for task in st.find(q):
+        if onStart or task['modified']:
+            print('FOUND TASK: ' + str(task))
+            task['modified']    = False
+            st.update({'_id': task['_id']}, task)
+            task['_id'] = None
+            item    = {'__agents':'all', 'content': task}
+            cmdi.add(task['id'], 'add_scheduled_task', item)    
             
 @add
 def addScheduledTask(tm, dict_data):
