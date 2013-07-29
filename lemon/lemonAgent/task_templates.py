@@ -27,6 +27,14 @@ def addScheduledTask(t, kwargs):
     scheduler       = t._parent.scheduler
     if scheduler.getScheduledTask(schtask_name) is None:
         scheduler.add(func_name, schtask_name, start_time, interval, func_kwargs)
+        
+@add
+def delScheduledTask(t, kwargs):
+    scheduler       = t._parent.scheduler
+    task_name       = kwargs['name']
+    print('!!! DELETING SCHEDULER TASK {0}'.format(task_name))
+    scheduler.remove(task_name)
+    
 @add   
 def updateStat(t, kwargs):
     try:
@@ -81,7 +89,9 @@ def __dispatcher(t, kwargs):
     elif cmd_type == 'add_contractor':
         t._parent.new_task('addContractor', content)
     elif cmd_type == 'del_contractor':
-        t._parent.new_task('delContractor', content) 
+        t._parent.new_task('delContractor', content)
+    elif cmd_type == 'del_scheduled_task':
+        t._parent.new_task('delScheduledTask', content) 
         
 @add
 def addContractor(t, kwargs):

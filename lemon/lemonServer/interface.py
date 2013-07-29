@@ -82,8 +82,7 @@ class CommandInterface(object):
         self._taskManager.addTask('storeAgentData', agent_info)
         self._taskManager.addTask('storeData', dict_data)
         self._taskManager.addTask('storeCurrentData', dict_data)
-        # TODO: store in database
-    
+            
     def getLastUpdateTime(self):
         return  self._refresh
     

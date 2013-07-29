@@ -68,6 +68,14 @@ class Scheduler(lemon.BaseAgentLemon):
         self._add_to_schedule(schtask['__id'], schtask)
         self._store(schtask['__id'], schtask)
         
+    def remove(self, name):
+        removed = None
+        for k, v in self._schedule.items():
+            if v['name'] == name:
+                removed = k
+        if removed:
+            self._remove_from_schedule(removed)
+        
     def getScheduledTask(self, name):
         for v in self._schedule.values():
             if v['name']    == name:

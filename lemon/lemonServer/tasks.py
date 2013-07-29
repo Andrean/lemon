@@ -110,6 +110,12 @@ def updateContractors(tm, cfg):
             st.update({'_id': task['_id']}, task)
             task['_id'] = None
             item    = {'__agents':'all', 'content': task}
+            try:
+                if task['deleted']:
+                    cmdi.add(task['id'], 'del_scheduled_task', item)
+                    return
+            except KeyError:
+                pass
             cmdi.add(task['id'], 'add_scheduled_task', item)    
             
             
