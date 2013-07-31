@@ -84,6 +84,9 @@ class   StorageGhost(object):
     
     def set_default_collection(self, collection):
         self._collection    = collection
+        
+    def save(self, to_save):
+        return self._doREQUEST('save', to_save, self._collection)
     
     def update(self, query, doc):
         return self._doREQUEST('update', query, doc, self._collection)

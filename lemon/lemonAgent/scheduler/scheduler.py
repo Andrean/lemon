@@ -72,6 +72,8 @@ class Scheduler(lemon.BaseAgentLemon):
         removed = None
         for k, v in self._schedule.items():
             if v['name'] == name:
+                print("REMOVING: "+str(v['name']))
+                print(k)
                 removed = k
         if removed:
             self._remove_from_schedule(removed)

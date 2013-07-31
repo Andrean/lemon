@@ -42,6 +42,7 @@ class Storage(lemon.BaseServerComponent):
         self._cmd           = {
                                'update': self.update,
                                'insert': self.insert,
+                               'save'   : self.save,
                                'remove': self.remove,
                                'set_default_collection': self.set_default_collection,
                                'find': self.find,
@@ -85,6 +86,15 @@ class Storage(lemon.BaseServerComponent):
         except pymongo.errors.PyMongoError as err:
             self._logger.error("PyMongoError raised on update doc {0} in collection {1}: {2}".format(str(doc), str(collection), str(err)))
     
+    @updateTimer
+    def save(self, to_save, collection = None):
+        if collection is None:
+            collection  = self._collection
+        try:
+            return self._db[collection].save(to_save)
+        except pymongo.errors.PyMongoError as err:
+            self._logger.exception(err)
+            
     @updateTimer
     def remove(self, query, collection = None):
         if collection is None:

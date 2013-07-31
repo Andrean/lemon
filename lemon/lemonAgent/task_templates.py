@@ -52,7 +52,7 @@ def sendSelfStat(t, kwargs):
     info    = {'agent': {'__id': agentID, 'state': 'started'}}
     ip      = socket.gethostbyname(socket.gethostname())
     info['agent']['ip'] = ip
-    info['data']    = {'contractors': c_data}
+    info['data']    = c_data
     i.post(info)
     
 @add    

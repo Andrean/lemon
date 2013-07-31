@@ -8,6 +8,32 @@ import json
 import time
 import core
 
+
+def getSchemaContractor():
+    t    = { '__id': 'contractor_id', 
+                            'name': 'getCPULoad',
+                            'path': 'path_of_contractor',
+                            'args': [],
+                            'exit_code': 0,
+                            'result': 'string',
+                            'start_time': 0,
+                            'duration_time': 0,
+                            'state': 0                            
+                           }
+    return t
+
+def getSchemaAgent():
+    t         = {'agent_id': None,'state': None, 'start_time':0, 'end_time':None}
+    return t
+
+def getSchemaEntity():
+    t        = {'entity_id': None, 'time': None, 'data': [getSchemaContractor()], 'agent': {}}
+    return t
+
+def getSchemaContractorData():
+    t      = {'entity_id': None, 'time': None, 'data': [getSchemaContractor()]}
+    return t
+
 CMD = {}
 
 def add(f):
@@ -21,16 +47,15 @@ def storeAgentData(tm, dict_data):
     state       = agent_data['state']
     start_time  = agent_data['start_timestamp']
     st  = tm._storageManager.getInstance()
-    st.set_default_collection(entity_id)
-    query   = {'type': 'agent'}
-    result  = [v for v in st.find(query)]
-    doc_d   = {'type': 'agent', 'agent_id': agent_id,'state': state, 'start_time':start_time, 'end_time':None }
+    st.set_default_collection('entities')
+    query   = {'entity_id': entity_id}
+    item    = st.findOne(query)
+    if item is None:
+        item    = getSchemaEntity()
+    item['agent']   = {'agent_id': agent_id,'state': state, 'start_time':start_time, 'end_time':None }
+    st.save(item)
     
-    if len(result) < 1:
-        print(result)
-        st.insert(doc_d)
-    else:
-        st.update(query, doc_d)
+    
         
 @add
 def storeCurrentData(tm, dict_data):
@@ -38,14 +63,20 @@ def storeCurrentData(tm, dict_data):
     timestamp   = dict_data['time']
     entity_id   = dict_data['agent']['__id']
     st          = tm._storageManager.getInstance()
-    st.set_default_collection(entity_id)
-    q           =    {'type':'current'}
+    st.set_default_collection('entities')
+    q           =    {'entity_id':entity_id}
     item        = st.findOne(q)
-    doc         = {'type':'current', 'data': data, 'time':timestamp}
     if item is None:
-        st.insert(doc)
-    else:
-        st.update(q, doc)
+        item    = getSchemaEntity()
+        item['entity_id']   = entity_id       
+
+    item['time']    = timestamp
+    item['data']    = []
+    for v in data.values():
+        item['data'].append(v)
+    st.save(item)
+
+    
     
 @add
 def storeData(tm, dict_data):
@@ -53,9 +84,14 @@ def storeData(tm, dict_data):
     data        = dict_data['data']
     timestamp   = dict_data['time']
     entity_id   = agent['__id']
-    doc     = {'type': 'persistent', 'timestamp': timestamp, 'data': data}
     st      = tm._storageManager.getInstance()
-    st.set_default_collection(entity_id)
+    st.set_default_collection('data')
+    doc     = getSchemaContractorData()
+    doc['entity_id']    = entity_id
+    doc['time'] = timestamp
+    doc['data'] = []
+    for v in data.values():
+        doc['data'].append(v)
     st.insert(doc)
     
 @add

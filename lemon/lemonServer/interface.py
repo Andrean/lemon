@@ -6,7 +6,6 @@ Created on 12.07.2013
 
 import time
 import json
-import uuid
 
 SECONDS  = 1
 MINUTES  = 60*SECONDS
@@ -57,6 +56,8 @@ class CommandInterface(object):
         Constructor
         '''
         self._taskManager   = taskManager
+        self._commands  = {}
+        '''
         self._commands  = {'add_scheduled_task': {'__agents': 'all', 
                                                   '__add_timestamp': time.time(),\
                                                   '__type':'add_scheduled_task', 
@@ -67,7 +68,7 @@ class CommandInterface(object):
                                                                'start_time': None,
                                                                'kwargs': {'los': 'test', 't': True}
                                                               }}}
-        self._new       = ['add_scheduled_task']
+        '''
         self._current   = {}
         self._refresh   = time.time()
            
@@ -80,8 +81,8 @@ class CommandInterface(object):
         agent_info['agent']['state']    = dict_data['agent']['state']
         agent_info['agent']['ip']       = dict_data['agent']['ip'] 
         self._taskManager.addTask('storeAgentData', agent_info)
-        self._taskManager.addTask('storeData', dict_data)
         self._taskManager.addTask('storeCurrentData', dict_data)
+        self._taskManager.addTask('storeData', dict_data)
             
     def getLastUpdateTime(self):
         return  self._refresh
