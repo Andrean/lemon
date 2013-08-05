@@ -76,11 +76,7 @@ class CommandInterface(object):
         pass
     
     def receive(self, agentID, dict_data):
-        agent_info  = {'agent': {'__id': agentID, 'received_id': dict_data['agent']['__id']}}
-        agent_info['agent']['start_timestamp']  = time.time()
-        agent_info['agent']['state']    = dict_data['agent']['state']
-        agent_info['agent']['ip']       = dict_data['agent']['ip'] 
-        self._taskManager.addTask('storeAgentData', agent_info)
+        self._taskManager.addTask('storeAgentData', dict_data)
         self._taskManager.addTask('storeCurrentData', dict_data)
         self._taskManager.addTask('storeData', dict_data)
             

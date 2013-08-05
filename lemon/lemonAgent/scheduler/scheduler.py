@@ -78,7 +78,9 @@ class Scheduler(lemon.BaseAgentLemon):
         if removed:
             self._remove_from_schedule(removed)
         
-    def getScheduledTask(self, name):
+    def getScheduledTask(self, name=None):
+        if name is None:
+            return self._schedule
         for v in self._schedule.values():
             if v['name']    == name:
                 return v

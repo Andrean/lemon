@@ -23,15 +23,15 @@ def getSchemaContractor():
     return t
 
 def getSchemaAgent():
-    t         = {'agent_id': None,'state': None, 'start_time':0, 'end_time':None}
+    t         = {'agent_id': None,'state': None, 'start_time':0, 'end_time':None, 'scheduler': {}}
     return t
 
-def getSchemaEntity():
-    t        = {'entity_id': None, 'time': None, 'data': [getSchemaContractor()], 'agent': {}}
+def getSchemaEntity(_id):
+    t        = {'entity_id': _id, 'name': _id, 'time': None, 'data': [getSchemaContractor()], 'agent': {}}
     return t
 
-def getSchemaContractorData():
-    t      = {'entity_id': None, 'time': None, 'data': [getSchemaContractor()]}
+def getSchemaContractorData(_id):
+    t      = {'entity_id': _id, 'time': None, 'data': [getSchemaContractor()]}
     return t
 
 CMD = {}
@@ -45,14 +45,18 @@ def storeAgentData(tm, dict_data):
     agent_id    = agent_data['__id']
     entity_id   = agent_id
     state       = agent_data['state']
-    start_time  = agent_data['start_timestamp']
+    start_time  = time.time()
+    scheduler   = agent_data['scheduler']
     st  = tm._storageManager.getInstance()
     st.set_default_collection('entities')
     query   = {'entity_id': entity_id}
     item    = st.findOne(query)
     if item is None:
-        item    = getSchemaEntity()
-    item['agent']   = {'agent_id': agent_id,'state': state, 'start_time':start_time, 'end_time':None }
+        item    = getSchemaEntity(entity_id)  
+    s   = []
+    for task in scheduler.values():
+        s.append(task)
+    item['agent']   = {'agent_id': agent_id,'state': state, 'start_time':start_time, 'end_time':None, 'scheduler': s }
     st.save(item)
     
     
@@ -67,9 +71,7 @@ def storeCurrentData(tm, dict_data):
     q           =    {'entity_id':entity_id}
     item        = st.findOne(q)
     if item is None:
-        item    = getSchemaEntity()
-        item['entity_id']   = entity_id       
-
+        item    = getSchemaEntity(entity_id)
     item['time']    = timestamp
     item['data']    = []
     for v in data.values():
@@ -86,8 +88,7 @@ def storeData(tm, dict_data):
     entity_id   = agent['__id']
     st      = tm._storageManager.getInstance()
     st.set_default_collection('data')
-    doc     = getSchemaContractorData()
-    doc['entity_id']    = entity_id
+    doc     = getSchemaContractorData(entity_id)
     doc['time'] = timestamp
     doc['data'] = []
     for v in data.values():
@@ -118,8 +119,8 @@ def updateContractors(tm, cfg):
         pass
     print('CHECKING DATABASE')
     st  = tm._storageManager.getInstance()
-    st.set_default_collection('server')
-    q   = {'type':'contractor'}
+    st.set_default_collection('contractors')
+    q   = {}
     c   = core.getCoreInstance()
     serverInstance  = c.getInstance('SERVER')
     cmdi    = serverInstance.cmdInterface
@@ -131,14 +132,17 @@ def updateContractors(tm, cfg):
             item    = {'__agents':'all', 'content': contractor}
             try:
                 if contractor['deleted']:
-                    cmdi.add(contractor['id'], 'del_contractor', item)                    
+                    cmdi.add(contractor['id'], 'del_contractor', item)
+                    st.remove({'id': contractor['id']})                    
                     return
             except KeyError:
                 pass
-            cmdi.add(contractor['id'], 'add_contractor', item)
+            if contractor['install'] is True:
+                cmdi.add(contractor['id'], 'add_contractor', item)
             
     
-    q       = {'type': 'scheduled task'}
+    st.set_default_collection('agent_scheduler')
+    q   = {}
     for task in st.find(q):
         if onStart or task['modified']:
             print('FOUND TASK: ' + str(task))
@@ -149,10 +153,12 @@ def updateContractors(tm, cfg):
             try:
                 if task['deleted']:
                     cmdi.add(task['id'], 'del_scheduled_task', item)
+                    st.remove({'id': task['id']})
                     return
             except KeyError:
                 pass
-            cmdi.add(task['id'], 'add_scheduled_task', item)    
+            if task['install']:
+                cmdi.add(task['id'], 'add_scheduled_task', item)    
             
             
 @add

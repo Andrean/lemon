@@ -47,11 +47,14 @@ def sendSelfStat(t, kwargs):
     agentID = t._parent.agentID
     i       = t._parent.interfaceInstance
     cLayer  = t._parent.contractorLayer
+    scheduler   = t._parent.scheduler
     c_data  = cLayer.getStat()
     print('STATISTICS:   ' + str(c_data))
     info    = {'agent': {'__id': agentID, 'state': 'started'}}
     ip      = socket.gethostbyname(socket.gethostname())
-    info['agent']['ip'] = ip
+    schedulerStat   = scheduler.getScheduledTask()
+    info['agent']['scheduler']  = schedulerStat
+    info['agent']['ip'] = ip    
     info['data']    = c_data
     i.post(info)
     
