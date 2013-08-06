@@ -78,6 +78,7 @@ class Layer(lemon.BaseAgentLemon):
             if v['name'] == name:
                 removed    = k
         self._contractors.pop(removed)
+        self._remove(removed + '.py')
         self._store()
     
     def getStat(self):
@@ -116,6 +117,13 @@ class Layer(lemon.BaseAgentLemon):
             path    = self.contractors_path + path
             f   = open(path,'w')
             f.write(content)
+        except Exception as e:
+            self._logger.exception(e)
+    
+    def _remove(self, path):
+        try:
+            path    = self.contractors_path + path
+            os.remove(path)
         except Exception as e:
             self._logger.exception(e)
         
