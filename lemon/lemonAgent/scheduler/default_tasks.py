@@ -14,8 +14,8 @@ def formSchTask(func, name, interval, start_time=None, kwargs={}):
 
 refreshServer       = formSchTask('refresh','refresh',5)
 sendSelfInfoOnStart = formSchTask('sendSelfStat', 'Sending Self Information on start', 0)
-sendSelfInfo        = formSchTask('sendSelfStat', 'Sending Self information by interval', 10)
-updateCoreStat      = formSchTask('updateStat', 'Update core stat', 10, None, {'core': True})
+sendSelfInfo        = formSchTask('sendSelfStat', 'Sending Self information by interval', 1)
+updateCoreStat      = formSchTask('updateStat', 'Update core stat', 1, None, {'core': True})
 
 tasks   = {}
 tasks['refresh']                = refreshServer

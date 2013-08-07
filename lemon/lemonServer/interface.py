@@ -58,7 +58,7 @@ class CommandInterface(object):
         self._taskManager   = taskManager
         self._commands  = {}
         '''
-        self._commands  = {'add_scheduled_task': {'__agents': 'all', 
+        self._commands  = {'identifikator': {'__agents': 'all', 
                                                   '__add_timestamp': time.time(),\
                                                   '__type':'add_scheduled_task', 
                                                   'content': {
@@ -90,7 +90,13 @@ class CommandInterface(object):
         new = []
         for name, item in self._commands.items():
             if item['__add_timestamp'] > lastread_timestamp:
-                new.append(name)  
+                if len(new) < 1:
+                    new.append(name)
+                for i,v in enumerate(new):
+                    if self._commands[v]['__add_timestamp'] > item['__add_timestamp']:
+                        new.insert(i, name)
+                        break
+                          
         print('NEW COMMANDS: '+str(new))
         return new
     
@@ -103,6 +109,12 @@ class CommandInterface(object):
     def add(self, c_id, cmd_type, item):
         print('UPDATING COMMANDS: '+cmd_type)
         key = c_id
+        remove_list = []
+        for k, v in self._commands.items():
+            if v['content']['name'] == item['content']['name']:
+                remove_list.append(k)
+        for i in remove_list:
+            self._commands.pop(i)
         self._refresh       = time.time()
         self._commands[key] = item
         self._commands[key]['__add_timestamp']   = self._refresh
