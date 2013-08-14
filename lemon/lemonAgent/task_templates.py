@@ -32,7 +32,6 @@ def addScheduledTask(t, kwargs):
 def delScheduledTask(t, kwargs):
     scheduler       = t._parent.scheduler
     task_name       = kwargs['name']
-    print('!!! DELETING SCHEDULER TASK {0}'.format(task_name))
     scheduler.remove(task_name)
     
 @add   
@@ -48,8 +47,7 @@ def sendSelfStat(t, kwargs):
     i       = t._parent.interfaceInstance
     cLayer  = t._parent.contractorLayer
     scheduler   = t._parent.scheduler
-    c_data  = cLayer.getStat()
-    print('STATISTICS:   ' + str(c_data))
+    c_data  = cLayer.getStat()    
     info    = {'agent': {'__id': agentID, 'state': 'started'}}
     ip      = socket.gethostbyname(socket.gethostname())
     schedulerStat   = scheduler.getScheduledTask()
@@ -64,14 +62,12 @@ def getNewData(t, kwargs):
     last_refresh    = kwargs['last_refresh']
     new_data    = i.get('new',last_refresh)
     print('Found new commands: '+str(new_data))
-    for k in new_data:
-        print(k)
+    for k in new_data:        
         item = i.get(k)       
         __dispatcher(t, {'command': k, 'item': item})
         
 def __dispatcher(t, kwargs):
-    try:
-        print(kwargs)
+    try:        
         command = kwargs['command']
         item = kwargs['item']
         content = item['content']
@@ -80,8 +76,7 @@ def __dispatcher(t, kwargs):
         cmd_type    = item['__type']
     except KeyError as e:
         print(e)
-        return
-    print('COMMAND: ' + command)
+        return   
     
     if cmd_type == 'add_scheduled_task':
         schedulerInstance   = t._parent.scheduler
@@ -97,16 +92,14 @@ def __dispatcher(t, kwargs):
         t._parent.new_task('delScheduledTask', content) 
         
 @add
-def addContractor(t, kwargs):
-    print('!!!!!!!!!!!!!!!!!!!!!!ADD CONTRACTOR: '+ str(kwargs))
+def addContractor(t, kwargs):   
     name    = kwargs['name']
     content = kwargs['content']
     cLayer  = t._parent.contractorLayer
     cLayer.addContractor(name, content)
     
 @add
-def delContractor(t, kwargs):
-    print('!!!!!!!!!!!!!!!!!!!! DEL CONTRACTOR: '+ str(kwargs))
+def delContractor(t, kwargs):    
     name    = kwargs['name']
     cLayer  = t._parent.contractorLayer
     cLayer.removeContractor(name)
@@ -123,8 +116,7 @@ def refresh(t, kwargs):
     i.get() 
        
 @add    
-def testPrint(t, kwargs):
-    print(kwargs['los'])
+def testPrint(t, kwargs):    
     try:
         if kwargs['t']:
             print('i am task with id '+str(t.id))

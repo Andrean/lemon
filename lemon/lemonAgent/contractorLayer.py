@@ -54,7 +54,6 @@ class Layer(lemon.BaseAgentLemon):
         self._logger.info("Layer stopped")
         
     def addContractor(self, name, stream):
-        print('CONTRACTORS!!!!!   ' + str(self._contractors))
         c_id        = str(uuid.uuid4())
         for item in self._contractors.values():
             if item['name'] == name:
@@ -80,11 +79,10 @@ class Layer(lemon.BaseAgentLemon):
         self._contractors.pop(removed)
         self._remove(removed + '.py')
         self._store()
+        self._logger.info("Contractor {0} successfully removed".format(name))
     
     def getStat(self):
         return self._contractors
-    
-    
     
     def startContractors(self, contractor_list):
         keys_contr  = []
@@ -103,6 +101,7 @@ class Layer(lemon.BaseAgentLemon):
             path    = self._contractors[k]['path']
             args    = self._contractors[k]['args']
             self._stop(path, args)
+        self._logger.info("Contractors were successfully stopped")
     
     def _start(self, k, path, args):
         c_info  = {'instance': None, 'state': 'noninit'}

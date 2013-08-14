@@ -94,7 +94,7 @@ class Task(threading.Thread):
         taskNote['state']     = STATE.RUNNING
         try:
             self.func(self, self.kwargs)
-            logger.info('task {0} started'.format(self.id))
+            logger.debug('task {0} started'.format(self.id))
             #print('i am task: {0}'.format(str(self.id)))
             taskNote['result'] = 1
             taskNote['exit_code'] = 0

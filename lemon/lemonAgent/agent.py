@@ -19,19 +19,10 @@ if __name__ == '__main__':
     for schtask in schedulerInstance.getNotInitiatedDefaultTasks():
         tmInstance.new_task('addScheduledTask', schtask)     
     
-    #script  = 'print("Testing!)'
-    #contrLayer.addContractor('one_test', script)
-    #contrLayer.startContractors(['one_test'])
     try:
         print('LEMON AGENT')
-    #    completed   = []
         while True:
-            time.sleep(0.1)
-    #        contractors  = contrLayer.getStat()
-    #        for k,v in contractors.items():
-    #            if v['state'] == contractorLayer.STATE.STOPPED and (k not in completed):
-    #                completed.append(k)
-    #                print(contractors[k])           
+            time.sleep(0.1)           
     except KeyboardInterrupt:
         c.stop()
         
