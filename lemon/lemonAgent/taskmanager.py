@@ -11,6 +11,7 @@ from collections import namedtuple
 import task_templates
 import lemon
 import core
+import lemon_threadpool
 
 _state   = namedtuple('STATE',['INIT','RUNNING','STOPPED'])
 
@@ -29,6 +30,7 @@ class TaskManager(lemon.BaseAgentLemon):
         self._tasks     = {}
         self._taskTemplate  = {'__self': 0, '__id': None, 'state': STATE.STOPPED, 'exit_code': None, 'result': None}
         self._lock  = threading.Lock()
+        self._pool  = lemon_threadpool.ThreadPool(10)
         self.taskmanagerInstance    = self
         
         lemon.BaseAgentLemon.__init__(self, _logger, _config, _info)
@@ -40,6 +42,7 @@ class TaskManager(lemon.BaseAgentLemon):
         self.contractorLayer        = c.getInstance('CONTRACTOR')
         self.scheduler              = c.getInstance('SCHEDULER')
         self.agentID                = c.getItem('agent')['__id']
+        self._pool.start()
         
         self._setReady()
         self._logger.info('Task Manager started')
@@ -52,7 +55,8 @@ class TaskManager(lemon.BaseAgentLemon):
         if self._taskQueue.empty() is False:
             task    = self._taskQueue.get()
             self._logger.debug('Trying to start task {0}'.format(task.id))
-            task.start()
+            self._pool.put(task)
+            #task.start()
         else:
             time.sleep(0.01)
         
@@ -75,7 +79,7 @@ class TaskManager(lemon.BaseAgentLemon):
            
           
         
-class Task(threading.Thread):
+class Task(object):
     
     def __init__(self, _id ,_tm, _logger, _parent, _func, kwargs):
         self.id    = _id
@@ -84,8 +88,6 @@ class Task(threading.Thread):
         self._parent   = _parent
         self.kwargs = kwargs
         self._logger    = _logger
-        threading.Thread.__init__(self)
-        
     
     def run(self):
         logger      = self._logger
