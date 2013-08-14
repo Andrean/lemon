@@ -145,7 +145,6 @@ def updateContractors(tm, cfg):
     q   = {}
     for task in st.find(q):
         if onStart or task['modified']:
-            print('FOUND TASK: ' + str(task))
             task['modified']    = False
             st.update({'_id': task['_id']}, task)
             task['_id'] = None

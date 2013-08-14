@@ -118,8 +118,7 @@ class CommandInterface(object):
         self._refresh       = time.time()
         self._commands[key] = item
         self._commands[key]['__add_timestamp']   = self._refresh
-        self._commands[key]['__type']   = cmd_type 
-        print(self._commands)
+        self._commands[key]['__type']   = cmd_type        
         
     
     
