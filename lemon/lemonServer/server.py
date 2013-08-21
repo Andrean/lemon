@@ -32,7 +32,6 @@ class Server(lemon.BaseServerComponent):
             self._xmlrpcListener.register_instance(agentHandler)
             self._setReady()
             self._logger.info('xmlrpc listener starting')
-            print("i am a new server instance with id: "+str(self._getId())+"\n");
             self._xmlrpcListener.serve_forever()
                         
         except XMLRPCExitException:
