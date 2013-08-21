@@ -29,6 +29,7 @@ class EntityManager(lemon.BaseServerComponent):
     
     def update(self):
         self.configManager._update()
+        self.tagManager._update()
 
 
 
@@ -77,5 +78,12 @@ class TagManager(object):
         self._tagList.append(t)
         self._st.set_default_collection('groups')
         self._st.save(t)    
+        
+    def _update(self):
+        self._tagList   = []
+        self._st = core.getCoreInstance().getInstance('STORAGE').getInstance()
+        self._st.set_default_collection('groups')
+        for item in self._st.find({}):
+            self._tagList.append(item)
   
         
