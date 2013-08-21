@@ -111,6 +111,8 @@ def refreshServerStat(tm, *args):
     
 @add
 def updateContractors(tm, cfg):
+    pass
+    '''
     onStart = False
     try:
         if cfg['onStart']:
@@ -157,7 +159,8 @@ def updateContractors(tm, cfg):
             except KeyError:
                 pass
             if task['install']:
-                cmdi.add(task['id'], 'add_scheduled_task', item)    
+                cmdi.add(task['id'], 'add_scheduled_task', item)  
+    '''  
             
             
 @add

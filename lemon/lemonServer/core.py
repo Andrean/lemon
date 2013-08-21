@@ -7,6 +7,7 @@ Created on 18.07.2013
 import logging.config
 import storagemanager
 import task_manager
+import entity_manager
 import scheduler.scheduler as scheduler
 import server
 import os
@@ -16,8 +17,8 @@ import configparser
 CONFIG_PATH = 'conf'
 CONFIG_FILE = CONFIG_PATH + '/server.conf'
 
-COMPONENTS          = ['TASK_MANAGER', 'SERVER','SCHEDULER']
-SERVER_COMPONENTS   = {'STORAGE': storagemanager.StorageManager, 'TASK_MANAGER': task_manager.TaskManager, 'SERVER': server.Server, 'SCHEDULER': scheduler.Scheduler} 
+COMPONENTS          = ['TASK_MANAGER', 'SERVER','SCHEDULER', 'ENTITY_MANAGER']
+SERVER_COMPONENTS   = {'STORAGE': storagemanager.StorageManager, 'TASK_MANAGER': task_manager.TaskManager, 'SERVER': server.Server, 'SCHEDULER': scheduler.Scheduler, 'ENTITY_MANAGER': entity_manager.EntityManager} 
 TM_HANDLERS         = {'store': task_manager.StoreTaskHandler, 'scheduler': task_manager.SchedulerTaskHandler}
 
 CORE_INSTANCE   = None

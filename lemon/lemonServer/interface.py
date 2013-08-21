@@ -4,6 +4,7 @@ Created on 12.07.2013
 @author: vau
 '''
 
+import core
 import time
 import json
 
@@ -26,24 +27,24 @@ class xmlrpcHandler(object):
         return TASK_SUCCESSFULLY_ADDED
     
     def refresh(self, agentId):
-        result  = self._commandInterface.getLastUpdateTime()
+        result  = self._commandInterface.getRevision()
+        print("revision: "+str(result))
+        #result  = self._commandInterface.getLastUpdateTime()
         return result
     
     def get(self, agentId, key, *args):
         result = ""
+        if key == 'cfg':
+            result  = self._commandInterface.getConfig(agentId)
+            return json.dumps(result)
         if key == 'new':
             result = self._commandInterface.getNewCommands(args[0], agentId)
         elif key == 'all':
             result = self._commandInterface.getCurrentCommands(agentId)
         else:
             result =  self._commandInterface.getItem(agentId, key)
-        return json.dumps(result)
+        return json.dumps(result)    
     
-    def getUpdate(self, agentId, _dictData):
-        pass
-    
-    def getConfig(self, agentId, _dictData):
-        pass
 
 class CommandInterface(object):
     '''
@@ -57,8 +58,22 @@ class CommandInterface(object):
         '''
         self._taskManager   = taskManager
         self._commands  = {}
+        self._revision  = 0
+        self._entityManager = core.getCoreInstance().getInstance('ENTITY_MANAGER')       
+        
         '''
-        self._commands  = {'identifikator': {'__agents': 'all', 
+        config    = {
+            'item-id':     {
+                            '__type': type,
+                            '__tags': [tags],
+                            '__added': time,
+                            '__revision': autoincrement number   
+                            'content' : {item-content}
+                            }        
+                    }
+        '''
+        '''
+        self._commands  = {'identifikator': {     '__agents': 'all', 
                                                   '__add_timestamp': time.time(),\
                                                   '__type':'add_scheduled_task', 
                                                   'content': {
@@ -79,10 +94,16 @@ class CommandInterface(object):
         self._taskManager.addTask('storeAgentData', dict_data)
         self._taskManager.addTask('storeCurrentData', dict_data)
         self._taskManager.addTask('storeData', dict_data)
+        
+    def getRevision(self):
+        return self._entityManager.configManager.getRevision()
             
     def getLastUpdateTime(self):
         return  self._refresh
     
+    def getConfig(self, agentId):         
+        return [x for x in self._entityManager.getConfig(agentId)]
+        
     def getCurrentCommands(self,agentId=None):
         return self._commands
     
@@ -120,5 +141,6 @@ class CommandInterface(object):
         self._commands[key]['__add_timestamp']   = self._refresh
         self._commands[key]['__type']   = cmd_type        
         
-    
-    
+
+
+        

@@ -8,7 +8,8 @@ def formSchTask(func, name, interval, start_time=None, kwargs={}):
                 'name': name,
                 'interval': interval,
                 'start_time': start_time,
-                'kwargs': kwargs
+                'kwargs': kwargs,
+                'revision': -1
                 }
     return _task
 

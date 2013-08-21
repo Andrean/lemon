@@ -18,15 +18,25 @@ def runCounter(t, counter_id, kwargs):
     pass
 
 @add
+def sync(t, data):
+    i       = t._parent.interfaceInstance
+    cfg  = i.get('cfg')
+    i._logger.info("Synchronizing configuration with server")
+    e   = core.getCoreInstance().getInstance('ENTITY_MANAGER')
+    e.updateList(cfg)
+    print("Synchronizing configuration with server")
+    
+@add
 def addScheduledTask(t, kwargs):
     func_name       = kwargs['func']
     schtask_name    = kwargs['name']
     start_time      = kwargs['start_time']
     interval        = kwargs['interval']
     func_kwargs     = kwargs['kwargs']
+    revision        = kwargs['revision']
     scheduler       = t._parent.scheduler
     if scheduler.getScheduledTask(schtask_name) is None:
-        scheduler.add(func_name, schtask_name, start_time, interval, func_kwargs)
+        scheduler.add(func_name, schtask_name, start_time, interval, func_kwargs, revision)
         
 @add
 def delScheduledTask(t, kwargs):

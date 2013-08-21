@@ -55,7 +55,7 @@ class Scheduler(lemon.BaseAgentLemon):
                 it = 0
                 self._store_schedule()
             
-    def add(self, func_type, name='default', start_time=None, interval = 5*MINUTES,  kwargs=None):
+    def add(self, func_type, name='default', start_time=None, interval = 5*MINUTES,  kwargs=None, revision=0):
         schtask = {}
         if start_time is None:
             start_time  = time.time()
@@ -65,6 +65,7 @@ class Scheduler(lemon.BaseAgentLemon):
         schtask['last_time']    = start_time
         schtask['interval']     = interval
         schtask['task']         = {'func': func_type, 'args': kwargs}
+        schtask['__revision']   = revision
         self._add_to_schedule(schtask['__id'], schtask)
         self._store(schtask['__id'], schtask)
         

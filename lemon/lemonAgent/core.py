@@ -8,6 +8,7 @@ import taskmanager
 import storage
 import interface
 import contractorLayer
+import entity_manager
 import configparser
 import logging.config
 import os
@@ -21,12 +22,13 @@ CONFIG_PATH = 'conf'
 CONFIG_FILE = CONFIG_PATH + '/agent.conf'
 
 # Do not change order of instances. Important: storage must be first, task_manager - second
-COMPONENTS  = ['TASK_MANAGER', 'SCHEDULER', 'INTERFACE', 'CONTRACTOR']
+COMPONENTS  = ['TASK_MANAGER', 'SCHEDULER', 'INTERFACE', 'CONTRACTOR','ENTITY_MANAGER']
 AGENT_COMPONENTS   = {  'STORAGE': storage.Storage, 
                         'TASK_MANAGER': taskmanager.TaskManager, 
                         'SCHEDULER': scheduler.Scheduler, 
                         'INTERFACE': interface.XMLRPC_Client, 
-                        'CONTRACTOR': contractorLayer.Layer     }
+                        'CONTRACTOR': contractorLayer.Layer ,
+                        'ENTITY_MANAGER': entity_manager.EntityManager    }
 core_instance   =    None
 
 def setCoreInstance(_core):
@@ -130,10 +132,10 @@ class Core(object):
             config.add_section('TASK_MANAGER')
             config.add_section('INTERFACE')
             config.add_section('CONTRACTOR')
+            config.add_section('ENTITY_MANAGER')
             interfaceConfig                 = config['INTERFACE']
             interfaceConfig['xmlrpc_server_addr'] = 'localhost'
             interfaceConfig['xmlrpc_server_port'] = '8000' 
-            config.add_section('CONTRACTOR')
             config.add_section('LOGGING')
             loggingConfig                   = config['LOGGING']
             loggingConfig['file']           = CONFIG_PATH + '/logging.conf'
