@@ -45,10 +45,13 @@ class Configuration(object):
         st.set_default_collection('configuration')
         for item in st.find({}):
             if item['__type'] == 'revision':
-                self._revision = item['content']['revision']
+                self.setRevision(item['content']['revision'])
                 continue
             self._config[item['__id']] = item
             
+    def setRevision(self, new_revision):
+        self._revision = new_revision
+        
     def getRevision(self):
         return self._revision
     
