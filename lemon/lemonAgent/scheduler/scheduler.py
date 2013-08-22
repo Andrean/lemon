@@ -74,7 +74,6 @@ class Scheduler(lemon.BaseAgentLemon):
         for k, v in self._schedule.items():
             if v['name'] == name:
                 print("REMOVING: "+str(v['name']))
-                print(k)
                 removed = k
         if removed:
             self._remove_from_schedule(removed)
@@ -85,6 +84,10 @@ class Scheduler(lemon.BaseAgentLemon):
         for v in self._schedule.values():
             if v['name']    == name:
                 return v
+            
+    def getSchedule(self):
+        for v in self._schedule.values():
+            yield v
             
     def getNotInitiatedDefaultTasks(self):
         for taskName, task in tasks.tasks.items():

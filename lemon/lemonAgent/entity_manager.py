@@ -47,7 +47,7 @@ class EntityManager(lemon.BaseAgentLemon):
         
     def readInfo(self):
         self.contractorList = [x for x in self.contractorLayer.getContractors()]
-        self.scheduleList   = self.scheduler.getScheduledTask()
+        self.scheduleList   = [x for x in self.scheduler.getSchedule()]
         
     def updateList(self, cfg_list, _revision):
         try:
@@ -64,25 +64,25 @@ class EntityManager(lemon.BaseAgentLemon):
                         self.contractorLayer.addContractor(row['content']['name'], row['content']['content'], row['__revision'])
                 if row['__type'] == 'scheduled_task':
                     add = True
-                    for item in self.scheduleList.values():
+                    for item in self.scheduleList:
                         if item['name'] == row['content']['name']:
                             add = False
                             if item['__revision'] < row['__revision']:
                                 self.scheduler.remove(item['name'])
                                 r   = row['content']
-                                self.scheduler.add(r['func'],r['name'],r['start_time'],r['interval'],r['kwargs'],row['__revision'])
+                                self.scheduler.add(r['func'],r['name'],r['start_time'],int(r['interval']),r['kwargs'],row['__revision'])
                     if add is True:
-                        self.scheduler.add(r['func'],r['name'],r['start_time'],r['interval'],r['kwargs'],row['__revision'])
+                        r   = row['content']
+                        self.scheduler.add(r['func'],r['name'],r['start_time'],int(r['interval']),r['kwargs'],row['__revision'])
             for item in self.contractorList:
                 remove = True
                 for row in cfg_list:
                     if row['__type'] == 'contractor' and row['content']['name'] == item['name']:
                         remove = False
                 if remove:
-                    self.contractorLayer.removeContractor(item['name'])
+                    self.contractorLayer.removeContractor(item['name'])                    
                     
-                    
-            for item in self.scheduleList.values():
+            for item in self.scheduleList:
                 if item['__revision'] < 0:
                     continue
                 remove = True
