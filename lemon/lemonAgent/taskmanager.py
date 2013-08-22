@@ -30,7 +30,7 @@ class TaskManager(lemon.BaseAgentLemon):
         self._tasks     = {}
         self._taskTemplate  = {'__self': 0, '__id': None, 'state': STATE.STOPPED, 'exit_code': None, 'result': None}
         self._lock  = threading.Lock()
-        self._pool  = lemon_threadpool.ThreadPool(10)
+        self._pool  = lemon_threadpool.ThreadPool(15)
         self.taskmanagerInstance    = self
         
         lemon.BaseAgentLemon.__init__(self, _logger, _config, _info)
@@ -54,14 +54,14 @@ class TaskManager(lemon.BaseAgentLemon):
     def _process(self):
         if self._taskQueue.empty() is False:
             task    = self._taskQueue.get()
-            self._logger.debug('Trying to start task {0}'.format(task.id))
+            #self._logger.debug('Trying to start task {0}'.format(task.id))
             self._pool.put(task)
             #task.start()
         else:
             time.sleep(0.01)
         
         
-    def add_task(self, _task):         
+    def add_task(self, _task): 
         self._taskQueue.put(_task)
         
     def new_task(self, _func, kwargs=None):
@@ -69,7 +69,7 @@ class TaskManager(lemon.BaseAgentLemon):
         self._tasks[_id]             = self._taskTemplate
         self._tasks[_id]['__id']     = _id
         task                         = Task(_id, self._tasks[_id], self._logger, self, task_templates.CMD[_func], kwargs)
-        self._logger.debug('Adding new task into queue. Task id {0}'.format(_id))
+        #self._logger.debug('Adding new task into queue. Task id {0}'.format(_id))
         self.add_task(task)
     
     def remove_task(self, task_id):
@@ -96,7 +96,8 @@ class Task(object):
         taskNote['state']     = STATE.RUNNING
         try:
             self.func(self, self.kwargs)
-            logger.debug('task {0} started'.format(self.id))
+            
+            #logger.debug('task {0} started'.format(self.id))
             #print('i am task: {0}'.format(str(self.id)))
             taskNote['result'] = 1
             taskNote['exit_code'] = 0

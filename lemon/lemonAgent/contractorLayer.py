@@ -86,7 +86,9 @@ class Layer(lemon.BaseAgentLemon):
         return self._contractors
     
     def getContractors(self):
-        return self._contractors
+        for v in self._contractors.values():
+            yield v
+        
     
     def startContractors(self, contractor_list):
         keys_contr  = []

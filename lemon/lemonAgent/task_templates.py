@@ -6,6 +6,7 @@ Task templates, which used to do some useful actions
 import json
 import socket
 import core
+import time
 
 
 CMD = {}
@@ -20,11 +21,12 @@ def runCounter(t, counter_id, kwargs):
 @add
 def sync(t, data):
     i       = t._parent.interfaceInstance
-    cfg  = i.get('cfg')
-    i._logger.info("Synchronizing configuration with server")
+    recv    = i.get('cfg')
+    cfg = recv['cfg']
+    new_revision = recv['v']
     e   = core.getCoreInstance().getInstance('ENTITY_MANAGER')
-    e.updateList(cfg)
-    print("Synchronizing configuration with server")
+    e.updateList(cfg, new_revision)
+    i._logger.info("Synchronized configuration with server")
     
 @add
 def addScheduledTask(t, kwargs):

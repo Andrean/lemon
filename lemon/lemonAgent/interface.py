@@ -38,6 +38,7 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
     def run(self):
         self._taskManager   = core.getCoreInstance().getInstance('TASK_MANAGER')
         self._agentID       = core.getCoreInstance().getItem('agent')['__id']
+        self._entityManager = core.getCoreInstance().getInstance('ENTITY_MANAGER')
         self._createConnection(self._server_addr, self._server_port)
         self._setReady()
         
@@ -105,9 +106,8 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
                 try:
                     result = self._reqREFRESH(self._agentID)                    
                     if result - self._last_refresh > 0:
-                        #self._taskManager.new_task('getNewData', {'last_refresh': self._last_refresh})
                         self._taskManager.new_task('sync')
-                        self._last_refresh  = result
+                        self._last_refresh  = self._entityManager.getRevision()                        
                 except Exception as e:
                     self._logger.exception(e)                               
             else:

@@ -36,18 +36,19 @@ class EntityManager(lemon.BaseServerComponent):
 class Configuration(object):
     def __init__(self):
         self._revision      = 0
-        self._config        = {}
+        self._config        = []
         self._update()        
     
     def _update(self):
         stManager   = core.getCoreInstance().getInstance('STORAGE')
         st          = stManager.getInstance()
         st.set_default_collection('configuration')
+        self._config = []
         for item in st.find({}):
             if item['__type'] == 'revision':
-                self.setRevision(item['content']['revision'])
+                self.setRevision(item['__revision'])
                 continue
-            self._config[item['__id']] = item
+            self._config.append(item)
             
     def setRevision(self, new_revision):
         self._revision = new_revision
@@ -56,7 +57,7 @@ class Configuration(object):
         return self._revision
     
     def getConfig(self, tags):
-        for item in self._config.values():
+        for item in self._config:
             for k in  item['__tags']:
                 if k in tags:
                     item['_id'] = None

@@ -27,8 +27,7 @@ class xmlrpcHandler(object):
         return TASK_SUCCESSFULLY_ADDED
     
     def refresh(self, agentId):
-        result  = self._commandInterface.getRevision()
-        print("revision: "+str(result))
+        result  = self._commandInterface.getRevision()        
         #result  = self._commandInterface.getLastUpdateTime()
         return result
     
@@ -102,7 +101,7 @@ class CommandInterface(object):
         return  self._refresh
     
     def getConfig(self, agentId):         
-        return [x for x in self._entityManager.getConfig(agentId)]
+        return {'v':self.getRevision(), 'cfg': [x for x in self._entityManager.getConfig(agentId)]}
         
     def getCurrentCommands(self,agentId=None):
         return self._commands
