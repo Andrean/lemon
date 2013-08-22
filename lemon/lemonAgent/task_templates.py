@@ -24,6 +24,7 @@ def sync(t, data):
     recv    = i.get('cfg')
     cfg = recv['cfg']
     new_revision = recv['v']
+    print("new_revision is "+str(new_revision))
     e   = core.getCoreInstance().getInstance('ENTITY_MANAGER')
     e.updateList(cfg, new_revision)
     i._logger.info("Synchronized configuration with server")

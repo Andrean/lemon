@@ -48,12 +48,18 @@ class Configuration(object):
             if item['__type'] == 'revision':
                 self.setRevision(item['__revision'])
                 continue
+            try:
+                if item['__enabled'] is False:
+                    continue
+            except KeyError:
+                continue
             self._config.append(item)
             
     def setRevision(self, new_revision):
         self._revision = new_revision
         
     def getRevision(self):
+        print("revision: "+str(self._revision))
         return self._revision
     
     def getConfig(self, tags):
