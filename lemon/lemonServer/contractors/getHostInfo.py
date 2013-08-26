@@ -25,11 +25,9 @@ poll     = {
                         'DataWidth',
                         'Caption',
                         'Description'
-                        ],
-                'logicaldisk': ['Caption',
-                                'FreeSpace',
-                                'Description']
-                 }
+                        ]
+	}
+                
 
 def get_value(poll):     
     t_cmd = "wmic {0} get {1} /value"
