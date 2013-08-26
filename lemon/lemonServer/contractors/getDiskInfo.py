@@ -11,7 +11,8 @@ poll     = {
                                 'Name',
                                 'ProviderName',
                                 'VolumeSerialNumber',
-                                'Description']
+                                'Description',
+                                'DriveType']
                  }
 
 def get_value(poll):     
