@@ -62,7 +62,7 @@ class Scheduler(lemon.BaseAgentLemon):
         schtask['__id'] = str(uuid.uuid4())
         schtask['name'] = name
         schtask['start_time']   = start_time
-        schtask['last_time']    = start_time
+        schtask['last_time']    = start_time - interval
         schtask['interval']     = interval
         schtask['task']         = {'func': func_type, 'args': kwargs}
         schtask['__revision']   = revision
