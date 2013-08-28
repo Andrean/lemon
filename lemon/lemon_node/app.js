@@ -60,6 +60,7 @@ app.get('/inventory/entities/:id', entities.entity);
 app.get('/inventory/entities', entities.show_all);
 //app.post('/inventory/entities', entities.add_entity);
 app.post('/inventory/entities/contractor', entities.upload_contractor);
+app.get('/inventory/entities/:id/contractors',entities.contractors);
 app.post('/inventory/entities/task', entities.setup_scheduler_task);
 app.post('/inventory/entities/:id', entities.get_contractors);
 app.get('/inventory/entities/:id/data', entities.get_data);

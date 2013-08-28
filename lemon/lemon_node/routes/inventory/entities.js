@@ -40,7 +40,9 @@ var init	= function(){
 	groups		= global.models.agent_manager.groups;
 	configuration		= global.models.agent_manager.configuration;
 };
-
+var error	= function(err_msg){
+	console.log('ERROR: '+err_msg) 
+}
 var entity_fn	= function(req, res){
 	if(req.xhr){
 		answer	= {'status': 'error', 'time': 0}
@@ -227,7 +229,32 @@ function _addConfigurationItem(type, content){
 					'content': content
 					})
 }
-
+var contractors		= function(req, res){
+	var id	= req.params.id
+	groups.findOne({'agent_id': id}, function(err, tag_record){
+		if(err) return error(err)
+		var tag	= tag_record.tag
+		var list	= []
+		configuration.find({'__tags': tag, '__type': 'contractor'}, function(err, c_list){
+			if(err) return error(err)
+			var it = 0
+			for(var _it in c_list){
+				var _c	= {'name': "", 'size': 0, 'added': 0, 'enabled': false, 'revision':0, 'tags':[]}
+				it	 		= c_list[_it]
+				_c.name		= it.content.name
+				_c.size		= it.content.content.length
+				_c.added	= it.__added
+				_c.enabled	= it.__enabled
+				_c.revision	= it.__revision
+				_c.tags		= it.__tags
+				list.push(_c)				
+			}
+			res.send({'response': list})
+		})
+	})
+	
+	
+}
 var uploadContractor	= function(req, res){
 	if(req.files)
 	{
@@ -465,3 +492,4 @@ exports.get_contractors		= getContractors
 exports.setup_scheduler_task	= setupTask
 exports.manage_tasks			= manageTasks
 exports.get_data			= getData
+exports.contractors			= contractors

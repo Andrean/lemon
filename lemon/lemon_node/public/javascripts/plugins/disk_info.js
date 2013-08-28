@@ -37,7 +37,7 @@
 			return ''
 		var suffix	= [' b',' Kb', ' Mb', ' Gb', ' Tb']
 		var i	= 0
-		while(bytes_size > 1024 && i < suffix.length)
+		while(bytes_size > 1024 && i < suffix.length-1)
 		{
 			bytes_size /=1024
 			++i

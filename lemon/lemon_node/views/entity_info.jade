@@ -83,6 +83,13 @@ block content
 									span MANAGE SCHEDULER TASKS
 							.panel-content
 								#mtaskset
+						.panel.border-color-blueDark
+							.panel-header.bg-color-blueDark.fg-color-white
+								p
+									i.iconi-cog-4
+									span CONTRACTORS
+							.panel-content
+								include plugins\configuration_contractors
 							
 					#frame3.frame(style="padding: 20px; ")
 						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Documentation			
@@ -94,5 +101,6 @@ block content
 	script(src='/javascripts/plugins/processes_view.js')
 	script(src='/javascripts/plugins/host_info.js')
 	script(src='/javascripts/plugins/disk_info.js')
+	script(src='/javascripts/plugins/configuration_contractors.js')
 	script(src='/javascripts/date.format.js')
 	
