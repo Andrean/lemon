@@ -53,14 +53,27 @@ poll     = {
                    'WorkingSetSize',
                    'WriteOperationCount',
                    'WriteTransferCount'
-                   ]
+                   ],
+            'win32_perfformatteddata_perfproc_process':[
+                    'Name',
+                    'PercentProcessorTime',
+                    'CreatingProcessID',
+                    'HandleCount',
+                    'IDProcess',
+                    'ThreadCount',
+                    'WorkingSet'                                     
+                    ]
+                
             }
  
 def get_value(poll):     
     t_cmd = "wmic {0} get {1} /value"
     result  = {}
     for key, vlist in poll.items():
-        cmd         = t_cmd.format(key,",".join(vlist))
+        param = key
+        if key[0:6] == 'win32_':
+            param   = 'path '+key
+        cmd         = t_cmd.format(param,",".join(vlist))
         response    = os.popen(cmd + ' 2>&1','r').read().strip().splitlines()
         result[key] = []
         line        = {}
@@ -75,8 +88,13 @@ def get_value(poll):
                     pass                    
                 line[row[0]] = row[1]
         result[key].append(line)
-    return json.dumps(result)            
     
-    
+    for p in result['win32_perfformatteddata_perfproc_process']:
+        for v in result['process']:
+            if p['IDProcess'] == v['ProcessId']:
+                for _k,_v  in p.items():
+                    v[_k] = _v
+    result.pop('win32_perfformatteddata_perfproc_process')
+    return json.dumps(result)     
 if __name__ == '__main__':
     print(get_value(poll))
