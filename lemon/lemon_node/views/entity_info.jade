@@ -1,8 +1,8 @@
 extends layout
 block head
 	title Entity #{entity.name} information
-	script(src='/javascripts/sidebar_control.js')
-	script(src='/javascripts/page_server_info.js')
+	link(rel='stylesheet', href='/stylesheets/css/plugins/processes_view.css', type='text/css')
+	link(rel='stylesheet', href='/stylesheets/css/plugins/disk_info.css', type='text/css')
 block content
 	include page-header	
 	#page2.page
@@ -22,6 +22,11 @@ block content
 								a(href="#frame2") 
 									i.iconi-stats-3
 									span Monitoring
+						li
+							.sidebar-menu-item-wrapper
+								a(href="#configure") 
+									i.iconi-tools
+									span Configuration
 						li 
 							.sidebar-menu-item-wrapper
 								a(href="#frame3")
@@ -30,10 +35,64 @@ block content
 				#panels.page-panels.frames
 					#frame1.frame.active(style="padding: 20px; ")
 						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Dashboard
+						include entity_info_dashboard
+									
 					#frame2.frame(style="padding: 20px; ")
 						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Monitoring
+						.panel.border-color-gray
+							.panel-header.bg-color-dark.fg-color-white
+								p
+									i.iconi-bars
+									span CPU LOAD
+							.panel-content
+								#container.graph-container
+									img#loader(src='/images/preloader-w8-cycle-black.gif').loader
+						.panel.border-color-gray
+							.panel-header.bg-color-dark.fg-color-white
+								p
+									i.iconi-bars
+									span PHYSICAL MEMORY LOAD
+							.panel-content								
+								#PhysicalMemoryChart.graph-container
+									img#loader(src='/images/preloader-w8-cycle-black.gif').loader
+					#configure.frame(style="padding: 20px; ")
+						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Configuration
+						div.panel.border-color-gray
+							.panel-header.bg-color-gray.fg-color-white
+								p
+									i.iconi-cog-4
+									span ADD CONTRACTOR
+							.panel-content
+								#fileset
+									div.grid(style="margin-bottom: 0px !important;")
+										each record in records
+											include entity_filerow
+								#dropZone.dropbox
+									span >>> Drop file here <<<
+						div.panel.border-color-gray
+							.panel-header.bg-color-gray.fg-color-white
+								p
+									i.iconi-cog-4
+									span AGENT SCHEDULER TASKS
+							.panel-content
+								#taskset
+						div.panel.border-color-gray
+							.panel-header.bg-color-gray.fg-color-white
+								p
+									i.iconi-cog-4
+									span MANAGE SCHEDULER TASKS
+							.panel-content
+								#mtaskset
+							
 					#frame3.frame(style="padding: 20px; ")
-						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Documentation
-			
-			
-			
+						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Documentation			
+	
+	script(src='/javascripts/sidebar_control.js')
+	script(src='/javascripts/page_server_info.js')
+	script(src='/javascripts/highcharts/highcharts.js')	
+	script(src='/javascripts/form_load_contractor.js')
+	script(src='/javascripts/plugins/processes_view.js')
+	script(src='/javascripts/plugins/host_info.js')
+	script(src='/javascripts/plugins/disk_info.js')
+	script(src='/javascripts/date.format.js')
+	

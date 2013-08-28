@@ -3,3 +3,19 @@ div(id="#{entity.id}").tile.bg-color-green.outline-color-yellow
 		h6 #{entity.entity_name}
 		br
 		p Status: 	#{entity.entity_status}
+	.brand.command-line(style="display:none")
+		.button-set.place-right
+			if entity.installed
+				button(id="btn_uninstall").tile-button
+					i.iconi-box-remove
+				button(id="btn_delete",style="display:none").tile-button
+					i.iconi-cross
+				button(id="btn_install",style="display:none").tile-button
+					i.iconi-checkmark
+			unless entity.installed
+				button(id="btn_uninstall",style="display:none").tile-button
+					i.iconi-box-remove
+				button(id="btn_delete").tile-button
+					i.iconi-cross
+				button(id="btn_install").tile-button
+					i.iconi-checkmark

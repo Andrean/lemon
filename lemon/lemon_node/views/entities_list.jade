@@ -1,11 +1,40 @@
 extends layout
 block head
-	title Entities information
-	script(src="/javascripts/server_tile.js")
+	title Entities information	
 block content
+	#confirm.modal(style="display:none")
+		.modal-header
+			button.close x
+			h3 Confirmation		
+		.modal-body
+			p Are you sure for delete this item?
+		.modal-footer
+			.button-set
+				#modal_ok.button.default OK
+				#modal_cancel.button.bg-color-gray Cancel
 	include page-header	
 	#page2.page
 		.page-region
 			.page-region-content
-				each entity in tiles
-					include server_tile
+				#default_group.group
+					.group-header
+						p
+							i.iconi-grid
+							span DEFAULT GROUP
+					.group-content					
+						each entity in tiles
+							if entity.installed
+								include server_tile
+				#trash.group
+					.group-header
+						p
+							i.iconi-grid
+							span FOUND
+					.group-content
+						each entity in tiles
+							unless entity.installed
+								include server_tile
+	#backdrop.modal-backdrop.fade.in(style="display:none")
+	script(src="/javascripts/server_tile.js")
+	script(src="/javascripts/modal.js")
+	

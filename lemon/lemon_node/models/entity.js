@@ -5,30 +5,61 @@
 
 var mongoose	= require('mongoose');
 var models	= {};
-var entities	= {};
+var entities	= [];
 var service	= {};
+var entityList	= {};
 
 // defining schemas
-var serviceSchema	= {
-		'id': String,
+var contractorSchema	= {
+		'__id': String,
 		'name': String,
-		'type': String,
-		'counter': Number,
-		'state': String
+		'result': String,
+		'args': [String],
+		'path': String,
+		'state': Number,
+		'exit_code': Number,
+		'duration_time': Number,
+		'start_time':Number
+	};
+var serviceSchema	= {
+		'__id': String,
+		'name': String
+	};
+var schedulerTaskSchema	= {
+	'__id': String,
+	'name': String,
+	'last_time': Number,
+	'start_time': Number,
+	'interval': Number,
+	'task': {}
+};
+var agentSchema		= {
+		'agent_id':	 String,
+		'state': String,
+		'start_time': Number,
+		'end_time': Number,
+		'scheduler': [schedulerTaskSchema]
 	};
 var entitySchema	= {
-		'name': String ,	
-		'entity_id':	{type: String, unique: true},
-		'status':	String,
-		'services':[serviceSchema]
+		'entity_id': String,
+		'time': 	Number,
+		'agent':	agentSchema,
+		'data':		[contractorSchema],		
+		'name':		String,
+		'install':  {type: Boolean, default: false}
 	};
+var dataSchema	={
+		'entity_id': String,
+		'time':	Number,
+		'data': [contractorSchema]
+};
 
 exports.init		= function(){
 	entities	= mongoose.model( 'entities', entitySchema, 'entities' );
-	services	= mongoose.model( 'services', serviceSchema, 'entity_services');
+	data		= mongoose.model( 'data', dataSchema, 'data');	
 };
 exports.getModels	= function(){
 	models.entities	= entities;
-	models.services	= services;
+	models.data	= data;
 	return models;
 };

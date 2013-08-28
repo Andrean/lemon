@@ -1,0 +1,35 @@
+li(id='prototype',style="display:none").process_line
+	#workingset.info-label $
+	#cpu.info-label
+	.data
+		h4 process 1
+	.process_content
+		table
+			tbody
+				tr
+					td(style='width: 170px;') Имя процесса
+					td(style='width: 300px')#process_name
+				tr
+					td Местоположение файла
+					td#executable_path
+				tr
+					td Командная строка
+					td#command_line
+				tr
+					td Идентификатор процесса
+					td#ProcessId
+				tr
+					td Статус
+					td#Status
+				tr
+					td Количество потоков
+					td#ThreadCount				
+				tr
+					td Размер рабочей области
+					td#WorkingSetSize
+				tr
+					td Количество операций на запись
+					td#WriteOperationCount
+				tr
+					td Количество операций на чтение
+					td#ReadOperationCount

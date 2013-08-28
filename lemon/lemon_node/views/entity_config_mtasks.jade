@@ -1,0 +1,22 @@
+ul.listview.fluid.iconic.panel-line
+	each task in _mtasks
+		li(id="mtaskrow#{task.id}")
+			.task2	#{task.name}
+			unless task.deleted
+				button(id="btn_delete_task#{task.id}").bg-color-red
+					span delete
+				div(id="removing_bar#{task.id}",style="display:none;").barwrap
+					.barBg
+						.barTaskRemove
+							.barFill
+						.progress-text
+							.span removing
+			else
+				button(id="btn_delete_task#{task.id}",style="display:none;").bg-color-red
+					span delete
+				div(id="removing_bar#{task.id}",style="display: block;").barwrap
+					.barBg
+						.barTaskRemove
+							.barFill
+						.progress-text
+							.span removing

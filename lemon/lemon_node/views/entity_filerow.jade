@@ -1,0 +1,62 @@
+div(id="row#{record.row_number}").row.filerow
+	div(id="row_header#{record.row_number}").filerow_header
+		if record.install
+			div(id="installed#{record.row_number}").installed
+					i.iconi-checkmark
+		else
+			div(id="not_installed#{record.row_number}").not_installed
+					i.iconi-question
+		div(id="name" +"#{record.row_number}").filename.span2
+			a #{record.name}
+		div(id="size" +"#{record.row_number}").filesize.span2
+			a #{record.size}
+		button(id="btn" + "#{record.row_number}"+"_delete").bg-color-red
+			i.iconi-cross
+			span delete
+		unless record.install
+			button(id="btn" + "#{record.row_number}"+"_install").default
+				i.iconi-checkmark
+				span	install
+	div(id="form_scheduler#{record.row_number}").form_scheduler
+		form(id="form#{record.row_number}",method="post", action="/inventory/entities/task")
+			fieldset
+				legend setup scheduler task of this contractor
+				.grid
+					.row.span5
+						label.input-control.span2.input-label 
+							span	Task name
+						.input-control.text.span3
+							if record.task_name
+								input(id="form#{record.row_number}_taskname",type="text", name="task_name", placeholder="task name",required,maxlength="25",value="#{record.task_name}")
+							else
+								input(id="form#{record.row_number}_taskname",type="text", name="task_name", placeholder="task name",required,maxlength="25")
+							button.btn-clear
+						.input-wrap.span2
+							label.input-control.checkbox
+								input(id="check_onetime#{record.row_number}",type="checkbox")
+								span.helper One time execute
+					div(id="form_row_interval#{record.row_number}").row.span5
+						label.input-control.span2.input-label 
+							span Interval
+						.input-control.span3
+							input(id="form#{record.row_number}_interval",type="number", name="interval", placeholder="interval in seconds",required,min="1",max="36000000")							
+					div(id="form_row_starttime#{record.row_number}").row.span5
+						label.input-control.span2.input-label.disabled
+							span Start time
+						.input-control.span3
+							input(id="form#{record.row_number}_starttime",type="datetime-local", name="start_time", placeholder="start time",disabled)							
+							input(id="form#{record.row_number}_contractor",type="hidden", name="contractor", value="#{record.name}")
+					.row.span5
+						if record.task_name
+							.input-control.span3
+								input(id="submit#{record.row_number}",type="submit", value="change").default
+							div(id="disable_task_wrap#{record.row_number}").input-control.span3
+								input(id="disable_task#{record.row_number}",type="button", value="disable").bg-color-orange
+						else
+							.input-control.span3
+								input(id="submit#{record.row_number}",type="submit", value="setup").default
+							div(id="disable_task_wrap#{record.row_number}").input-control.span3(style="display:none")
+								input(id="disable_task#{record.row_number}",type="button", value="disable").bg-color-orange
+		
+		
+			

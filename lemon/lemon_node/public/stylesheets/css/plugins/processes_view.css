@@ -1,0 +1,34 @@
+ul.process li{
+	width: 100% !important;	
+}
+li.process_line{
+	display: block;
+}
+li.process_line.on{
+	min-height: 200px;
+}
+div.info-label {
+	position: relative;
+	float: right;
+	padding: 5px;
+	margin: -14px 1px 0 0px;
+	text-align: center;
+	width: 150px;
+	display: block;
+	font-size: 9pt;
+	color: white;
+	background-color: #2d89ef;
+	
+}
+.process_line .process_content {
+	display: none;
+	position: relative;
+	min-height: 200px;
+	margin-top: 20px;
+	width: 98%;
+	word-wrap: break-word;
+
+}
+.process_line.on .process_content {
+	display: block;
+}

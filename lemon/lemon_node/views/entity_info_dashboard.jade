@@ -1,0 +1,31 @@
+#info_panel.panel.border-color-purple
+	.panel-header.bg-color-purple
+		p
+			i.iconi-pencil
+			span ENTITY INFORMATION
+	.panel-content
+		include plugins\host_info
+div.panel.border-color-blueDark
+	div.panel-header.bg-color-blueDark
+		p
+			i.iconi-pencil
+			span PROCESSES
+	div.panel-content
+		include plugins\processes_view.jade	
+#disk_info_panel.panel.border-color-blueDark
+	.panel-header.bg-color-blueDark
+		p
+			i.iconi-pencil
+			span DISKS
+	.panel-content
+		include plugins\disk_info
+div.panel.border-color-dark
+	.panel-header.bg-color-gray.fg-color-white
+		p
+			i.iconi-bars
+			span STATISTICS
+	.panel-content
+		.grid
+		-	var ent	= entity
+				include entity_stat
+
