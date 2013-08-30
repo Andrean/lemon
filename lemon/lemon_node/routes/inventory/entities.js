@@ -482,6 +482,11 @@ var getData	= function(req, res){
 	}
 }
 
+var test = function(req, res){
+	var id 	= req.params.id
+	res.render('test_page', {bg_color: 'bg-color-purple'})
+}
+
 exports.init	= init;
 exports.group	= entity_group;
 exports.entity	= entity_fn;
@@ -493,3 +498,4 @@ exports.setup_scheduler_task	= setupTask
 exports.manage_tasks			= manageTasks
 exports.get_data			= getData
 exports.contractors			= contractors
+exports.test				= test

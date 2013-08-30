@@ -450,16 +450,18 @@ background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.15) 25%, transpa
 }
 
 .panel-header  p > [class^="iconi-"]{
-	font-size: 16pt;
+	font-size: 22px;
 	width: 20px;
 	display: inline-block;
 	margin-right: 5px;
+	margin-top: -2px;
 	text-align:center;
 
 }
 .panel-header  p > span {
-	position: relative;
-	top: -3pt;
+	position: absolute;
+	top: 5px;
+	margin-left: 5px;
 
 }
 .panel-content{
