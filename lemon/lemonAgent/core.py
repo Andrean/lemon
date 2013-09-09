@@ -16,7 +16,8 @@ import uuid
 import threading
 import time
 
-
+# core version
+VERSION     = '0.0.1'
 # configuration base parameters
 CONFIG_PATH = 'conf'
 CONFIG_FILE = CONFIG_PATH + '/agent.conf'
@@ -49,7 +50,7 @@ def getTemplate():
     return t
 
 def getStatTemplate():
-    t   = {'agent': {'__id': None, 'start_timestamp': None, 'threads': 0}}
+    t   = {'agent': {'__id': None, 'start_timestamp': None, 'threads': 0, 'instances': [], 'version': 0}}
     return t
 
 class Core(object):
@@ -65,6 +66,7 @@ class Core(object):
         self._config     = {}
         self.__initCoreLogger()
         self._corelogger.info('core started')
+        self.agentVersion   = 0
     
     def __initCoreLogger(self):
         name    = 'CORE'
@@ -173,6 +175,16 @@ class Core(object):
             
     def updateStat(self):
         self._updateStat()
+    
+    def getStat(self):        
+        self._stat['agent']['instances'] = []
+        for k, v in self._instances.items():
+            self._stat['agent']['instances'].append( {'name': k,'state': v['state'], 'threads': v['threads'], 'exceptions':v['exceptions'],'errors': v['errors']} )
+        self._stat['agent']['version']  = self.agentVersion
+        return self._stat
+        
+    def renewVersion(self, _version):
+        self.agentVersion = _version
         
     def start(self):
         self._loadConfig()

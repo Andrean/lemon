@@ -56,6 +56,7 @@ def updateStat(t, kwargs):
         pass
 @add    
 def sendSelfStat(t, kwargs):
+    c       = core.getCoreInstance()
     agentID = t._parent.agentID
     i       = t._parent.interfaceInstance
     cLayer  = t._parent.contractorLayer
@@ -65,7 +66,9 @@ def sendSelfStat(t, kwargs):
     ip      = socket.gethostbyname(socket.gethostname())
     schedulerStat   = scheduler.getScheduledTask()
     info['agent']['scheduler']  = schedulerStat
-    info['agent']['ip'] = ip    
+    info['agent']['ip'] = ip
+    info['agent']['version'] = (c.getStat())['agent']['version']
+    info['agent']['instances']  = (c.getStat())['agent']['instances']
     info['data']    = c_data
     i.post(info)
     

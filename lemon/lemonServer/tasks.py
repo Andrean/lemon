@@ -23,7 +23,7 @@ def getSchemaContractor():
     return t
 
 def getSchemaAgent():
-    t         = {'agent_id': None,'state': None, 'start_time':0, 'end_time':None, 'scheduler': {}}
+    t         = {'agent_id': None,'state': None, 'start_time':0, 'end_time':None, 'scheduler': {},'version':"",'instances':{}}
     return t
 
 def getSchemaEntity(_id):
@@ -41,6 +41,7 @@ def add(f):
     
 @add
 def storeAgentData(tm, dict_data):
+    print("STORE AGENT DATA")
     agent_data  = dict_data['agent']
     agent_id    = agent_data['__id']
     entity_id   = agent_id
@@ -56,13 +57,20 @@ def storeAgentData(tm, dict_data):
     s   = []
     for task in scheduler.values():
         s.append(task)
-    item['agent']   = {'agent_id': agent_id,'state': state, 'start_time':start_time, 'end_time':None, 'scheduler': s }
+    item['agent']   = {'agent_id': agent_id,
+                       'state': state, 
+                       'start_time':start_time, 
+                       'end_time':None, 
+                       'scheduler': s,
+                       'version': agent_data['version'],
+                       'instances': agent_data['instances'] }
     st.save(item)
     
     
         
 @add
 def storeCurrentData(tm, dict_data):
+    print("STORE CURRENT DATA")
     data        = dict_data['data']
     timestamp   = dict_data['time']
     entity_id   = dict_data['agent']['__id']

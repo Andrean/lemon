@@ -32,8 +32,8 @@ class ThreadPool(threading.Thread):
         if self._taskQueue.empty() is True:
             time.sleep(0.05) 
         else:
-            n   = self._getFreeThread()
             task    = self._taskQueue.get()
+            n   = self._getFreeThread()
             self._start_task(n, task)
                 
     def _start_task(self, thread_num, task):

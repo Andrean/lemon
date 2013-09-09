@@ -94,6 +94,4 @@ class EntityManager(lemon.BaseAgentLemon):
                     self.scheduler.remove(item['name'])
             self._revision = _revision
         except Exception as e:
-            self._logger.exception(e)
-            
-           
+            self._logger.exception(e)            
