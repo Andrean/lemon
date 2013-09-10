@@ -3,7 +3,7 @@ Created on 08.07.2013
 
 @author: vau
 '''
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 
 import core
 import time
@@ -36,8 +36,8 @@ if __name__ == '__main__':
         #                                                        #
         ##########################################################        
         """)
-        while True:
-            time.sleep(1)           
+        while c.is_alive():
+            time.sleep(0.1)           
     except KeyboardInterrupt:
         c.stop()
         

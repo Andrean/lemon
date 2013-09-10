@@ -25,7 +25,7 @@ class EntityManager(lemon.BaseServerComponent):
         self._setReady()
         while(self._running):
             self.update()
-            time.sleep(1)
+            time.sleep(4)
             
     def getConfig(self, agent_id):
         tags    = self.tagManager.getTags(agent_id)

@@ -60,6 +60,7 @@ class Core(object):
 
 
     def __init__(self):
+        self._running    = False
         self._stat       = {}
         self._instances  = {}
         self._loggers    = {}
@@ -186,7 +187,11 @@ class Core(object):
     def renewVersion(self, _version):
         self.agentVersion = _version
         
+    def is_alive(self):
+        return self._running
+        
     def start(self):
+        self._running = True
         self._loadConfig()
         self._initStat()
         self._initLoggers()
@@ -197,6 +202,7 @@ class Core(object):
         
     def stop(self):
         self.terminateInstances()
+        self._running   = False
         
     
     

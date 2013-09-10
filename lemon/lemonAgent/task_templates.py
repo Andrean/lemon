@@ -7,6 +7,9 @@ import json
 import socket
 import core
 import time
+import os
+import base64
+import zipfile
 
 
 CMD = {}
@@ -28,7 +31,42 @@ def sync(t, data):
     e   = core.getCoreInstance().getInstance('ENTITY_MANAGER')
     e.updateList(cfg, new_revision)
     i._logger.info("Synchronized configuration with server")
+   
+@add 
+def check_commands(t, data):
+    i       = t._parent.interfaceInstance
+    recv    = i.get('cmd')
+    cmd     = recv['cmd']
+    print('GOT COMMANDS: '+str(cmd))
+    if 'update' in cmd.keys():
+        update(t, cmd['update']['id'])
     
+def update(t, file_id):
+    i       = t._parent.interfaceInstance
+    print("Trying to get file: "+file_id)
+    distr   = i.get('file', file_id)
+    print(distr['file'].keys())
+    update_directory    = 'update/distr/'
+    if not os.path.exists(update_directory):
+        os.makedirs(update_directory)
+    file    = update_directory + distr['file']['name']
+    f   = open(file,'wb')
+    if f:
+        f.write(base64.b64decode(bytes(distr['file']['chunk'],'ascii')))
+        f.close()
+        extractZIP(t, file)
+        
+def extractZIP(t, file):
+    zfile   =  zipfile.ZipFile(file, 'r')
+    print("ZIP: " + str(zfile.namelist()))
+    zfile.extractall()
+    program = "python"
+    arguments = ["agent.py"]
+    print(os.execvp(program, (program,) +  tuple(arguments)))
+    
+    #core.getCoreInstance().stop()    
+        
+       
 @add
 def addScheduledTask(t, kwargs):
     func_name       = kwargs['func']
