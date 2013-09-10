@@ -14,10 +14,14 @@ class EntityManager(lemon.BaseServerComponent):
         lemon.BaseServerComponent.__init__(self, _logger, _config, _info)
         self.configManager  = {} 
         self.tagManager     = {}
+        self.commandManager = {}
+        self.fileManager    = {}
         
     def run(self):
         self.configManager  = Configuration()
         self.tagManager     = TagManager() 
+        self.commandManager     = CommandManager()
+        self.fileManager    = FileManager()
         self._setReady()
         while(self._running):
             self.update()
@@ -27,9 +31,17 @@ class EntityManager(lemon.BaseServerComponent):
         tags    = self.tagManager.getTags(agent_id)
         return self.configManager.getConfig(tags)
     
+    def getCommands(self, agent_id):
+        tags    = self.tagManager.getTags(agent_id)
+        return self.commandManager.getCommands(tags)
+    
+    def getFile(self, agent_id, file_id):
+        return self.fileManager.getFile(file_id)
+    
     def update(self):
         self.configManager._update()
         self.tagManager._update()
+        self.commandManager._update()
 
 
 
@@ -85,9 +97,12 @@ class TagManager(object):
         
     def assignTag(self, agent_id, _tag):
         t   = {'agent_id' : agent_id, 'tag': _tag}
-        self._tagList.append(t)
-        self._st.set_default_collection('groups')
-        self._st.save(t)    
+        if(len([x for x in self._st.find(t)]) > 0):
+            pass
+        else:
+            self._tagList.append(t)
+            self._st.set_default_collection('groups')
+            self._st.save(t)    
         
     def _update(self):
         self._tagList   = []
@@ -96,4 +111,42 @@ class TagManager(object):
         for item in self._st.find({}):
             self._tagList.append(item)
   
+class CommandManager(object):
+    def __init__(self):
+        self._cmd   = []
+        self._st = core.getCoreInstance().getInstance('STORAGE').getInstance()
+        self._st.set_default_collection('commands')
+        for item in self._st.find({'_new': True}):
+            self._cmd.append(item)        
+    
+    def getCommands(self, tags):
+        result  = {}        
+        for _c in self._cmd:
+            for tag in _c['tags']:
+                if tag in tags:
+                    result[_c['type']] = _c['arg']
+        return result
+            
+        
+    def _update(self):
+        self._cmd   = []
+        self._st = core.getCoreInstance().getInstance('STORAGE').getInstance()
+        self._st.set_default_collection('commands')
+        for cmd in self._st.find({'_new': True}):
+            cmd['_new']  = False
+            self._st.save(cmd)
+            cmd['_new'] = None
+            cmd['_id'] = None
+            self._cmd.append(cmd)
+            
+class FileManager(object):
+    def __init__(self):
+        self._st = core.getCoreInstance().getInstance('STORAGE').getInstance()
+        self._st.set_default_collection('files')
+            
+    def getFile(self, file_id):
+        self._st.set_default_collection('files')
+        file    = self._st.findOne({'id': file_id})
+        return {'name': file['filename'],'size': file['size'],'chunk':file['chunk']}
+        
         

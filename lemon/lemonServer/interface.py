@@ -36,6 +36,13 @@ class xmlrpcHandler(object):
         if key == 'cfg':
             result  = self._commandInterface.getConfig(agentId)
             return json.dumps(result)
+        if key == 'cmd':
+            result  = self._commandInterface.getCMD(agentId)            
+            return json.dumps(result)
+        if key == 'file':
+            result = self._commandInterface.getFile(agentId, args[0])
+            return json.dumps(result)
+                
         if key == 'new':
             result = self._commandInterface.getNewCommands(args[0], agentId)
         elif key == 'all':
@@ -103,6 +110,12 @@ class CommandInterface(object):
     def getConfig(self, agentId):         
         return {'v':self.getRevision(), 'cfg': [x for x in self._entityManager.getConfig(agentId)]}
         
+    def getCMD(self, agentId):
+        return {'cmd': self._entityManager.getCommands(agentId)}
+    
+    def getFile(self, agentId, file_id):
+        return {'file': self._entityManager.getFile(agentId, file_id)}
+    
     def getCurrentCommands(self,agentId=None):
         return self._commands
     

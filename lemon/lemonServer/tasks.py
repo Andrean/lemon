@@ -116,7 +116,8 @@ def refreshServerStat(tm, *args):
             stat[k] = str(v)
         doc = {'component': name, 'stat': stat}
         st.update(q, doc)
-    
+
+      
 @add
 def updateContractors(tm, cfg):
     pass
