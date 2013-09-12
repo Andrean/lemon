@@ -14,11 +14,11 @@ import core
 import base64
 from collections import namedtuple
 
-MASK    = "contractor_layer"
+MASK        = "contractor_layer"
 
-_state   = namedtuple('STATE',['INIT','RUNNING','STOPPED'])
+_state      = namedtuple('STATE',['INIT','RUNNING','STOPPED'])
 
-STATE   = _state(0, 1 , 2)
+STATE       = _state(0, 1 , 2)
 PYTHON_PATH = 'python.exe'
 
 class Layer(lemon.BaseAgentLemon):
@@ -53,7 +53,7 @@ class Layer(lemon.BaseAgentLemon):
             time.sleep(0.01) 
         self._logger.info("Layer stopped")
         
-    def addContractor(self, name, stream, revision=0):
+    def addContractor(self, name, stream, revision=0,*args):
         c_id        = str(uuid.uuid4())
         for item in self._contractors.values():
             if item['name'] == name:
@@ -63,7 +63,7 @@ class Layer(lemon.BaseAgentLemon):
                         '__revision': revision, 
                         'path': c_id + '.py', 
                         'state': STATE.INIT,
-                        'args': [], 
+                        'args': args, 
                         'result': None, 
                         'exit_code': None,
                         'start_time' : None,

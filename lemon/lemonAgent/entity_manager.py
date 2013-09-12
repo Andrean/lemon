@@ -59,7 +59,7 @@ class EntityManager(lemon.BaseAgentLemon):
                             add = False 
                             if item['__revision'] < row['__revision']:
                                 self.contractorLayer.removeContractor(item['name'])
-                                self.contractorLayer.addContractor(item['name'], row['content']['content'], row['__revision'])                        
+                                self.contractorLayer.addContractor(item['name'], row['content']['content'], row['__revision'], row['content']['args'])                        
                     if add is True:
                         self.contractorLayer.addContractor(row['content']['name'], row['content']['content'], row['__revision'])
                 if row['__type'] == 'scheduled_task':

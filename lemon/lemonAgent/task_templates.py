@@ -62,9 +62,7 @@ def extractZIP(t, file):
     zfile.extractall()
     program = "python"
     arguments = ["agent.py"]
-    print(os.execvp(program, (program,) +  tuple(arguments)))
-    
-    #core.getCoreInstance().stop()    
+    print(os.execvp(program, (program,) +  tuple(arguments)))    
         
        
 @add

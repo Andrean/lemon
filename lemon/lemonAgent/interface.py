@@ -59,6 +59,8 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
                 self._logger.exception(e)
                 self._reconnect()
                 self._put(method,args,callback)
+            except xmlrpc.client.Fault as e:
+                self._logger.exception(e)
         req['ready']    = True
     
     def _createConnection(self, addr, port):
