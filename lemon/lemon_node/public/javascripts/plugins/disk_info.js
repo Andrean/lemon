@@ -7,6 +7,7 @@
 		ul.find("li[id^='disk_']").detach()
 		$.get(url, function(obj){
 			var disks = jQuery.parseJSON(obj.data.getDiskInfo.value)
+			if(!disks) return
 			disks.time	= obj.data.getDiskInfo.time
 			ul.find("#loader").hide()
 			for(var _d in disks.logicaldisk){
@@ -17,7 +18,7 @@
 				li_item.find('#Description').text(d.Description)
 				if(d.DriveType != 5 )
 					li_item.find('#Size').text(formatSize(d.FreeSpace) + " free of " + formatSize(d.Size))
-				li_item.find('#bar_freespace').css('width',((d.FreeSpace / d.Size)*100) + '%')
+				li_item.find('#bar_freespace').css('width',(((d.Size - d.FreeSpace) / d.Size)*100) + '%')
 				li_item.find('.icon').append($('<img src="'+getDriveType(d.DriveType)+'"/>'))
 				li_item.show()
 				li_item.appendTo(ul)

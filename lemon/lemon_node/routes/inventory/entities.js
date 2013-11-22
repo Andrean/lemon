@@ -39,9 +39,16 @@ var init	= function(){
 	tasks		= global.models.agent_manager.tasks;
 	groups		= global.models.agent_manager.groups;
 	configuration		= global.models.agent_manager.configuration;
+	collFiles		= global.models.files.files;
+	collCommands	= global.models.agent_manager.commands;
 };
 var error	= function(err_msg){
 	console.log('ERROR: '+err_msg) 
+	
+}
+function _error(err_msg, response){
+	console.log('ERROR: '+err_msg) 
+	response.send(500, {error: err_msg})
 }
 var entity_fn	= function(req, res){
 	if(req.xhr){
@@ -107,7 +114,7 @@ var entity_fn	= function(req, res){
 			else{
 				entity_result = result;
 				records	= [];
-				res.render('entity_info', {bg_color: 'bg-color-purple', entity: result, records: records});
+				res.render('entity_info', {bg_color: 'bg-color-blueDark', entity: result, records: records});
 			}
 		});
 	}
@@ -177,7 +184,7 @@ var show_allEntities	= function( req, res ){
 			tiles.push(tile);			
 		}
 		res.render('entities_list', {
-			bg_color: "bg-color-purple",
+			bg_color: "bg-color-blueDark",
 			tiles: tiles
 		});
 	});
@@ -201,60 +208,150 @@ function updateRevision(){
 		}
 	})
 }
-function _createContractor(name, data){
+function _createContractor(name, data, args){
 	return {
 		'id' : String(uuid.v1()),
 		'name':name,
-		'content': data		
+		'content': data,
+		'args': args
 	}
 }
-function _createScheduledTask(name, interval, start_time, _contractor){
+function _createScheduledTask(s){
 	return {
 		'id': String(uuid.v1()),
-		'name':	name,
-		'func': 'runContractor',
-		'interval': parseInt(interval),
-		'start_time': 0,
-		'kwargs': {'contractor': _contractor}
+		'name':	s.name,
+		'func': s.func,
+		'interval': parseInt(s.interval || 0),
+		'start_time': parseInt(s.start || 0),
+		'description': s.description || "",
+		'kwargs': {'contractor': s.contractor}
 	}
 }
-function _addConfigurationItem(type, content){
+function _addConfigurationItem(type, content, tag){
 	updateRevision()
+	if(!tag) tag = 'default'
 	return new configuration({
 					'__id' : String(uuid.v1()),
 					'__type': type,
 					'__added': (new Date()).getTime(),
-					'__tags': ['default'],
+					'__tags': [tag],
 					'__enabled': false,
 					'content': content
 					})
 }
-var contractors		= function(req, res){
+function _upload(type, item, tag){
+	
+}
+
+var contractors_get		= function(req, res){
 	var id	= req.params.id
 	groups.findOne({'agent_id': id}, function(err, tag_record){
 		if(err) return error(err)
 		var tag	= tag_record.tag
 		var list	= []
 		configuration.find({'__tags': tag, '__type': 'contractor'}, function(err, c_list){
-			if(err) return error(err)
-			var it = 0
-			for(var _it in c_list){
-				var _c	= {'name': "", 'size': 0, 'added': 0, 'enabled': false, 'revision':0, 'tags':[]}
-				it	 		= c_list[_it]
-				_c.name		= it.content.name
-				_c.size		= it.content.content.length
-				_c.added	= it.__added
-				_c.enabled	= it.__enabled
-				_c.revision	= it.__revision
-				_c.tags		= it.__tags
-				list.push(_c)				
-			}
-			res.send({'response': list})
+			if(err) return error(err, res)
+			entities.findOne({'entity_id': id}, function(err, _entity){
+				if(err) return error(err, res)
+				var data	= _entity.data
+				var it = 0
+				var _d	= {}
+				for(var _it in data){
+					it	= data[_it]
+					_d[it.name] = it
+				}
+				for(var _it in c_list){
+					var _c	= {'name': "", 'size': 0, 'added': 0, 'enabled': false, 'revision':0, 'tags':[]}
+					it	 		= c_list[_it]
+					_c.name		= it.content.name
+					_c.size		= it.content.content.length
+					_c.added	= it.__added
+					_c.enabled	= it.__enabled
+					_c.revision	= it.__revision
+					_c.tags		= it.__tags
+					_c.data		= _d[_c.name]
+					list.push(_c)				
+				}
+				res.send({'response': list})
+			})
+			
 		})
 	})
 	
 	
 }
+var contractors_post	= function(req, res){
+	var files	= req.files
+	var del		= req.body.delete
+	var name	= req.body.name
+	var args	= req.body.args || []
+	var change	= req.body.change
+	var enable	= req.body.enable
+	var update	= req.body.update
+	var type	= 'contractor' 
+	var status	= {'status': 'error'}
+	updateRevision()
+	if(change)
+		configuration.findOneAndUpdate({'__type': 'contractor', 'content.name': name}, {'__enabled': enable}, function(err, result){
+			if(err){error(err); res.send(status);return;}
+			status.status='ok'
+			res.send(status)
+		})
+	if(files)
+	{
+		var file	= files.file
+		var name	= file.name.match(/\w+/)[0]
+		fs.readFile(file.path, function(err, data){
+			if(err){ error(err); res.send(status); return }
+			configuration.find({'__type': 'contractor', 'content.name': name}, function(err, results){
+				if(err){ error(err); res.send(status); return }
+				if(results.length < 1){
+					var c	= _addConfigurationItem(
+												'contractor',
+												_createContractor(name, String(data), args)
+											)
+					c.save(function(err, result){
+						if(err){ error(err); res.send(status); return;}
+						status.status	= 'ok'
+						status.name	= result.content.name
+						status.size	= computeSize(result.content.content.length)
+						res.send(status)
+					})
+				}
+				else
+					if(!update)
+						res.send(status)
+					else{
+						if(results.length == 1){
+							var item = results[0]
+							item.content.content	= String(data)
+							item.__revision	= item.__revision + 1
+							item.save(function(err, r){
+								if(err) { error(err); res.send(status); return;}
+								status.status = 'ok'
+								status.name	= r.content.name
+								status.revision	= r.__revision
+								status.size	= computeSize(r.content.content.length)
+								res.send(status)								
+							})
+						}
+					}
+			})			
+		})
+	}
+	if(del){
+		if(name)
+		{
+			configuration.remove({'__type': 'contractor', 'content.name': name}, function(err, result){
+				if(err) return error(err);
+				status.deleted = true
+				status.status  = 'ok'
+				res.send(status)
+			})
+		}
+	}
+}
+
 var uploadContractor	= function(req, res){
 	if(req.files)
 	{
@@ -392,6 +489,64 @@ var setupTask	= function(req, res){
 		})
 	}
 }
+var tasks		= function(req, res){
+	if(req.xhr){
+		var id	= req.params.id
+		var install		= req.body.install
+		var disable		= req.body.disable
+		var enable		= req.body.enable
+		var uninstall	= req.body.uninstall
+		var settings	= {}
+		settings.name			= req.body.name
+		settings.interval		= req.body.interval
+		settings.start			= req.body.start
+		settings.contractor		= req.body.contractor
+		settings.description	= req.body.description
+		settings.func			= req.body.func
+		var response	= {'status': 'error'}
+		if(install){
+			configuration.findOne({'__type':'scheduled_task','content.name':settings.name}, function(err, result){
+				if(err) return error(err, res);
+				if(result){
+					response.status='alert'
+					response.msg='task is exists'
+					res.send(response)
+					return
+				}
+				var task	= _addConfigurationItem(	'scheduled_task',
+														_createScheduledTask(settings),
+														id
+								)
+				task.__enabled	= true
+				task.save(function(err, result){
+					if(err) return error(err, res);
+					response.status	= 'ok'
+					res.send(response)
+				})
+			})
+			return
+		}
+		if(disable || enable){
+			configuration.findOneAndUpdate({'__type':'scheduled_task','content.name':settings.name},{'__enabled': enable || false}, function(err, result){
+				if(err) return error(err, res);
+				response.status='ok'
+				res.send(response)
+			})
+			return
+		}
+		if(uninstall){
+			configuration.remove({'__type':'scheduled_task','content.name':settings.name}, function(err, result){
+				if(err) return error(err ,res)
+				response.status	= 'ok'
+				res.send(response)
+			})
+			return
+		}
+		
+		return
+	}
+	res.send('not XmlHTTPRequest')
+}
 var manageTasks	= function(req, res){
 	deleteID	= req.query.delete
 	installID	= req.query.install
@@ -431,10 +586,10 @@ var manageTasks	= function(req, res){
 				console.log(err)
 			}
 			else{
-				_mtasks	= []
 				for(var t in results)
-					_mtasks.push(results[t]['content'])					
-				res.render('entity_config_mtasks', {_mtasks: _mtasks})
+					results[t]['_id'] = null
+				res.send({'list':results})
+				//res.render('entity_config_mtasks', {_mtasks: _mtasks})
 			}
 		})
 	}
@@ -446,23 +601,25 @@ function getDateTime(milliseconds){
 }
 
 var getData	= function(req, res){
-	var contractorsList	= req.query.contractor,
-	contractors	= contractorsList.split(",")
+	var contractorsList	= req.query.contractor	
 	var id		= req.params.id
 	var from	= req.query.from
 	if(id){
-		if(from){
+		if(contractorsList){
+			var contractors	= contractorsList.split(",")
+			if(from){
+				
+				data.find({'entity_id': id, 'data' : {$elemMatch: {'name': { $in: contractors}, 'start_time': {$gt : from}}}}, function(err, results){
+					if(err)
+						console.log(err)
+					else {					
+						var send = {'data': results}
+						res.send(send)
+					}
+				})
+				return
+			}
 			
-			data.find({'entity_id': id, 'data' : {$elemMatch: {'name': { $in: contractors}, 'start_time': {$gt : from}}}}, function(err, results){
-				if(err)
-					console.log(err)
-				else {					
-					var send = {'data': results}
-					res.send(send)
-				}
-			})
-		}
-		else{
 			entities.findOne({'entity_id': id}, function(err, result){
 				if(err)
 					console.log(err)
@@ -478,7 +635,14 @@ var getData	= function(req, res){
 					res.send(answer)					
 				}
 			})	
-		}
+			return			
+		}		
+		entities.findOne({'entity_id': id}, function(err, result){
+			if(err) return error(err, res);
+			var data	= result.data
+			if(data)
+				res.send({'data':data})
+		})
 	}
 }
 
@@ -487,15 +651,82 @@ var test = function(req, res){
 	res.render('test_page', {bg_color: 'bg-color-purple'})
 }
 
-exports.init	= init;
-exports.group	= entity_group;
-exports.entity	= entity_fn;
-exports.add_entity	= entity_add;
-exports.show_all	= show_allEntities;
+var agent_GET	= function(req, res){
+	var id	= req.params.id
+	entities.findOne({'entity_id': id}, function(err, _e){
+		if(err) return _error(err, res);
+		res.json({'response': _e.agent})		
+	})
+}
+var agent_POST	= function(req, res) {
+	var id	= req.params.id
+	var files	= req.files
+	var result	= {'status': 'error'}
+	if(files){
+		var file	= files.file
+		fs.readFile(file.path, function(err, data){
+			if(err) return error(err, res);
+			var base64file	= data.toString('base64')
+			var upFile	= new collFiles({
+				'filename': file.name,
+				'chunk': base64file,
+				'size': file.size,
+				'meta': 0,
+				'length': 1,
+				'id': String(uuid.v1())
+			})
+			upFile.save(function(err, _r){
+				if(err) return error(err, res)
+				groups.find({'agent_id': id}, function(err, _groups){
+					if(err) return error(err, res)
+					var tags	= []
+					for(var i in _groups)
+						tags.push(_groups[i].tag)
+					var updateCommand = new collCommands({
+						'type':	'update',
+						'tags': tags,
+						'arg': {'id': _r.id}						
+					})
+					updateCommand.save(function(err, _saved){
+						if(err) return error(err, res)
+						result.status="ok"					
+						res.send(result)
+					})
+				})
+			})
+		})
+		
+		
+		
+		res.send(result)
+	}
+}
+function tags_GET(req, res){
+	var id	= req.params.id
+	groups.find({'agent_id':id}, function(err, tags){
+		if(err) return error(err, res);
+		var data= []
+		for(var i in tags){
+			data.push(tags[i].tag)
+		}
+		res.send({'tags': data})
+	})
+}
+
+exports.init				= init;
+exports.group				= entity_group;
+exports.entity				= entity_fn;
+exports.add_entity			= entity_add;
+exports.show_all			= show_allEntities;
 exports.upload_contractor	= uploadContractor
 exports.get_contractors		= getContractors
-exports.setup_scheduler_task	= setupTask
-exports.manage_tasks			= manageTasks
+exports.setup_scheduler_task= setupTask
+exports.manage_tasks		= manageTasks
+exports.tasks				= tasks
 exports.get_data			= getData
-exports.contractors			= contractors
+exports.contractors_get		= contractors_get
+exports.contractors_post	= contractors_post
 exports.test				= test
+exports.agent_get			= agent_GET
+exports.agent_post			= agent_POST
+exports.get_tags			= tags_GET

@@ -1,0 +1,38 @@
+extends layout
+block head
+	title Entities information	
+	link(rel='stylesheet', href='/stylesheets/css/plugins/configuration_contractors.css', type='text/css')
+	link(rel='stylesheet', href='/stylesheets/css/plugins/agent.css', type='text/css')	
+	link(rel='stylesheet', href='/stylesheets/css/plugins/scheduler.css', type='text/css')	
+	link(rel='stylesheet', href='/stylesheets/css/plugins/tags.css', type='text/css')
+block content
+	include page-header
+	.page
+		.page-region
+			.page-content
+				include plugins/tags
+				include agent
+				include plugins/configuration_contractors
+				include plugins/scheduler
+				div(id="myModal",tabindex="-1",role="dialog",aria-labelledby="myModalLabel",aria-hidden="true").modal.fade
+					.modal-dialog
+						.modal-content
+							.modal-header
+								button(type="button",data-dismiss="modal",aria-hidden="true").close &times;
+								h4.modal-title Modal title
+							.modal-body
+								...
+							.modal-footer
+								button(type="button",data-dismiss="modal").btn.btn-default Close 
+								button(type="button").btn.btn-primary Save changes						
+				a(data-toggle="modal",data-target="#myModal").btn.btn-primary.btn-lg.fg-color-white	Launch demo modal
+	script(src='/javascripts/date.format.js')
+	script(src='/javascripts/lemon_pop.js')
+	script(src='/javascripts/bootstrap/tooltip.js')
+	script(src='/javascripts/bootstrap/modal.js')
+	script(src='/javascripts/bootstrap/transition.js')
+	script(src='/javascripts/plugins/agent.js')
+	script(src='/javascripts/plugins/configuration_contractors.js')
+	script(src='/javascripts/plugins/scheduler.js')
+	script(src='/javascripts/form_load_contractor.js')
+	script(src='/javascripts/plugins/tags.js')

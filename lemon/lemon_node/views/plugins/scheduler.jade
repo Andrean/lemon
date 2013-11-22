@@ -1,0 +1,52 @@
+.panel(data-action='toggle-panel').border-color-blueDark
+	.panel-header.bg-color-blueDark.fg-color-white
+		p
+			i.iconi-cogs
+			span TASKS
+		.button-set.right-box
+			div(data-toggle='tooltip',title='add new task',data-original-title='add new task')
+				button#add_new_task.right-box-button
+					i.iconi-add-to-list
+	.panel-content
+		div(id="scheduler_container")
+			ul.listview.fluid
+				li(id='__prototype',style="display:none")
+					.contractor-badge
+						i.status
+						i.iconi-clock-2.image
+					.data
+						h4 name
+						p#
+			div(id="info_window").c-commands
+				.arrow
+				.c-header
+					h4#title Default
+				.c-content
+					p.title Name
+					p#name.value
+					p.title Revision
+					p#rev.value
+					p.title Tags
+					p#tags.value ..
+					p.title id
+					p#id.value
+					p.title func
+					p#func.value
+					p.title args
+					p#args.value
+					p.title Start time
+					p#start.value
+					p.title Interval
+					p#interval.value
+					p.title Description
+					p#description.value					
+				.c-footer
+					.button-set.place-right(style='width: 100%')
+						button#btn_delete.c-button.place-left.fg-color-red(title="delete",)
+							i.iconi-cross-4
+						button#btn_update.c-button.place-right.fg-color-blueDark(title="update")
+							i.iconi-arrow-up-11
+						button#btn_enable.c-button.place-right.fg-color-blueDark(title="enable")
+							i.iconi-unlocked-2
+						button#btn_disable.c-button.place-right.fg-color-blueDark(title="disable")
+							i.iconi-lock-3

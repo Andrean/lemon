@@ -1,0 +1,51 @@
+.panelbar-button-box {
+	position: absolute;
+	top: 0px;
+	right: 10px;
+	padding-top: 5px;
+}
+.panelbar-button-box .btn {
+	background-color: inherit !important;
+	position: relative;
+	cursor: pointer;
+	height: 32px;
+	width: 32px;
+	min-width: 20px;
+	min-height: 20px;
+	display: inline-block;
+	border-radius: 0px;
+	padding: 0 0px;	
+	font-size: 30px;
+	margin-right: 10px;
+	color: #2b5797 !important;
+}
+.agent_update_window {
+	position: absolute;
+	top: 0;
+	right:0;
+	display: block;
+	width: 300px;
+	min-height: 50px;
+	padding: 5px 10px;
+	outline: 1px solid rgba(0, 0, 0, 0.2) !important;
+	z-index: 50;
+	display:none;
+	background-color: #fff;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+.agent_update_window h4 {
+	margin: 10px;
+}
+.agent_update_window button {
+	margin-top: 20px;
+}
+.neighbor	{
+	float:left;
+	
+}
+.info {
+	margin-left: 20px;
+	padding-bottom: 5px;
+	
+	
+}

@@ -1409,6 +1409,7 @@
                 <Folder name="plugins">
                     <File name="public\javascripts\plugins\processes_view.js" />
                 </Folder>
+                <File name="public\javascripts\modal.js" />
             </Folder>
             <Folder name="stylesheets">
                 <File name="public\stylesheets\style.css" />
@@ -1427,11 +1428,14 @@
             <Folder name="inventory">
                 <File name="routes\inventory\entities.js" />
             </Folder>
+            <File name="routes\system.js" />
         </Folder>
         <File name="app.js" />
         <File name="package.json" />
         <Folder name="models">
             <File name="models\agent.js" />
+            <File name="models\agent_manager.js" />
+            <File name="models\files.js" />
         </Folder>
         <Folder name="views">
             <File name="views\entity_info.jade" />
@@ -1449,6 +1453,8 @@
                 <File name="views\plugins\processes_view_element.jade" />
             </Folder>
             <File name="views\entity_filerow.jade" />
+            <File name="views\entity_config_task.jade" />
+            <File name="views\test_page.jade" />
             <File name="views\entity_config_task.jade" />
         </Folder>
     </Project>

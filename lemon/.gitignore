@@ -1,2 +1,4 @@
 /deploy.bat
 /deploy
+/lemon/lemon_node/node_modules
+*.log

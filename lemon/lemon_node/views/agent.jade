@@ -1,0 +1,19 @@
+.panel.border-color-blueDark
+	.panel-header.bg-color-blueDark.fg-color-white
+		p
+			i.iconi-cog-3
+			span AGENT
+		.button-set.right-box
+			div(data-toggle='tooltip',title='update agent',data-original-title='update agent')
+				form(id='update_agent',method="post",action="/inventory/entities/contractors",enctype="multipart/form-data")
+					div.hidden_upload
+						button#add_new_task.right-box-button
+							i.iconi-arrow-up--upload
+						input(id="i_upload",type='file',name='file').hidden_upload
+					input(type='submit',style="display:none")				
+	.panel-content
+		div(id='agent_container')
+			.panel-bar
+				.info			
+			ul#instances.neighbor.listview
+			ul#scheduler.neighbor.listview

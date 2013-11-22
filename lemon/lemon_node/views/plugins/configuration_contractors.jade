@@ -1,0 +1,30 @@
+.panel(data-action='toggle-panel').border-color-blueDark
+	.panel-header.bg-color-blueDark.fg-color-white
+		p
+			i.iconi-cogs
+			span CONTRACTORS
+		.button-set.right-box
+			div(data-toggle='tooltip',title="Add new contractor",data-original-title='Add new contractor')
+				form(id='add_contractor',method="post",action="/inventory/entities/contractors",enctype="multipart/form-data")
+					div.hidden_upload
+						button#add_new_contractor.right-box-button(title="add new contractor")
+							i.iconi-add-to-list									
+						input(id="i_upload",type='file',name='file',size='1')				
+				input(type='submit',style="display:none")			
+	.panel-content
+		div(id="contractors_container")
+			ul.listview.fluid
+				include configuration_contractors_element
+			#update_modal.modal(style="display:none")
+				.modal-header
+					button.close x
+					h3 Update		
+				.modal-body
+					#dropbox.dropboxBig
+						div
+							h3 DROP FILE HERE
+				.modal-footer
+					.button-set
+						#modal_ok.button.default OK
+						#modal_cancel.button.bg-color-gray Cancel
+			#backdrop.modal-backdrop.fade.in(style="display:none")

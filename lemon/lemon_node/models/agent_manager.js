@@ -13,6 +13,7 @@ var ContractorCollection	= 'contractors'
 var SchedulerTaskCollection	= 'agent_scheduler'
 var groupsCollection		= 'groups'
 var configurationCollection	= 'configuration'
+var commandsCollection		= 'commands'
 
 var groupsSchema		= {
 		'agent_id': String,
@@ -49,12 +50,19 @@ var taskSchema	= {
 		'install': {type: Boolean, default: false},
 		'kwargs': argsSchema
 	};
+var commandsSchema	= {
+		'type': String,
+		'tags': [String],
+		'arg': {},
+		'_new': {type: Boolean, default: true}
+	};
 	
 exports.init	= function(){
 	contractors	= mongoose.model(ContractorCollection, contractorSchema)
 	tasks		= mongoose.model(SchedulerTaskCollection, taskSchema, SchedulerTaskCollection)
 	groups		= mongoose.model(groupsCollection, groupsSchema, groupsCollection)
 	configuration = mongoose.model(configurationCollection, configurationSchema, configurationCollection)
+	commands	= mongoose.model(commandsCollection, commandsSchema, commandsCollection)
 }
 
 exports.getModels	= function(){
@@ -62,5 +70,6 @@ exports.getModels	= function(){
 	models.tasks		= tasks;
 	models.groups		= groups;
 	models.configuration	= configuration;
+	models.commands		= commands
 	return models;
 }

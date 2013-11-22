@@ -4,14 +4,17 @@ block head
 	link(rel='stylesheet', href='/stylesheets/css/plugins/processes_view.css', type='text/css')
 	link(rel='stylesheet', href='/stylesheets/css/plugins/disk_info.css', type='text/css')
 	link(rel='stylesheet', href='/stylesheets/css/plugins/configuration_contractors.css', type='text/css')
+	link(rel='stylesheet', href='/stylesheets/css/plugins/agent.css', type='text/css')	
+	link(rel='stylesheet', href='/stylesheets/css/plugins/scheduler.css', type='text/css')
+	link(rel='stylesheet', href='/stylesheets/css/graphs.css', type='text/css')
 block content
 	include page-header	
 	#page2.page
 		.page-content
-			#entity_header.entity_info_header
+			#entity_header.entity_info_header.bg-color-blueDark
 				h3.fg-color-white #{entity.name} - information
 			.page-entity-info(data-role="sidebar-control")
-				#sidebar.sidebar
+				#sidebar.sidebar.bg-color-blueDark
 					ul
 						li.active
 							.sidebar-menu-item-wrapper
@@ -36,72 +39,102 @@ block content
 				#panels.page-panels.frames
 					#frame1.frame.active(style="padding: 20px; ")
 						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Dashboard
-						include entity_info_dashboard
-									
+						include entity_info_dashboard									
 					#frame2.frame(style="padding: 20px; ")
 						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Monitoring
-						.panel.border-color-gray
-							.panel-header.bg-color-dark.fg-color-white
-								p
-									i.iconi-bars
-									span CPU LOAD
-							.panel-content
-								#container.graph-container
-									img#loader(src='/images/preloader-w8-cycle-black.gif').loader
-						.panel.border-color-gray
-							.panel-header.bg-color-dark.fg-color-white
-								p
-									i.iconi-bars
-									span PHYSICAL MEMORY LOAD
-							.panel-content								
-								#PhysicalMemoryChart.graph-container
-									img#loader(src='/images/preloader-w8-cycle-black.gif').loader
+						br
+						.span16
+							.grid
+								.row.circleStats
+									.span16
+										.row
+											.span3
+												.circleStatsItemBox.bg-color-green(data-contractor='cpu')
+													.header CPU Usage
+													span.percent percent
+													.circleStat
+														input#circle(type="text",data-thickness=".2",value="0")
+													.footer
+														span.count
+															span.number 0															
+														span.sep /
+														span.value
+															span.number 100															
+															span.unit %
+											.span3
+												.circleStatsItemBox.bg-color-blue(data-contractor='memory')
+													.header Memory
+													span.percent percent
+													.circleStat
+														input#circle(type="text",data-thickness=".2",value="0")
+													.footer
+														span.count
+															span.number 0
+															span.unit Gb
+														span.sep /
+														span.value
+															span.number 100															
+															span.unit Gb
+											.span3(style="display:none")
+												.circleStatsItemBox.bg-color-purple(data-contractor='disk')
+													.header Disk space usage
+													span.percent percent
+													.circleStat
+														input#circle(type="text",data-thickness=".2",value="0")
+													.footer
+														span.count
+															span.number 0
+															span.unit Gb
+														span.sep /
+														span.value
+															span.number 100															
+															span.unit Gb
+								#charts_row.row
+									.span16
+										.panel.border-color-white(style="width: 45%",data-action="toggle-panel")
+											.panel-header.bg-color-blueDark.fg-color-white
+												p
+													i.iconi-bars
+													span CPU LOAD												
+											.panel-content
+												#chart_getCPU.graph-container(data-contractor='CPU')
+													img#loader(src='/images/preloader-w8-cycle-black.gif').loader
+										.panel.border-color-white(style="width: 45%",data-action="toggle-panel")
+											.panel-header.bg-color-blueDark.fg-color-white
+												p
+													i.iconi-bars
+													span PHYSICAL MEMORY LOAD								
+											.panel-content								
+												#chart_getMemory.graph-container(data-contractor='Memory')
+													img#loader(src='/images/preloader-w8-cycle-black.gif').loader						
 					#configure.frame(style="padding: 20px; ")
-						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Configuration
-						div.panel.border-color-gray
-							.panel-header.bg-color-gray.fg-color-white
-								p
-									i.iconi-cog-4
-									span ADD CONTRACTOR
-							.panel-content
-								#fileset
-									div.grid(style="margin-bottom: 0px !important;")
-										each record in records
-											include entity_filerow
-								#dropZone.dropbox
-									span >>> Drop file here <<<
-						div.panel.border-color-gray
-							.panel-header.bg-color-gray.fg-color-white
-								p
-									i.iconi-cog-4
-									span AGENT SCHEDULER TASKS
-							.panel-content
-								#taskset
-						div.panel.border-color-gray
-							.panel-header.bg-color-gray.fg-color-white
-								p
-									i.iconi-cog-4
-									span MANAGE SCHEDULER TASKS
-							.panel-content
-								#mtaskset
-						.panel.border-color-blueDark
-							.panel-header.bg-color-blueDark.fg-color-white
-								p
-									i.iconi-cog-4
-									span CONTRACTORS
-							.panel-content
-								include plugins\configuration_contractors
-							
+						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Configuration						
+						include plugins\agent
+						include plugins\configuration_contractors
+						include plugins\scheduler						
 					#frame3.frame(style="padding: 20px; ")
-						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Documentation			
-	
-	script(src='/javascripts/sidebar_control.js')
-	script(src='/javascripts/page_server_info.js')
-	script(src='/javascripts/highcharts/highcharts.js')	
+						h2(style="font-family: 'Segoe UI';text-rendering: optimizelegibility") Documentation
+	script(src='/javascripts/date.format.js')
+	script(src='/javascripts/lemon_pop.js')
+	script(src='/javascripts/bootstrap/tooltip.js')
+	script(src='/javascripts/bootstrap/modal.js')
+	script(src='/javascripts/bootstrap/transition.js')
+	script(src='/javascripts/sidebar_control.js')	
 	script(src='/javascripts/form_load_contractor.js')
+	script(src='/javascripts/plugins/agent.js')
+	script(src='/javascripts/plugins/scheduler.js')
 	script(src='/javascripts/plugins/processes_view.js')
 	script(src='/javascripts/plugins/host_info.js')
 	script(src='/javascripts/plugins/disk_info.js')
 	script(src='/javascripts/plugins/configuration_contractors.js')
-	script(src='/javascripts/date.format.js')
+	script(src='/javascripts/dragdrop.js')
+	script(src='/javascripts/jquery/jquery.knob.js')
+	script(src='/javascripts/highcharts/highcharts.js')
+	script(src='/javascripts/plugins/getdata.js')
+	script(src='/javascripts/plugins/charts.js')
+	script(src='/javascripts/plugins/graphs.js')
+	
+	
+		
+	
 	

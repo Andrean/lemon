@@ -1,5 +1,4 @@
-
-$(document).ready(function(){
+!function(){
 	function setPhysicalMemoryChart(_dataTotal, _dataAllocated){
 		$('#PhysicalMemoryChart').highcharts({
             chart: {
@@ -213,150 +212,7 @@ $(document).ready(function(){
             }]
         });
 	}
-	function setClick(){
-		$("button[id$='_install']").on('click', function(event){
-			event.stopPropagation()
-			var id_s	= $(this).attr('id')
-			var re 		= /\d+/
-			var num 	= id_s.match(re)[0]
-			var filename	= $('#name'+num+' a').text()
-			var name	= filename.match(/\w+/)[0]
-			$.post('/inventory/entities/contractor',{'install':true,'name':name}, function(res){
-				if(res.status	 == 'installed'){
-					$("#btn"+num+"_install").detach()
-					$("#not_installed"+num).detach()
-					$('#row_header'+num).prepend('<div id="installed'+num+'" class="installed"></div>')
-					$('#installed'+num).append('<i class="icon-checkmark"></i>')				
-				}
-			}, "json")
-		})
-		$("button[id$='_delete']").on('click', function(event){
-			event.stopPropagation()
-			var id_s	= $(this).attr('id')
-			var re 		= /\d+/
-			var num 	= id_s.match(re)[0]
-			var filename	= $('#name'+num+' a').text()
-			var name	= filename.match(/\w+/)[0]
-			console.log('"' + name+'"')
-			$.post('/inventory/entities/contractor', {'install': false,'name':name}, function(res){
-				if(res.status=="deleted")
-					$('#row'+num).detach()		
-			})
-		})
-		// установить обработчик запись, чтобы выезжала форма по клику
-		
-	}
-	function setClicks(){
-		$("div[id^='row_header']").on('click', function(event){
-			event.stopPropagation()
-			var id_s	= $(this).attr('id')
-			var num 	= id_s.match(/\d+/)[0]
-			if($('#form_scheduler'+num).css('display') == 'none')
-				$('#form_scheduler'+num).slideDown(1000)
-			else{
-				$('#form_scheduler'+num).slideUp(1000)
-				console.log("animating")
-				}
-			parent	= $("#row"+num)
-			if(parent.css("height") == "50px")
-				parent.animate({height:'360px'},1000)
-			else
-				parent.animate({height:'50px'},1000)
-		})
-		$("input[id^='disable_task_wrap']").click(function(e){
-			event.stopPropagation()
-			var id_s	= $(this).attr('id')
-			var num 	= id_s.match(/\d+/)[0]
-			var task	= $("#form"+num+"_taskname").val()
-			$.post('/inventory/entities/task', {'disable': true, 'task_name': task }, function(res){
-				if(res.status =="ok"){
-					$("#disable_task_wrap"+num).hide()
-					$("#submit"+num).val('setup')
-				}
-			})
-		})
-	}
-	function submitValidator(){
-		$("form[id^='form']").submit(function(e){
-			var id_s	= $(this).attr('id')
-			var num 	= id_s.match(/\d+/)[0]
-			e.stopPropagation()
-			var action		= $(this).attr('action')
-			var task_name	= $("#form"+num+"_taskname").val()
-			var interval	= $("#form"+num+"_interval").val()
-			var start_time	= $("#form"+num+"_starttime").val()
-			var contractor	= $("#form"+num+"_contractor").val()
-			var formData	= {}
-			formData['task_name'] =  task_name
-			formData['interval'] 	= interval
-			formData['start_time']	= start_time
-			formData['contractor']	= contractor
-			$.post('/inventory/entities/task', formData, function(result){
-				if(result.status	== 'ok')
-				{
-					$("#submit"+num).val('change')
-					$("#disable_task_wrap"+num).show()
-					setClick()
-				}
-				if(result.status	== "error")
-				{
-					window.alert("error")
-				}
-					
-			})
-			return false;
-		})
-	}
-	function setChange(){
-		$("input[id^='check_onetime']").on('change', function(e){
-			var id_s	= $(this).attr('id')
-			var num 	= id_s.match(/\d+/)[0]
-			if($(this).is(':checked'))
-			{
-				$('#form_row_starttime'+num+' > label').removeClass('disabled')
-				$('#form_row_starttime'+num+' > div > input[type="datetime-local"]').removeAttr('disabled')
-				$('#form_row_interval'+num+' > label').addClass('disabled')
-				$('#form_row_interval'+num+' > div > input[type="time"]').attr('disabled', true)
-			}
-			else{
-				$('#form_row_starttime'+num+' > label').addClass('disabled')
-				$('#form_row_starttime'+num+' > div > input[type="datetime-local"]').attr('disabled',true)
-				$('#form_row_interval'+num+' > div > input[type="time"]').removeAttr('disabled')
-				$('#form_row_interval'+num+' > label').removeClass('disabled')
-			}
-		})
-	}
-	var setTasksClick	= function()	{
-		$("button[id^='btn_delete_task']").on('click', function(event){
-			event.stopPropagation()
-			var id_s	= $(this).attr('id')
-			var id		= id_s.match(/btn_delete_task([\w\-]+)/)[1]
-			$.get(window.location+"/tasks?delete="+id, function(result){
-				if(result.status	== 'error')
-					alert("Error while removing")
-				else{
-					$("#removing_bar"+id).show()
-					$("#btn_delete_task"+id).hide()
-				}
-			})
-			console.log(id)
-			
-		})
-	}
-	var renew	= function(){
-		$.get(window.location+"/tasks?show_agent=1", function(data){
-			response	= jQuery.parseHTML(data)
-			console.log(response)
-			$("#taskset > ul").detach()
-			$("#taskset").append(response)			
-		})
-		$.get(window.location+"/tasks", function(data){
-			_response	= jQuery.parseHTML(data)
-			$("#mtaskset > ul").detach()
-			$("#mtaskset").append(_response)
-			setTasksClick()
-		})
-	}
+	
 	function setCharts(){
 		var x = (new Date()).getTime()/1000 - 120
 		var _data	= []
@@ -388,93 +244,46 @@ $(document).ready(function(){
 			setPhysicalMemoryChart(_dataTotal, _dataAllocated)		
 		})		
 	}
-	
-	renew()
-	setInterval(renew, 10000)
-	setCharts()
-	$('.sidebar').css('height', $(document).height() - $("#page1").height() - 70)
-	$(window).resize(function(e){
-		$('.sidebar').css('height', $(document).height() - $("#page1").height() - 70)
-	})
-	
-	$.post('',{'contractor': 'get'}, function(data){
-		response = jQuery.parseHTML(data)
-		$("#fileset > div").append(response)
-		setClick()
-		setChange()
-		setClicks()
-		submitValidator()
-	})
-	var dropZone	= $('#dropZone')
-	var maxFileSize	= 1000000
-	// Добавляем класс hover при наведении
-    dropZone[0].ondragover = function() {
-        dropZone.addClass('hover');
-        return false;
-    };
-    
-    // Убираем класс hover
-    dropZone[0].ondragleave = function() {
-        dropZone.removeClass('hover');
-        return false;
-    };
-    
-    // Обрабатываем событие Drop
-    dropZone[0].ondrop = function(event) {
-        event.preventDefault();
-        dropZone.removeClass('hover');
-        dropZone.addClass('drop');
-        
-        var file = event.dataTransfer.files[0];
-        // Проверяем размер файла
-        if (file.size > maxFileSize) {
-            dropZone.text('Файл слишком большой!');
-            dropZone.addClass('error');
-            return false;
-        }
-        
-		
-		
-        // Создаем запрос
-		var formData	= new FormData();
-		formData.append('file',file);
-        var xhr = new XMLHttpRequest();
-        xhr.upload.addEventListener('progress', uploadProgress, false);
-        xhr.onreadystatechange = stateChange;
-        xhr.open('POST', '/inventory/entities/contractor', true);
-        xhr.setRequestHeader('X-FILE-NAME', file.name);
-		result	= xhr.send(formData);
-    };
-	
-   // Показываем процент загрузки
-    function uploadProgress(event) {
-        var percent = parseInt(event.loaded / event.total * 100);
-        dropZone.text('Загрузка: ' + percent + '%');
-    }
-    
-    // Пост обрабочик
-    function stateChange(event) {
-        if (event.target.readyState == 4) {
-            if (event.target.status == 200) {
-				//console.log(event.target)
-				response = jQuery.parseHTML(event.target.response)
-				console.log(response)
-				if($(response).text() == "none")
-				{
-					window.alert("Contractor is already exists")
-					dropZone.text(">>> Drop file here <<<")	
-					return
-				}
-				$('#fileset > div').append(response)
-				setClick()
-				dropZone.text(">>> Drop file here <<<")				
-            } else {
-                dropZone.text('Произошла ошибка!');
-                dropZone.addClass('error');
-            }
-        }
-    }
 
+	$.fn.toggle_panel = function(options){
+		return this.each(function(){
+			var $this = $(this)
+			if(!options){
+				var button_template = "<button class='right-box-button' data-button='toggle-panel'><i class='iconi-arrow-up-6'></i></button>"
+				var template = "<div class='button-set right-box'></div>"
+				if($this.find('.panel-header').find('.button-set').length > 0)
+					$this.find('.panel-header').find('.button-set').append($(button_template))
+				else
+					$this.find('.panel-header').append($(template).append($(button_template)))
+				return
+			}
+			var btn	= options.button
+			var hidden = $this.attr('data-hidden')
+			if(!hidden){
+				$this.find('.panel-content').slideUp(300)
+				$this.attr('data-hidden',true)
+				btn.find('i').removeClass('iconi-arrow-up-6').addClass('iconi-arrow-down-6')
+			}
+			else{
+				$this.find('.panel-content').slideDown(300)
+				$this.removeAttr('data-hidden')
+				btn.find('i').removeClass('iconi-arrow-down-6').addClass('iconi-arrow-up-6')
+			}
+		})
+		
+	}
+	$(document).on('click', '[data-button="toggle-panel"]',function(e){
+		e.preventDefault()
+		var $this = $(this)
+		var options = {}
+		options.button	= $this
+		$panel = $(this).parents('[data-action="toggle-panel"]')
+		$panel.toggle_panel(options)
+		
+		
+	})
+	$(document).ready(function(){
+		$('[data-action="toggle-panel"]').toggle_panel()
+	})
 	
-	
-});
+}(window.jQuery)
