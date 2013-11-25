@@ -249,7 +249,7 @@
 		return this.each(function(){
 			var $this = $(this)
 			if(!options){
-				var button_template = "<button class='right-box-button' data-button='toggle-panel'><i class='iconi-arrow-up-6'></i></button>"
+				var button_template = "<button class='right-box-button' data-button='toggle-panel'><i class='iconi-arrow-up-5'></i></button>"
 				var template = "<div class='button-set right-box'></div>"
 				if($this.find('.panel-header').find('.button-set').length > 0)
 					$this.find('.panel-header').find('.button-set').append($(button_template))
@@ -262,12 +262,12 @@
 			if(!hidden){
 				$this.find('.panel-content').slideUp(300)
 				$this.attr('data-hidden',true)
-				btn.find('i').removeClass('iconi-arrow-up-6').addClass('iconi-arrow-down-6')
+				btn.find('i').removeClass('iconi-arrow-up-5').addClass('iconi-arrow-down-6')
 			}
 			else{
 				$this.find('.panel-content').slideDown(300)
 				$this.removeAttr('data-hidden')
-				btn.find('i').removeClass('iconi-arrow-down-6').addClass('iconi-arrow-up-6')
+				btn.find('i').removeClass('iconi-arrow-down-6').addClass('iconi-arrow-up-5')
 			}
 		})
 		

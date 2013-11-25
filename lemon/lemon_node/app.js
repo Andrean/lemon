@@ -10,6 +10,7 @@ var express = require('express')
   , systemPages = require('./routes/system')
   , entities	= require('./routes/inventory/entities')
   , groups		= require('./routes/inventory/groups')
+  , administration = require('./routes/administration')
   , http = require('http')
   , path = require('path') 
   , mongoose = require('mongoose');
@@ -75,6 +76,8 @@ app.post('/inventory/entities/:id', entities.get_contractors);
 app.get('/inventory/entities/:id/data', entities.get_data);
 app.get('/inventory/entities/:id/tags', entities.get_tags);
 app.get('/inventory/groups', groups.get)
+app.get('/administration/update', administration.update)
+app.get('/administration/update/:service', administration.update)
 app.get('*',systemPages.get404);
 
 

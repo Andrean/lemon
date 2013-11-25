@@ -20,7 +20,11 @@
 													a(href="/inventory/entities").fg-color-white Entities
 												li
 													a(href="/inventory/groups").fg-color-white Groups
-										li
-											a(href="/") Administration
+										li(data-role='dropdown')
+											a Administration
+												ul.dropdown-menu(class="#{bg_color}")
+													li 
+														a(href="/administration/update").fg-color-white Update service
 										li
 											a(href="/") Documentation
+											

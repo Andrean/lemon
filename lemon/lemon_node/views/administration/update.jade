@@ -1,0 +1,29 @@
+extends ..\layout
+block head
+	title Lemon monitoring
+	link(rel='stylesheet', href='/stylesheets/css/update.css', type='text/css')
+block content
+	include ..\page-header												
+	.page
+		#header.entity_info_header.bg-color-blueDark(style="border-top: 1px solid white")
+			h3.fg-color-white Обновление #{service}
+		div.row
+			div.span3(style="float:left")
+				nav.sidebar
+					ul
+						li.title Сервисы
+						li
+							a(href="/administration/update/kopf") 
+								i.icon-wrench
+								| Контур-Отчет ПФ
+						li
+							a(href="/administration/update/checkexpress") 
+								i.icon-wrench
+								| Check Express
+						li
+							a(href="/administration/update/fssbenefit") 
+								i.icon-wrench
+								| FSS Benefit		
+			div(style="float:left")
+				- if(service == 'kopf')
+					include kopf

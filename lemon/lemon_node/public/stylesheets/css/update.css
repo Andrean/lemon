@@ -1,0 +1,270 @@
+.sidebar {
+  margin: 0;
+  padding: 0;
+  background-color: #3D3D3D;
+  width: 100%;
+  height: 100%;
+}
+.sidebar > ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sidebar > ul:nth-child(1) {
+	margin: 0 !important;
+}
+.sidebar > ul li {
+  display: block;
+  border: 0;
+  border-bottom: 1px #5c5c5c solid;  
+}
+.sidebar > ul li.title {
+  padding: 20px 20px 10px 20px;
+  font-family: 'Segoe UI Light_', 'Open Sans Light', Verdana, Arial, Helvetica, sans-serif;
+  font-weight: 300;
+  color: #000000;
+  letter-spacing: 0.00em;
+  font-size: 20pt;
+  line-height: 24pt;
+  letter-spacing: 0.01em;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 16pt;
+  color: #ffffff;
+}
+.sidebar > ul li a {
+  display: block;
+  position: relative;
+  padding: 10px 20px;
+  text-decoration: none;
+  cursor: pointer;
+  color: #eeeeee;
+  background-color: #3D3D3D;
+}
+.sidebar > ul li a:hover {
+  background-color: #262626;
+  color: #ffffff;
+}
+.sidebar > ul li a.dropdown-toggle:after {
+  right: 10px;
+  bottom: 5px;
+}
+.sidebar > ul li a [class*="icon-"] {
+  margin-right: 15px;
+}
+.sidebar > ul li.stick {
+  position: relative;
+}
+.sidebar > ul li.stick:before {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 100%;
+  left: -7px;
+  text-indent: -9999px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  background-color: inherit;
+}
+.sidebar > ul li.disabled a {
+  background-color: #8a8a8a;
+  cursor: default;
+  color: #555555;
+}
+.sidebar > ul li.active a {
+  background-color: #9a1616;
+  color: #ffffff;
+}
+.sidebar > ul ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  position: absolute;
+  display: none;
+  z-index: 1000;
+  background: #ffffff;
+  min-width: 220px;
+  width: auto;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
+  position: relative !important;
+  background-color: #e5e5e5;
+  min-width: 100%;
+}
+.sidebar > ul ul li {
+  display: block;
+  margin: 10px 0;
+  padding: 0;
+  vertical-align: baseline;
+  position: relative;
+  font-family: 'Segoe UI_', 'Open Sans', Verdana, Arial, Helvetica, sans-serif;
+}
+.sidebar > ul ul li a {
+  display: block;
+  text-decoration: none;
+  font-family: 'Segoe UI Light_', 'Open Sans Light', Verdana, Arial, Helvetica, sans-serif;
+  font-weight: 300;
+  color: #000000;
+  letter-spacing: 0.00em;
+  font-size: 20pt;
+  line-height: 24pt;
+  letter-spacing: 0.01em;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 16pt;
+  font-size: 14pt;
+  color: inherit;
+}
+.sidebar > ul ul li.title {
+  font-family: 'Segoe UI Light_', 'Open Sans Light', Verdana, Arial, Helvetica, sans-serif;
+  font-weight: 300;
+  color: #000000;
+  letter-spacing: 0.00em;
+  font-size: 20pt;
+  line-height: 24pt;
+  letter-spacing: 0.01em;
+  font-size: 30pt;
+  margin-bottom: 20px;
+}
+.sidebar > ul ul.compact a {
+  font-weight: normal;
+  font-size: 10.5pt;
+  line-height: 12pt;
+  color: inherit;
+}
+.sidebar > ul ul.compact li.title {
+  margin-bottom: 10px;
+  font-family: 'Segoe UI Semibold_', 'Open Sans Bold', Verdana, Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: #000000;
+  font-size: 11pt;
+  line-height: 15pt;
+  letter-spacing: 0.02em;
+}
+.sidebar > ul ul ul.secondary {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  margin-left: 15px;
+}
+.sidebar > ul ul ul.secondary li a {
+  font-family: 'Segoe UI Semibold_', 'Open Sans Bold', Verdana, Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: #000000;
+  font-size: 11pt;
+  line-height: 15pt;
+  letter-spacing: 0.02em;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 16px;
+  color: inherit;
+}
+.sidebar > ul ul li {
+  margin: 5px 0 0;
+  width: 100%;
+}
+.sidebar > ul ul li:last-child {
+  margin-bottom: 5px;
+}
+.sidebar > ul ul li.disabled,
+.sidebar > ul ul li.disabled:hover {
+  cursor: default !important;
+  background: transparent !important;
+  color: #eeeeee;
+}
+.sidebar > ul ul li.disabled a,
+.sidebar > ul ul li.disabled:hover a {
+  color: inherit;
+  cursor: inherit;
+  background: inherit;
+}
+.sidebar > ul ul a {
+  padding: 8px 32px !important;
+  color: inherit;
+  font-size: 15px !important;
+  line-height: 14px !important;
+  cursor: pointer;
+}
+.sidebar > ul ul li:hover {
+  background: #1ba1e2;
+  color: #ffffff;
+}
+.sidebar > ul ul li.checked a:before,
+.sidebar > ul ul li.checked-partial a:before {
+  position: absolute;
+  left: 10px;
+  content: "\e0a6";
+  font-family: iconFont;
+}
+.sidebar > ul ul li.checked-partial a:before {
+  content: "\e0a8";
+}
+.sidebar > ul ul.place-right {
+  right: -15px;
+  left: auto;
+}
+.sidebar > ul ul .divider {
+  padding: 0;
+  height: 1px;
+  margin: 9px 1px;
+  overflow: hidden;
+  background-color: #e5e5e5;
+}
+.sidebar > ul ul .divider:hover {
+  background: #e5e5e5;
+}
+.sidebar > ul ul.open {
+  display: block !important;
+}
+.sidebar > ul ul .dropdown-menu {
+  left: 100%;
+  top: -10%;
+}
+.sidebar > ul ul > li:hover > .dropdown-menu[data-show="hover"] {
+  display: block;
+}
+.sidebar > ul ul > li > a.dropdown-toggle:after {
+  font-family: iconFont;
+  font-size: .7em;
+  content: "\e1b3";
+  left: 85%;
+  top: .85em;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+}
+.sidebar > ul ul.drop-left {
+  left: -100%;
+}
+.sidebar > ul ul.drop-up {
+  top: auto;
+  bottom: 0;
+}
+.sidebar > ul ul li {
+  border: 0;
+}
+.sidebar > ul ul li a {
+  background-color: #e5e5e5;
+}
+.sidebar > ul ul li.divider {
+  background-color: #c2c2c2;
+}
+.sidebar > ul ul li.divider:hover {
+  background-color: #c2c2c2;
+}
+.sidebar > ul ul li.disabled a {
+  color: #999999;
+}
+.sidebar > ul ul li.disabled a:hover {
+  color: #999999;
+}
+.sidebar > ul ul.open {
+  display: block;
+}
+h2 {
+	font-family: "Segoe UI" !important;
+}
+.container {
+	padding: 20px 10px;
+}
