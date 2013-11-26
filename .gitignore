@@ -1,3 +1,5 @@
 node_modules
 *.log
 .*project
+*.pyc
+__pycache__
