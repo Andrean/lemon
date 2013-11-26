@@ -155,7 +155,7 @@ class Core(object):
         self._corelogger.info('load configuration')
         if len(config.sections()) < 1:
             self._corelogger.info('write default configuration to file')
-            writeDefaultConfig(config)            
+            writeDefaultConfig(config)
         logging.config.fileConfig(config['LOGGING']['file'])
     
     def getInstance(self, name):

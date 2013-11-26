@@ -1,3 +1,7 @@
 node_modules
 *.log
 .npp_project
+.metadata
+*.pyc
+*.pyo
+
