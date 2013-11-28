@@ -1,0 +1,9 @@
+LOGGING: 
+    file: conf/logging.conf
+SCHEDULER: {}
+SERVER: 
+    xmlrpc_address:  127.0.0.1
+    xmlrpc_port:   8000
+STORAGE: 
+    data_path: data/storage/
+TASK_MANAGER: {}

@@ -65,9 +65,6 @@ class Core(object):
     def __initInstance(self, name, cls):
         if name:
             self._instances[name]   = getInstanceTemplate(name)
-            print(self._loggers)
-            print(self._config)
-            print(self._instances)
             t = cls(self._loggers[name], self._config[name], self._instances[name])
             self._instances[name]['instance']   = t
             self._clogger.debug('init '+str(name))   
