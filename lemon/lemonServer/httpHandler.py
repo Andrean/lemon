@@ -18,4 +18,4 @@ class httpRequestHandler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(bytes(self.path,'utf-8'))
         """
-        self._router.route(self.path)
+        self._router.dispatch(self.path)

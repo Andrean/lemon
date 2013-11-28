@@ -18,7 +18,7 @@ class Router(object):
     def apply_handler(self, request_handler):
         self._handler   = request_handler
         
-    def route(self, path):
+    def dispatch(self, path):
         for rule in self._routes:
             if re.search(rule['pattern'], path):
                 rule['action']( self._handler, self._handler )
