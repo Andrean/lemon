@@ -11,7 +11,6 @@ import entity_manager
 import scheduler.scheduler as scheduler
 import server
 import os
-import configparser
 import yaml
 
 
