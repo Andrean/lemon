@@ -3,6 +3,7 @@
 #
 #
 import http.server
+import types
 
 
 class httpRequestHandler(http.server.BaseHTTPRequestHandler):    
