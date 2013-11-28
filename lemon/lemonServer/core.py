@@ -12,10 +12,12 @@ import scheduler.scheduler as scheduler
 import server
 import os
 import configparser
+import yaml
 
 
 CONFIG_PATH = 'conf'
-CONFIG_FILE = CONFIG_PATH + '/server.conf'
+#CONFIG_FILE = CONFIG_PATH + '/server.conf'
+CONFIG_FILE = CONFIG_PATH + '/server.yaml'
 
 COMPONENTS          = ['TASK_MANAGER', 'SERVER','SCHEDULER', 'ENTITY_MANAGER']
 SERVER_COMPONENTS   = {'STORAGE': storagemanager.StorageManager, 'TASK_MANAGER': task_manager.TaskManager, 'SERVER': server.Server, 'SCHEDULER': scheduler.Scheduler, 'ENTITY_MANAGER': entity_manager.EntityManager} 
@@ -63,6 +65,9 @@ class Core(object):
     def __initInstance(self, name, cls):
         if name:
             self._instances[name]   = getInstanceTemplate(name)
+            print(self._loggers)
+            print(self._config)
+            print(self._instances)
             t = cls(self._loggers[name], self._config[name], self._instances[name])
             self._instances[name]['instance']   = t
             self._clogger.debug('init '+str(name))   
@@ -95,28 +100,31 @@ class Core(object):
             tmInstance.connectHandler(hndl)
     
     def _initConfig(self):
-        def writeDefaultConfig(config):
-            config.add_section('STORAGE')
-            storageConfig                   = config['STORAGE']
-            storageConfig['data_path']      = 'data/storage/'
-            config.add_section('TASK_MANAGER')
-            config.add_section('SERVER')
-            config.add_section('SCHEDULER')
-            config.add_section('LOGGING')
-            loggingConfig                   = config['LOGGING']
-            loggingConfig['file']           = CONFIG_PATH + '/logging.conf'
-            if not os.path.exists(CONFIG_PATH):
-                os.makedirs(CONFIG_PATH)
-            with open(CONFIG_FILE,'w') as configFile:        
-                config.write(configFile)
+        def writeDefaultConfig(cfg = {}):
+            cfg['STORAGE']  = {
+                'data_path': 'data/storage/'
+            }
+            cfg['TASK_MANAGER'] = {}
+            cfg['SERVER']   = {}
+            cfg['SCHEDULER']= {}
+            cfg['LOGGING']  = {
+                'file': 'conf/logging.conf'
+            }
+            os.makedirs(CONFIG_PATH,exist_ok=True)
+            yaml.dump(cfg, open(CONFIG_FILE,'w'))
+            return cfg
+            
+        self._config    = {}
+        if os.path.exists(CONFIG_FILE):
+            self._config = yaml.load(open(CONFIG_FILE))
+        else:
+            self._config    = writeDefaultConfig()
+        for key in ['ENTITY_MANAGER','TASK_MANAGER','SCHEDULER']:
+            if not self._config.__contains__(key):
+                self._config[key] = {}
+        os.makedirs('logs',exist_ok=True)
+        logging.config.fileConfig(self._config['LOGGING']['file'])
         
-        self._config  = configparser.ConfigParser()
-        config  = self._config
-        config.read(CONFIG_FILE)
-        if len(config.sections()) < 1:
-            writeDefaultConfig(config)
-        logging.config.fileConfig(config['LOGGING']['file'])
-    
     def getInstance(self, name):
         return self._instances[name]['instance']
                
