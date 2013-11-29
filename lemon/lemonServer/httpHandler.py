@@ -12,3 +12,8 @@ class httpRequestHandler(http.server.BaseHTTPRequestHandler):
         router    = self.server.request_router
         router.apply_handler(self, 'GET')
         router.dispatch(self.path)
+        
+    def do_POST(self):
+        router    = self.server.request_router
+        router.apply_handler(self, 'POST')
+        router.dispatch(self.path)

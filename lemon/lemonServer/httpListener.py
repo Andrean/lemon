@@ -1,7 +1,11 @@
+#
+#
+#
+#
 import http.server
+
 class Listener(object):
-
-
+    
     def __init__(self, handler_class , router_instance):
         self._handler   = handler_class
         self._router    = router_instance
@@ -12,3 +16,6 @@ class Listener(object):
         self._httpd.request_router  = self._router
         self._httpd.serve_forever()
         
+    def stop(self):
+        if self._httpd is not None:
+            self._httpd.shutdown()

@@ -32,8 +32,13 @@ class Server(lemon.BaseServerComponent):
     def run(self):
         try:            
             coreInstance    = core.getCoreInstance()
+            endpoint    = 'localhost:8080'
+            if self._config.__contains__('agent_interface'):
+                if self._config['agent_interface'].__contains__('listenerEndpoint'):
+                    endpoint   = self._config['agent_interface']['listenerEndpoint']
             self._logger.info('http agent listener started')
-            self._agentListener.run(('localhost',8080))
+            listenerAddr    = endpoint.split(':')
+            self._agentListener.run(tuple([listenerAddr[0],int(listenerAddr[1])]))
             self._setReady()
             self._logger.info('http agent listener started')
         except Exception as e:
@@ -55,6 +60,7 @@ class Server(lemon.BaseServerComponent):
         """
     def shutdownListener(self):        
         self._logger.info('attempting to shutdown agent xmlrpcListener')
+        self._agentListener.stop()
         #self._xmlrpcListener.shutdown()
         #self._logger.info('agent xmlrpcListener is shutdown')
                 
