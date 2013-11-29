@@ -104,7 +104,7 @@ class Core(object):
             cfg['SERVER']   = {}
             cfg['SCHEDULER']= {}
             cfg['LOGGING']  = {
-                'file': 'conf/logging.conf'
+                'file': 'conf/logging.yaml'
             }
             os.makedirs(CONFIG_PATH,exist_ok=True)
             yaml.dump(cfg, open(CONFIG_FILE,'w'))
@@ -117,9 +117,13 @@ class Core(object):
             self._config    = writeDefaultConfig()
         for key in ['ENTITY_MANAGER','TASK_MANAGER','SCHEDULER']:
             if not self._config.__contains__(key):
-                self._config[key] = {}
-        os.makedirs('logs',exist_ok=True)
-        logging.config.fileConfig(self._config['LOGGING']['file'])
+                self._config[key] = {}                                
+        #os.makedirs(os.path.dirname(self._config['LOGGING']['file']),exist_ok=True)
+        logging_config  = yaml.load(open(self._config['LOGGING']['file']))
+        for item in logging_config['handlers'].values():
+            if item.__contains__('filename'):
+                os.makedirs(os.path.dirname(item['filename']),exist_ok=True)
+        logging.config.dictConfig(logging_config)
         
     def getInstance(self, name):
         return self._instances[name]['instance']
