@@ -9,8 +9,8 @@ import controllers.baseController as baseController
 
 
 AGENT_INTERFACE_ROUTES  = [
-     [  'GET', r'^/commands$',  commandController.get_commands   ]
-    ,[  'GET', r'.*',           baseController.get_404   ]
+     [  'GET', r'^/commands$',  commandController.get_commands  ]
+    ,[  'GET', r'.*',           baseController.get_404          ]
 ]
 
 class Router(object):
@@ -25,10 +25,13 @@ class Router(object):
     def dispatch(self, path):
         for rule in self._routes:
             if rule['method'] == self._method and re.search(rule['pattern'], path):
-                rule['action']( 
-                    self.__make_request_ref(self._handler), 
-                    self.__make_response_ref(self._handler) 
-                )
+                try:
+                    rule['action']( 
+                        self.__make_request_ref(self._handler), 
+                        self.__make_response_ref(self._handler) 
+                    )
+                except:                    
+                    baseController.get_500( self.__make_request_ref(self._handler), self.__make_response_ref(self._handler) )
                 return
             
     def add_route(self , method, url_pattern, action):
