@@ -1,5 +1,5 @@
 LOGGING: 
-    file: conf/logging.conf
+    file: conf/logging.yaml
 SCHEDULER: {}
 SERVER: 
     xmlrpc_address:  127.0.0.1
