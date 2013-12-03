@@ -7,6 +7,11 @@ Created on 20.08.2013
 import lemon
 import core
 import time
+import uuid
+import collections
+
+COMMANDS    = collections.namedtuple('COMMANDS',['get_self_info'])
+commands    = COMMANDS(get_self_info='get_self_info')
 
 class EntityManager(lemon.BaseServerComponent):
     
@@ -20,20 +25,33 @@ class EntityManager(lemon.BaseServerComponent):
     def run(self):
         self.configManager  = Configuration()
         self.tagManager     = TagManager() 
-        self.commandManager     = CommandManager()
+        self.commandManager = CommandManager()
         self.fileManager    = FileManager()
         self._setReady()
         while(self._running):
             self.update()
             time.sleep(4)
-            
+    
+    def addNewAgent(self, agent_id):
+        self.tagManager.assignTag(agent_id, agent_id)
+        self.sendCommand(commands.get_self_info, [], [agent_id])
+        
+    def sendCommand(self, cmd, args, tags=[]):
+        self.commandManager.addCommand(cmd, args, tags)
+        self._logger.info('SEND command "{0}" to groups "{1}"'.format(cmd, str(tags)))        
+        
     def getConfig(self, agent_id):
         tags    = self.tagManager.getTags(agent_id)
         return self.configManager.getConfig(tags)
     
-    def getCommands(self, agent_id):
+    def getCommands(self, agent_id, timestamp='0'):
+        timestamp   = int(timestamp)
         tags    = self.tagManager.getTags(agent_id)
-        return self.commandManager.getCommands(tags)
+        if len([x for x in tags]) > 0:
+            return self.commandManager.getCommands(tags, timestamp)
+        self._logger.info('Detected new agent with id {0}'.format(agent_id))
+        self.addNewAgent(agent_id)
+        return self.commandManager.getCommands([agent_id], 0)                
     
     def getFile(self, agent_id, file_id):
         return self.fileManager.getFile(file_id)
@@ -42,8 +60,7 @@ class EntityManager(lemon.BaseServerComponent):
         self.configManager._update()
         self.tagManager._update()
         self.commandManager._update()
-
-
+        
 
 class Configuration(object):
     def __init__(self):
@@ -92,8 +109,7 @@ class TagManager(object):
     def getTags(self, agent_id):
         for item in self._tagList:
             if item['agent_id'] == agent_id:
-                yield item['tag']
-        self.assignTag(agent_id, 'default')
+                yield item['tag']        
         
     def assignTag(self, agent_id, _tag):
         t   = {'agent_id' : agent_id, 'tag': _tag}
@@ -113,31 +129,39 @@ class TagManager(object):
   
 class CommandManager(object):
     def __init__(self):
-        self._cmd   = []
+        self._cmds   = []
         self._st = core.getCoreInstance().getInstance('STORAGE').getInstance()
         self._st.set_default_collection('commands')
-        for item in self._st.find({'_new': True}):
-            self._cmd.append(item)        
+        for item in self._st.find({}):
+            item['_id'] = None
+            self._cmds.append(item)        
     
-    def getCommands(self, tags):
-        result  = {}        
-        for _c in self._cmd:
-            for tag in _c['tags']:
-                if tag in tags:
-                    result[_c['type']] = _c['arg']
+    def getCommands(self, tags, timestamp):
+        result  = []        
+        for cmd in self._cmds:
+            for tag in cmd['tags']:
+                if tag in tags and cmd['time'] > timestamp:
+                    cmd['_id'] = None
+                    result.append({'cmd': cmd['cmd'], 'args':cmd['args'], 'id':cmd['id']})
         return result
-            
+    
+    def addCommand(self, cmd, args, tags):
+        self._cmds.append({ 
+            'id': str(uuid.uuid4()),
+            'tags': tags,
+            'cmd': cmd,
+            'args': args,
+            'time': time.time()          
+        })                   
         
     def _update(self):
-        self._cmd   = []
+        self._cmds   = []
         self._st = core.getCoreInstance().getInstance('STORAGE').getInstance()
         self._st.set_default_collection('commands')
-        for cmd in self._st.find({'_new': True}):
-            cmd['_new']  = False
-            self._st.save(cmd)
-            cmd['_new'] = None
-            cmd['_id'] = None
-            self._cmd.append(cmd)
+        #for cmd in self._st.find({}):
+        #    self._st.save(cmd)
+        #    cmd['_id'] = None
+        #    self._cmds.append(cmd)
             
 class FileManager(object):
     def __init__(self):

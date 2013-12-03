@@ -2,6 +2,8 @@
 #
 #
 #
+from urllib.parse import urlsplit
+from urllib.parse import parse_qs
 import re
 import types
 import controllers.commandController as commandController
@@ -9,8 +11,10 @@ import controllers.baseController as baseController
 
 
 AGENT_INTERFACE_ROUTES  = [
-     [  'GET', r'^/commands$',  commandController.get_commands  ]
-    ,[  'GET', r'.*',           baseController.get_404          ]
+     [  'GET', r'^/commands[?=%\w]*',  commandController.get_commands   ]
+    ,[  'GET', r'.*',           baseController.get_404                  ]
+    ,[  'POST', r'.*',          baseController.get_404                  ]
+    
 ]
 
 class Router(object):
@@ -27,7 +31,7 @@ class Router(object):
             if rule['method'] == self._method and re.search(rule['pattern'], path):
                 try:
                     rule['action']( 
-                        self.__make_request_ref(self._handler), 
+                        self.__make_request_ref(self._handler, path), 
                         self.__make_response_ref(self._handler) 
                     )
                 except:                    
@@ -41,11 +45,17 @@ class Router(object):
         for rule in routes:
             self.add_route(*rule)
     
-    def __make_request_ref(self, requestHandler):
+    def __make_request_ref(self, requestHandler, path):
+        requestHandler.query  = parse_qs( (urlsplit(path)).query )
         return requestHandler
 
     def __make_response_ref(self, requestHandler):
-        def send_content(self, content):
+        def send_content(self, content, headers={}):
+            self.send_response(200)
+            self.send_header('Content-Type','text/plain;charset=utf-8')
+            for header, value in headers.items():
+                self.send_header(header, value)
+            self.end_headers()
             self.wfile.write(bytes(content, 'utf-8'))    
         requestHandler.send_content = types.MethodType( send_content, requestHandler )
         return requestHandler
