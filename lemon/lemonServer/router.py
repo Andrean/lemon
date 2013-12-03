@@ -7,12 +7,13 @@ from urllib.parse import parse_qs
 import re
 import types
 import controllers.commandController as commandController
-import controllers.baseController as baseController
+import controllers.baseController    as baseController
 
 
 AGENT_INTERFACE_ROUTES  = [
-     [  'GET', r'^/commands[?=%\w]*',  commandController.get_commands   ]
+     [  'GET', r'^/commands[?=%\w]*$',  commandController.get_commands   ]
     ,[  'GET', r'.*',           baseController.get_404                  ]
+    ,[  'POST', r'^/commands/result$',          commandController.post_commands_result      ]
     ,[  'POST', r'.*',          baseController.get_404                  ]
     
 ]
