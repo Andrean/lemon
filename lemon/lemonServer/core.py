@@ -139,9 +139,7 @@ class Core(object):
     
     def stop(self):
         for i, t in self._instances.items():
-            self._clogger.debug('Attempt to stop {0}'.format(i))
-            t['instance'].quit()        
-        self._clogger.info(str(self._instances))
-        print(self._instances['STORAGE']['instance']._running)
+            t['instance'].quit()       
+        
                             
         
