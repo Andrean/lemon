@@ -8,13 +8,17 @@ import re
 import types
 import controllers.commandController as commandController
 import controllers.baseController    as baseController
+import controllers.dataController    as dataController
 
 
 AGENT_INTERFACE_ROUTES  = [
-     [  'GET', r'^/commands[?=%\w]*$',  commandController.get_commands   ]
-    ,[  'GET', r'.*',           baseController.get_404                  ]
-    ,[  'POST', r'^/commands/result$',          commandController.post_commands_result      ]
-    ,[  'POST', r'.*',          baseController.get_404                  ]
+     [  'GET',  r'^/commands[?=%\w]*$',  commandController.get_commands     ]
+    ,[  'GET',  r'.*',           baseController.get_404                     ]
+    ,[  'POST', r'^/commands/result$',  commandController.post_commands_result      ]    
+    ,[  'POST', r'^/data/AgentState$',   dataController.post_agent_state    ]
+    ,[  'POST', r'.*',              baseController.get_404                  ]
+    ,[  'PUT',  r'^/data$',         dataController.put_data                 ]
+    ,[  'PUT',  r'.*',              baseController.get_404                  ]
     
 ]
 
@@ -36,7 +40,7 @@ class Router(object):
                         self.__make_response_ref(self._handler) 
                     )
                 except:                    
-                    baseController.get_500( self.__make_request_ref(self._handler), self.__make_response_ref(self._handler) )
+                    baseController.get_500( self.__make_request_ref(self._handler, path), self.__make_response_ref(self._handler) )
                 return
             
     def add_route(self , method, url_pattern, action):
