@@ -53,6 +53,7 @@ class Scheduler(lemon.BaseServerComponent):
             if it > STORE_INTERVAL :
                 it = 0
                 self._store_schedule()
+        self._logger.info('stop SCHEDULER')
     
     def loadDefaultTasks(self):
         default_tasks   = scheduler.tasks.CMD

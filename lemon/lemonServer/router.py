@@ -6,6 +6,7 @@ from urllib.parse import urlsplit
 from urllib.parse import parse_qs
 import re
 import types
+import sys
 import controllers.commandController as commandController
 import controllers.baseController    as baseController
 import controllers.dataController    as dataController
@@ -40,6 +41,7 @@ class Router(object):
                         self.__make_response_ref(self._handler) 
                     )
                 except:                    
+                    print("Unexpected error:", sys.exc_info()[0])                   
                     baseController.get_500( self.__make_request_ref(self._handler, path), self.__make_response_ref(self._handler) )
                 return
             

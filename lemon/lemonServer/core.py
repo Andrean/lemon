@@ -119,7 +119,8 @@ class Core(object):
             if not self._config.__contains__(key):
                 self._config[key] = {}                                
         #os.makedirs(os.path.dirname(self._config['LOGGING']['file']),exist_ok=True)
-        logging_config  = yaml.load(open(self._config['LOGGING']['file']))
+        config_file = os.path.abspath(self._config['LOGGING']['file'])
+        logging_config  = yaml.load(open(config_file))
         for item in logging_config['handlers'].values():
             if item.__contains__('filename'):
                 os.makedirs(os.path.dirname(item['filename']),exist_ok=True)
@@ -134,6 +135,13 @@ class Core(object):
         self._initInstances()
         self._startStorageManager()
         self._startInstances()  
-        self._connectHandlers()  
+        self._connectHandlers()
+    
+    def stop(self):
+        for i, t in self._instances.items():
+            self._clogger.debug('Attempt to stop {0}'.format(i))
+            t['instance'].quit()        
+        self._clogger.info(str(self._instances))
+        print(self._instances['STORAGE']['instance']._running)
                             
         

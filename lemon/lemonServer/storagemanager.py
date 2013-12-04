@@ -22,15 +22,15 @@ class StorageManager(lemon.BaseServerComponent):
         self._taskQueue     = queue.Queue()
             
             
-    def run(self):
-        
+    def run(self):        
         self.createStoragePool()
         self._setReady()
-        self._logger.info('storage manager started')
         while self._running:
             time.sleep(0.01)
-            for k in self._storagePool:
+            for k in self._storagePool:      
                 self._process(k['instance'])
+        self.closeStoragePool()
+        self._logger.info('shutdown {0}'.format('storage_manager'))
             
     def createStoragePool(self, _size = 10):
         for _ in range(1,_size):
@@ -38,8 +38,13 @@ class StorageManager(lemon.BaseServerComponent):
             instance  = storage.Storage(self._logger, self._config, st)
             instance.start()
             self._info['threads'] += 1
-            self._storagePool.append(st)            
-        
+            self._storagePool.append(st)
+                        
+    def closeStoragePool(self):
+        self._logger.info('Closing storage pool')
+        for inst in self._storagePool:
+            inst['instance'].quit()
+            
     def getInstance(self):
         try:            
             st  = StorageGhost(self)
@@ -57,12 +62,14 @@ class StorageManager(lemon.BaseServerComponent):
         self._taskQueue.put(db_request)
         
     def _process(self, storageInstance):
-        req     = self._taskQueue.get()
-        method  = req['method']
-        args    = req['args']
-        cb      = req['callback']
-        res     = storageInstance.do(method, *args)
-        cb(res)
+        if not self._taskQueue.empty():
+            req     = self._taskQueue.get(timeout=5)
+            method  = req['method']
+            args    = req['args']
+            cb      = req['callback']
+            res     = storageInstance.do(method, *args)
+            cb(res)
+            
         
     
  

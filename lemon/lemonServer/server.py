@@ -40,29 +40,12 @@ class Server(lemon.BaseServerComponent):
             listenerAddr    = endpoint.split(':')
             self._agentListener.run(tuple([listenerAddr[0],int(listenerAddr[1])]))
             self._setReady()
-            self._logger.info('http agent listener started')
+            self._logger.info('http agent listener started')            
         except Exception as e:
-            self._logger.exception(e)    
-        """
-        try:
-            _core   = core.getCoreInstance()
-            self._tmInstance    = _core.getInstance('TASK_MANAGER')
-            self.cmdInterface   = interface.CommandInterface(self._tmInstance)
-            agentHandler        = interface.xmlrpcHandler(self._tmInstance, self.cmdInterface)
-            self._xmlrpcListener.register_instance(agentHandler)
-            self._setReady()
-            self._logger.info('xmlrpc listener starting')
-            self._xmlrpcListener.serve_forever()            
-                        
-        except XMLRPCExitException:
-            print("xmlrpc server shutdown")
-        self._logger.info('server instance with id {0} was stopped'.format(self._getId()))
-        """
+            self._logger.exception(e)
     def shutdownListener(self):        
-        self._logger.info('attempting to shutdown agent xmlrpcListener')
         self._agentListener.stop()
-        #self._xmlrpcListener.shutdown()
-        #self._logger.info('agent xmlrpcListener is shutdown')
+        self._logger.info('Server was successfully shutdown')
                 
     def quit(self):
         super(Server, self).quit()

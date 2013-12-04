@@ -29,12 +29,14 @@ class EntityManager(lemon.BaseServerComponent):
         self.tagManager     = {}
         self.commandManager = {}
         self.fileManager    = {}
+        self.agentManager   = {}
         
     def run(self):
         self.configManager  = Configuration()
         self.tagManager     = TagManager() 
         self.commandManager = CommandManager(self)
         self.fileManager    = FileManager()
+        self.agentManager   = AgentManager()
         self._setReady()
         i = 0
         while(self._running):
@@ -44,8 +46,10 @@ class EntityManager(lemon.BaseServerComponent):
             i+= 4                               
             self.update()
             time.sleep(4)
+        self._logger.info('stop ENTITY_MANAGER')
     
     def addNewAgent(self, agent_id):
+        self.agentManager.add(agent_id)
         self.tagManager.assignTag(agent_id, agent_id)
         self.sendCommand(commands.get_self_info, [], [agent_id])
         
@@ -69,12 +73,22 @@ class EntityManager(lemon.BaseServerComponent):
         return self.fileManager.getFile(file_id)
     
     def update(self):
-        self.configManager._update()
-        self.tagManager._update()
-        self.commandManager._update()
-        
-        
+        pass
+        #self.configManager._update()
+        #self.tagManager._update()
+        #self.commandManager._update()
 
+class AgentManager(object):
+    def __init__(self):
+        self._agents    = core.getCoreInstance().getInstance('STORAGE').getInstance()
+        self._agents.set_default_collection('agents')
+        
+    def add(self, agent_id):
+        if len([x for x in self._agents.find({'agent_id': agent_id})]) > 0:
+            pass
+        agent   = {'agent_id': agent_id, 'tags': []}
+        self._agents.save(agent)
+        
 class Configuration(object):
     def __init__(self):
         self._revision      = 0
@@ -112,33 +126,49 @@ class Configuration(object):
                     yield item 
             
 class TagManager(object):
+    """
+        Управляет коллекцией tags
+        tags    = [
+            {
+                'tag': string , внутреннее название тэга,
+                'name' : string, человекопонятное название,
+                'description': описание тега
+            }
+        
+        ]
+    """
     def __init__(self):
-        self._tagList   = []
-        self._st = core.getCoreInstance().getInstance('STORAGE').getInstance()
-        self._st.set_default_collection('groups')
-        for item in self._st.find({}):
-            self._tagList.append(item)
+        self._st_agents = core.getCoreInstance().getInstance('STORAGE').getInstance()
+        self._st_agents.set_default_collection('agents')
+        self._st_tags   = core.getCoreInstance().getInstance('STORAGE').getInstance()
+        self._st_tags.set_default_collection('tags')
         
-    def getTags(self, agent_id):
-        for item in self._tagList:
-            if item['agent_id'] == agent_id:
-                yield item['tag']        
+    def getTags(self, agent_id=None):
+        """
+            Return tags for agent_id. If agent_id is None then return all known tags
+        """
+        if agent_id is None:
+            for x in self._st_tags.find({}):
+                yield x
+        tags   = [x for x in self._st_tags.find({})]
+        for item in self._st_agents.find({'agent_id': agent_id}):
+            for tag in item.get('tags',[]):     
+                if tag in tags or tag == agent_id:               
+                    yield tag                        
         
-    def assignTag(self, agent_id, _tag):
-        t   = {'agent_id' : agent_id, 'tag': _tag}
-        if(len([x for x in self._st.find(t)]) > 0):
-            pass
-        else:
-            self._tagList.append(t)
-            self._st.set_default_collection('groups')
-            self._st.save(t)    
+    def assignTag(self, agent_id, *tags):
+        self._st_agents.update( 
+            {'agent_id':agent_id }, 
+            { "$addToSet": { 'tags': { "$each": tags } } }
+        )
         
     def _update(self):
-        self._tagList   = []
-        self._st = core.getCoreInstance().getInstance('STORAGE').getInstance()
-        self._st.set_default_collection('groups')
-        for item in self._st.find({}):
-            self._tagList.append(item)
+        pass
+        #self._tagList   = []
+        #self._st = core.getCoreInstance().getInstance('STORAGE').getInstance()
+        #self._st.set_default_collection('groups')
+        #for item in self._st.find({}):
+        #    self._tagList.append(item)
   
 class CommandManager(object):
     """
@@ -166,12 +196,7 @@ class CommandManager(object):
     def __init__(self, manager):
         self.manager    = manager
         self._cmds   = []
-        self._cmds_status   = {}    
-        #self._st = core.getCoreInstance().getInstance('STORAGE').getInstance()
-        #self._st.set_default_collection('commands')
-        #for item in self._st.find({}):
-        #    item['_id'] = None
-        #    self._cmds.append(item)        
+        self._cmds_status   = {}        
     
     def getCommands(self, tags, timestamp=0):
         result  = []        
@@ -202,19 +227,15 @@ class CommandManager(object):
             return
     
     def _update(self):
-        pass        
-        #for cmd in self._st.find({}):
-        #    self._st.save(cmd)
-        #    cmd['_id'] = None
-        #    self._cmds.append(cmd)
+        pass
+        
     def clean(self):
         self.manager._logger.debug('Calling cleaning commands')
         print(self._cmds)
         
         timestamp = time.time() - 60
         self._cmds[:] = [x for x in self._cmds if x['time'] > timestamp]
-        print(self._cmds)  
-                      
+        print(self._cmds)
             
 class FileManager(object):
     def __init__(self):
@@ -224,6 +245,5 @@ class FileManager(object):
     def getFile(self, file_id):
         self._st.set_default_collection('files')
         file    = self._st.findOne({'id': file_id})
-        return {'name': file['filename'],'size': file['size'],'chunk':file['chunk']}
-        
+        return {'name': file['filename'],'size': file['size'],'chunk':file['chunk']}        
         
