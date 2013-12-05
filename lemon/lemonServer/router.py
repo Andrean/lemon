@@ -11,7 +11,9 @@ import controllers.commandController as commandController
 import controllers.baseController    as baseController
 import controllers.dataController    as dataController
 
-
+#####################################################################################
+#    Routes for routing agent;s requests
+#####################################################################################
 AGENT_INTERFACE_ROUTES  = [
      [  'GET',  r'^/commands[?=%\w]*$',  commandController.get_commands     ]
     ,[  'GET',  r'.*',           baseController.get_404                     ]
@@ -21,6 +23,13 @@ AGENT_INTERFACE_ROUTES  = [
     ,[  'PUT',  r'^/data$',         dataController.put_data                 ]
     ,[  'PUT',  r'.*',              baseController.get_404                  ]
     
+]
+#####################################################################################
+#    Routes for routing request from WEB-Server as web-interface
+#####################################################################################
+WEB_INTERFACE_ROUTES = [
+
+
 ]
 
 class Router(object):
@@ -72,4 +81,7 @@ class AgentInterfaceRouter(Router):
     def load(self):
         super().load( AGENT_INTERFACE_ROUTES )
         
+class WebInterfaceRouter(Router):
+    def load(self):
+        super().load( WEB_INTERFACE_ROUTES )
                     
