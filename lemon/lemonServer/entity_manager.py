@@ -37,6 +37,7 @@ class EntityManager(lemon.BaseServerComponent):
         self.commandManager = CommandManager(self)
         self.fileManager    = FileManager()
         self.agentManager   = AgentManager()
+        self.dataManager    = DataManager()
         self._setReady()
         i = 0
         while(self._running):
@@ -72,12 +73,20 @@ class EntityManager(lemon.BaseServerComponent):
     def getFile(self, agent_id, file_id):
         return self.fileManager.getFile(file_id)
     
+    def saveData(self, data):
+        #self.dataManager.save()
+        pass
+    
     def update(self):
         pass
         #self.configManager._update()
         #self.tagManager._update()
         #self.commandManager._update()
 
+class DataManager(object):
+    def __init__(self):
+        self._db    = core.getCoreInstance().getInstance('STORAGE').getInstance()    
+    
 class AgentManager(object):
     def __init__(self):
         self._agents    = core.getCoreInstance().getInstance('STORAGE').getInstance()

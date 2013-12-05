@@ -138,7 +138,7 @@ class Core(object):
         self._connectHandlers()
     
     def stop(self):
-        for i, t in self._instances.items():
+        for t in self._instances.values():
             t['instance'].quit()       
         
                             
