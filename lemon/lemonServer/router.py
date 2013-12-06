@@ -10,9 +10,10 @@ import sys
 import controllers.commandController as commandController
 import controllers.baseController    as baseController
 import controllers.dataController    as dataController
+import controllers.webController     as webController
 
 #####################################################################################
-#    Routes for routing agent;s requests
+#    Routes for routing agent's requests
 #####################################################################################
 AGENT_INTERFACE_ROUTES  = [
      [  'GET',  r'^/commands[?=%\w]*$',  commandController.get_commands     ]
@@ -28,8 +29,9 @@ AGENT_INTERFACE_ROUTES  = [
 #    Routes for routing request from WEB-Server as web-interface
 #####################################################################################
 WEB_INTERFACE_ROUTES = [
-
-
+    [   'POST', r'^/update/loadDistr$', webController]
+    ,[  'GET',  r'.*',           baseController.get_404                     ]
+    
 ]
 
 class Router(object):
