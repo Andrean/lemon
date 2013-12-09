@@ -3,7 +3,11 @@
 #
 #
 import http.server
+from socketserver import ThreadingMixIn
 import threading
+
+class ThreadingHTTPServer(ThreadingMixIn, http.server.HTTPServer):
+    pass
 
 class Listener(threading.Thread):
     
@@ -20,8 +24,8 @@ class Listener(threading.Thread):
         self._endpoint  = server_address
 
     def listen(self):
-        self._httpd = http.server.HTTPServer(self._endpoint, self._handler)
-        self._httpd.request_router  = self._router
+        self._httpd = ThreadingHTTPServer(self._endpoint, self._handler)
+        self._httpd.request_router  = self._router        
         self._httpd.serve_forever()
         
     def stop(self):
