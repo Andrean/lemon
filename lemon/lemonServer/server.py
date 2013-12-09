@@ -8,6 +8,7 @@ import httpHandler
 import lemon
 import uuid
 import router
+import time
 
 class Server(lemon.BaseServerComponent):
     
@@ -35,7 +36,9 @@ class Server(lemon.BaseServerComponent):
             self._logger.info('http agent listener started')          
             self._webListener.start()
             self._logger.info('http WEB listener started')          
-            self._setReady()              
+            self._setReady()         
+            while self._running:
+                time.sleep(0.1)
         except Exception as e:
             self._logger.exception(e)
             raise
