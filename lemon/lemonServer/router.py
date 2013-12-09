@@ -7,6 +7,7 @@ from urllib.parse import parse_qs
 import re
 import types
 import sys
+import json
 import controllers.commandController as commandController
 import controllers.baseController    as baseController
 import controllers.dataController    as dataController
@@ -32,6 +33,7 @@ AGENT_INTERFACE_ROUTES  = [
 #####################################################################################
 WEB_INTERFACE_ROUTES = [
      [  'POST', r'^/upload$', webController.upload                          ]
+    ,[  'POST', r'^/update/distr', webController.post_distr                 ] 
     ,[  'POST', r'.*',              baseController.get_404                  ]
     ,[  'GET',  r'^/upload$', webController.test                              ]    
     ,[  'GET',  r'.*',           baseController.get_404                     ]
@@ -79,8 +81,11 @@ class Router(object):
             for header, value in headers.items():
                 self.send_header(header, value)
             self.end_headers()
-            self.wfile.write(bytes(content, 'utf-8'))    
+            self.wfile.write(bytes(content, 'utf-8')) 
+        def send_json(self, obj):
+            self.send_content( json.dumps(obj) )   
         requestHandler.send_content = types.MethodType( send_content, requestHandler )
+        requestHandler.send_json    = types.MethodType( send_json, requestHandler )        
         return requestHandler
     
             
