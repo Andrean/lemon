@@ -29,7 +29,9 @@ AGENT_INTERFACE_ROUTES  = [
 #    Routes for routing request from WEB-Server as web-interface
 #####################################################################################
 WEB_INTERFACE_ROUTES = [
-    [   'POST', r'^/update/loadDistr$', webController]
+     [  'POST', r'^/update/loadDistr$', webController.loadDistr             ]
+    ,[  'POST', r'.*',              baseController.get_404                  ]
+    ,[  'GET',r'^/update/loadDistr$', webController.test                    ]    
     ,[  'GET',  r'.*',           baseController.get_404                     ]
     
 ]
@@ -71,6 +73,7 @@ class Router(object):
         def send_content(self, content, headers={}):
             self.send_response(200)
             self.send_header('Content-Type','text/plain;charset=utf-8')
+            self.send_header('Content-Length',len(content))
             for header, value in headers.items():
                 self.send_header(header, value)
             self.end_headers()
