@@ -11,12 +11,14 @@ import controllers.commandController as commandController
 import controllers.baseController    as baseController
 import controllers.dataController    as dataController
 import controllers.webController     as webController
+import controllers.fileController    as fileController
 
 #####################################################################################
 #    Routes for routing agent's requests
 #####################################################################################
 AGENT_INTERFACE_ROUTES  = [
-     [  'GET',  r'^/commands[?=%\w]*$',  commandController.get_commands     ]
+     [  'GET',  r'^/commands[?=%&\w]*$',  commandController.get_commands     ]
+    ,[  'GET',  r'^/files[?=%,&\w]*$',    fileController.get_files            ] 
     ,[  'GET',  r'.*',           baseController.get_404                     ]
     ,[  'POST', r'^/commands/result$',  commandController.post_commands_result      ]    
     ,[  'POST', r'^/data/AgentState$',   dataController.post_agent_state    ]
@@ -31,7 +33,7 @@ AGENT_INTERFACE_ROUTES  = [
 WEB_INTERFACE_ROUTES = [
      [  'POST', r'^/upload$', webController.upload                          ]
     ,[  'POST', r'.*',              baseController.get_404                  ]
-    ,[  'GET',r'^/upload$', webController.test                              ]    
+    ,[  'GET',  r'^/upload$', webController.test                              ]    
     ,[  'GET',  r'.*',           baseController.get_404                     ]
     
 ]
