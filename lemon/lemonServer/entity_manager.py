@@ -9,6 +9,7 @@ import core
 import time
 import uuid
 import collections
+import os
 
 COMMANDS    = collections.namedtuple('COMMANDS',['get_self_info'])
 commands    = COMMANDS(get_self_info='get_self_info')
@@ -35,7 +36,7 @@ class EntityManager(lemon.BaseServerComponent):
         self.configManager  = Configuration()
         self.tagManager     = TagManager() 
         self.commandManager = CommandManager(self)
-        self.fileManager    = FileManager()
+        self.fileManager    = FileManager('files')
         self.agentManager   = AgentManager()
         self.dataManager    = DataManager()
         self._setReady()
@@ -46,6 +47,7 @@ class EntityManager(lemon.BaseServerComponent):
                 i = 0
             i+= 4                               
             self.update()
+            self.fileManager.removeOldLinks()
             time.sleep(4)
         self._logger.info('stop ENTITY_MANAGER')
     
@@ -247,12 +249,57 @@ class CommandManager(object):
         print(self._cmds)
             
 class FileManager(object):
-    def __init__(self):
-        self._st = core.getCoreInstance().getInstance('STORAGE').getInstance()
-        self._st.set_default_collection('files')
-            
-    def getFile(self, file_id):
-        self._st.set_default_collection('files')
-        file    = self._st.findOne({'id': file_id})
-        return {'name': file['filename'],'size': file['size'],'chunk':file['chunk']}        
+    def __init__(self, files_directory):
+        self._root  = files_directory
+        self._links = {}
+        os.makedirs(self._root, exist_ok=True)
+    
+    def isExistsFile(self, filename):
+        return os.path.exists(os.path.join(self._root, filename))
         
+    def writeFile(self, filename, rstream, length):
+        if filename is None: return
+        path    = os.path.join(self._root, filename)
+        with open(path, 'wb') as wstream:
+            buf_length  = 40000
+            while length > 0:
+                write_len   = buf_length if length > buf_length else length
+                buffer  = rstream.read( write_len )
+                wstream.write(buffer)
+                length -= buf_length
+            wstream.close()
+        return True
+    
+    def getFilePath(self , filename):
+        if filename:
+            return os.path.join(self._root, filename)
+        return
+                    
+    def getFileByLink(self, link):
+        try:        
+            fileRecord   =  self._links.get(link,0)
+            if fileRecord == 0:
+                raise VirtualLinkNotExists()
+            file    = fileRecord['file']
+            with open(file, 'rb') as f:
+                return f
+        except KeyError:
+            raise WrongLinkRecord()
+        
+    def createVirtualLink(self, file_path, ttl=3600):   # time of live of link is 3600 seconds
+        link    = 'file_'+ str(uuid.uuid4())
+        self._links[link]   = {'file': file_path, 'ttl': int(ttl), 'time': time.time()}
+        return link
+    
+    def removeOldLinks(self):
+        current_time   = time.time()
+        for k in self._links.keys():
+            if self._links[k]['time'] + self._links[k]['ttl'] < current_time:
+                del(self._links[k])
+
+### Exceptions
+class VirtualLinkNotExists(Exception):
+    pass
+
+class WrongLinkRecord(Exception):
+    pass
