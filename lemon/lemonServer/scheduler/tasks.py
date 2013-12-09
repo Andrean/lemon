@@ -22,6 +22,6 @@ refreshServerStat   =   formSchTask('refreshServerStat', 'Refreshing server stat
 checkManageUpdate   =   formSchTask('updateContractors', 'Check database for new update of commands and configuration', 10, None)
 loadContractors     =   formSchTask('updateContractors', 'Load all configuration info for agents from database', 0, None, {'onStart': True} ) 
 
-add(refreshServerStat)
-add(checkManageUpdate)
-add(loadContractors)
+#add(refreshServerStat)
+#add(checkManageUpdate)
+#add(loadContractors)
