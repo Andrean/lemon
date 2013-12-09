@@ -2,10 +2,10 @@ LOGGING:
     file: conf/logging.yaml
 SCHEDULER: {}
 SERVER: 
-    xmlrpc_address:  127.0.0.1
-    xmlrpc_port:   8000
     agent_interface:
        listenerEndpoint: 'localhost:8080'
+    web_interface:
+       listenerEndpoint: '0.0.0.0:10003'
 STORAGE: 
     data_path: data/storage/
 TASK_MANAGER: {}
