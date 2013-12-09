@@ -29,9 +29,9 @@ AGENT_INTERFACE_ROUTES  = [
 #    Routes for routing request from WEB-Server as web-interface
 #####################################################################################
 WEB_INTERFACE_ROUTES = [
-     [  'POST', r'^/update/loadDistr$', webController.loadDistr             ]
+     [  'POST', r'^/upload$', webController.upload                          ]
     ,[  'POST', r'.*',              baseController.get_404                  ]
-    ,[  'GET',r'^/update/loadDistr$', webController.test                    ]    
+    ,[  'GET',r'^/upload$', webController.test                              ]    
     ,[  'GET',  r'.*',           baseController.get_404                     ]
     
 ]
