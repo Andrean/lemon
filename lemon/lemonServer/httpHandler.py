@@ -5,8 +5,9 @@
 import http.server
 
 class httpRequestHandler(http.server.BaseHTTPRequestHandler):    
-    def __init__(self, request, client_address, server):
-        http.server.BaseHTTPRequestHandler.__init__(self, request, client_address, server)
+    def __init__(self, request, client_address, server):        
+        self.protocol_version = 'HTTP/1.1'
+        http.server.BaseHTTPRequestHandler.__init__(self, request, client_address, server)        
                 
     def do_GET(self):
         router    = self.server.request_router
