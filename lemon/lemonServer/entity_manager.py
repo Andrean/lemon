@@ -65,7 +65,8 @@ class EntityManager(lemon.BaseServerComponent):
         return self.configManager.getConfig(tags)
     
     def getCommands(self, agent_id, timestamp=0):        
-        tags    = [x for x in self.tagManager.getTags(agent_id)]        
+        tags    = [x for x in self.tagManager.getTags(agent_id)] 
+        self._logger.debug('Trying to get commands byt agent {0}'.format(agent_id))       
         if len( tags ) > 0:
             return self.commandManager.getCommands(tags, timestamp)
         self._logger.info('Detected new agent with id {0}'.format(agent_id))
@@ -170,8 +171,8 @@ class TagManager(object):
         tags   = [x for x in self._st_tags.find({})]
         for item in self._st_agents.find({'agent_id': agent_id}):
             for tag in item.get('tags',[]):     
-                if tag in tags or tag == agent_id:               
-                    yield tag                        
+                #if tag in tags or tag == agent_id:               
+                yield tag                        
         
     def assignTag(self, agent_id, *tags):
         self._st_agents.update( 
@@ -223,10 +224,14 @@ class CommandManager(object):
     def getCommands(self, tags, timestamp=0):
         result  = []        
         tags    = [x for x in tags]
+        print(tags)
+        print(self._cmds)
+        print(timestamp)
         for cmd in self._cmds:            
             for tag in cmd['tags']:
                 if tag in tags and cmd['time'] > timestamp:
                     result.append({'cmd': cmd['cmd'], 'args':cmd['args'], 'id':cmd['id']})
+        print(result)
         return result
     
     def addCommand(self, cmd, args, tags):
@@ -292,8 +297,7 @@ class FileManager(object):
             if fileRecord == 0:
                 raise VirtualLinkNotExists()
             file    = fileRecord['file']
-            with open(file, 'rb') as f:
-                return f
+            return (open(os.path.join(self._root, file), 'rb'), file)
         except KeyError:
             raise WrongLinkRecord()
         

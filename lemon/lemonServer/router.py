@@ -20,7 +20,7 @@ import controllers.fileController    as fileController
 #####################################################################################
 AGENT_INTERFACE_ROUTES  = [
      [  'GET',  r'^/commands[?=%&\w]*$',  commandController.get_commands    ]
-    ,[  'GET',  r'^/files[?=%,&\w]*$',    fileController.get_files          ] 
+    ,[  'GET',  r'^/files[?=%,&_\-\w]*$',    fileController.get_files          ] 
     ,[  'GET',  r'.*',           baseController.get_404                     ]
     ,[  'POST', r'^/commands/result$',  commandController.post_commands_result      ]    
     ,[  'POST', r'^/data/AgentState$',   dataController.post_agent_state    ]
