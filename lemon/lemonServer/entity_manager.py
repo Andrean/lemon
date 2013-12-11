@@ -11,8 +11,8 @@ import uuid
 import collections
 import os
 
-COMMANDS    = collections.namedtuple('COMMANDS',['get_self_info'])
-commands    = COMMANDS(get_self_info='get_self_info')
+COMMANDS    = collections.namedtuple('COMMANDS',['get_self_info', 'copy_distr'])
+commands    = COMMANDS(get_self_info='get_self_info', copy_distr='copy_distr')
 CMD_STATUS  = collections.namedtuple('CMD_STATUS',['present','submit','pending','completed','error'])
 status      = CMD_STATUS(
                 present   = 0,
@@ -99,6 +99,12 @@ class AgentManager(object):
             pass
         agent   = {'agent_id': agent_id, 'tags': []}
         self._agents.save(agent)
+    
+    def get(self, agent_id=None):
+        if not agent_id:
+            for agent in self._agents.find( {} ):
+                del agent['_id']
+                yield agent
         
 class Configuration(object):
     def __init__(self):
@@ -173,6 +179,11 @@ class TagManager(object):
             { "$addToSet": { 'tags': { "$each": tags } } }
         )
         
+    def removeTag(self, agent_id, *tags):
+        self._st_agents.update(
+            {'agent_id': agent_id}, 
+            {"$pullAll" : { 'tags': tags }}
+        )
     def _update(self):
         pass
         #self._tagList   = []
