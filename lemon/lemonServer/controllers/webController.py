@@ -3,7 +3,6 @@
 #
 #
 import core
-import os
 import json
 import re
 import webpersonal.update as update
@@ -77,6 +76,7 @@ def copy_services_to_agents( req, res):
             raise ValueError
         for srv in service_list:
             srv['link'] = em.fileManager.createVirtualLink(srv['file'])
+        print(service_list)
         
         #    Вид карты сервиса:
         #    [
@@ -91,7 +91,7 @@ def copy_services_to_agents( req, res):
             res.send_json(code=404,content={'status': False, 'msg': 'Information system not found' })
             return
         for group in system_map['map']:
-            em.sendCommand(commands.copy_distr, [x for x in service_list if x['service'] in group['services']], group.tag )
+            em.sendCommand(commands.copy_distr, [x for x in service_list if x['service'] in group['services']], [group['tag']] )
         res.send_json( {'status': True, 'check_link': '/update/status'} )    
     except:
         res.send_error(406)
@@ -102,7 +102,7 @@ def test( req, res):
 def get_agents( req, res ):
     em  = core.getCoreInstance().getInstance('ENTITY_MANAGER')
     agents  = [x for x in em.agentManager.get()]
-    res.send_json( agents )
+    res.send_json( agents )    
 
 def post_agents( req, res ):
     em  = core.getCoreInstance().getInstance('ENTITY_MANAGER')    
