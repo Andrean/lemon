@@ -15,12 +15,13 @@ import os
 import uuid
 import threading
 import time
+import yaml
 
 # core version
-VERSION     = '0.0.1'
+VERSION     = '1.0.1'
 # configuration base parameters
 CONFIG_PATH = 'conf'
-CONFIG_FILE = CONFIG_PATH + '/agent.conf'
+CONFIG_FILE = CONFIG_PATH + '/agent.yaml'
 
 # Do not change order of instances. Important: storage must be first, task_manager - second
 COMPONENTS  = ['TASK_MANAGER', 'SCHEDULER', 'INTERFACE', 'CONTRACTOR','ENTITY_MANAGER']
@@ -127,36 +128,58 @@ class Core(object):
             self._loggers[name] = logging.getLogger(name)
     
     def _loadConfig(self):
-        def writeDefaultConfig(config):
-            config.add_section('STORAGE')
-            storageConfig                   = config['STORAGE']
-            storageConfig['data_path']      = 'data/storage/'
-            config.add_section('SCHEDULER')
-            config.add_section('TASK_MANAGER')
-            config.add_section('INTERFACE')
-            config.add_section('CONTRACTOR')
-            config.add_section('ENTITY_MANAGER')
-            interfaceConfig                 = config['INTERFACE']
-            interfaceConfig['xmlrpc_server_addr'] = 'localhost'
-            interfaceConfig['xmlrpc_server_port'] = '8000' 
-            config.add_section('LOGGING')
-            loggingConfig                   = config['LOGGING']
-            loggingConfig['file']           = CONFIG_PATH + '/logging.conf'
+        def writeDefaultConfig():
+            config  = {}
+            config['storage'] = {
+                'data_path': 'data/storage'
+            }
+            config['scheduler'] = {}
+            config['task_manager'] = {}
+            config['interface'] = {
+                'server': 'dev-lemon:8080'
+            }
+            config['contractor'] = {}
+            config['entity_manager'] = {}
+            config['logging'] = {
+                'file': 'conf/logging.yaml'
+            }
             
-            if not os.path.exists(CONFIG_PATH):
-                os.makedirs(CONFIG_PATH)        
+            #config.add_section('STORAGE')
+            #storageConfig                   = config['STORAGE']
+            #storageConfig['data_path']      = 'data/storage/'
+            #config.add_section('SCHEDULER')
+            #config.add_section('TASK_MANAGER')
+            #config.add_section('INTERFACE')
+            #config.add_section('CONTRACTOR')
+            #config.add_section('ENTITY_MANAGER')
+            #interfaceConfig                 = config['INTERFACE']
+            #interfaceConfig['xmlrpc_server_addr'] = 'localhost'
+            #interfaceConfig['xmlrpc_server_port'] = '8000' 
+            #config.add_section('LOGGING')
+            #loggingConfig                   = config['LOGGING']
+            #loggingConfig['file']           = CONFIG_PATH + '/logging.conf'
             
-            with open(CONFIG_FILE,'w') as configFile:        
-                config.write(configFile)
+            os.makedirs(CONFIG_PATH,exist_ok=True)
+            yaml.dump(config, open(CONFIG_FILE,'w'))
+            return config
         
-        self._config  = configparser.ConfigParser()
-        config = self._config     
-        config.read(CONFIG_FILE)
-        self._corelogger.info('load configuration')
-        if len(config.sections()) < 1:
-            self._corelogger.info('write default configuration to file')
-            writeDefaultConfig(config)
-        logging.config.fileConfig(config['LOGGING']['file'])
+        #self._config  = configparser.ConfigParser()
+        if os.path.exists(CONFIG_FILE):
+            self._config = yaml.load(open(CONFIG_FILE))
+        else:
+            self._config    = writeDefaultConfig()
+        for key in ['ENTITY_MANAGER','TASK_MANAGER','SCHEDULER','CONTRACTOR']:
+            if not self._config.__contains__(str.lower(key)):
+                self._config[str.lower(key)] = {}
+        keys    = [x for x in self._config.keys()]
+        for key in keys:
+            self._config[str.upper(key)]    = self._config[key]
+        log_config_file = os.path.abspath(self._config['logging']['file'])
+        logging_config  = yaml.load(open(log_config_file))
+        for item in logging_config['handlers'].values():
+            if item.__contains__('filename'):
+                os.makedirs(os.path.dirname(item['filename']),exist_ok=True)
+        logging.config.dictConfig(logging_config)        
     
     def getInstance(self, name):
         try:

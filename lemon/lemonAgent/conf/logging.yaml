@@ -1,0 +1,43 @@
+version: 1
+formatters:
+    rootFormatter:
+        format:      "%(asctime)s.%(msecs)03d  %(name)-15s  %(levelname)-10s  %(message)s"
+        datefmt:     '%Y-%m-%d %H:%M:%S'
+handlers:
+    consoleHandler:
+        class:       logging.StreamHandler
+        formatter:   rootFormatter
+        stream:      ext://sys.stdout
+    fileHandler:
+        class:       logging.FileHandler
+        formatter:   rootFormatter
+        filename:    'logs/agent.log'
+loggers:
+    root:
+        level:       DEBUG
+        handlers:    [consoleHandler]
+    STORAGE:
+        level:       DEBUG
+        handlers:   [consoleHandler, fileHandler]
+    CORE:
+        level:       DEBUG
+        handlers:   [consoleHandler, fileHandler]
+    TASK_MANAGER:
+        level:       DEBUG
+        handlers:   [consoleHandler, fileHandler]
+    MAIN:
+        level:       DEBUG
+        handlers:   [consoleHandler, fileHandler]
+    SCHEDULER:
+        level:       DEBUG
+        handlers:   [consoleHandler, fileHandler]
+    ENTITY_MANAGER:
+        level:       DEBUG
+        handlers:   [consoleHandler, fileHandler]
+    INTERFACE:
+        level:       DEBUG
+        handlers:   [consoleHandler, fileHandler]
+    CONTRACTOR:
+        level:       DEBUG
+        handlers:   [consoleHandler, fileHandler]
+      

@@ -1,0 +1,7 @@
+contractor: {}
+entity_manager: {}
+interface: {server: 'dev-lemon:8080'}
+logging: {file: 'conf/logging.yaml'}
+scheduler: {}
+storage: {data_path: data/storage}
+task_manager: {}
