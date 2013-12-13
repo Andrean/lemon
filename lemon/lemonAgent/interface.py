@@ -10,6 +10,10 @@ import xmlrpc.client
 import lemon
 import core
 import queue
+import http.client
+import socket
+import threading
+import sys
 
 
 ERROR_NOT_IDENTIFIED  = '0000001'
@@ -17,9 +21,94 @@ ERROR_NOT_AUTHORIZED  = '0000002'
 
 TASK_SUCCESSFULLY_ADDED = '11'
 
-RECONNECT_INTERVAL      = 10
+RECONNECTION_INTERVAL      = 10
+QUEUE_WAIT_INTERVAL         = 10
 
-
+class HTTPClient(lemon.BaseAgentLemon):
+    def __init__(self, _logger, _config, _info):
+        self.agent_id = None
+        self.serverEndpoint = ('localhost', 8080)
+        self._reqQueue  = queue.Queue()
+        self._safezone  = []
+        lemon.BaseAgentLemon.__init__(self,_logger,_config, _info)
+    
+    def run(self):
+        endpoint    = self._config.get('server',None)
+        if endpoint:
+            self.serverEndpoint = endpoint.split(':')
+            self.serverEndpoint[1] = int(self.serverEndpoint[1])  
+        self._setReady()
+        while self._running:
+            try:
+                self._handle()
+            except:
+                self._logger.exception(sys.exc_info()[1])                
+        self._logger.info('Shutdown client interface')
+        
+    def _handle(self):
+        try:
+            task = self._reqQueue.get(True,1)   # блокируем очередь и ждем элемент в течение не более 1 секунды
+            connection  = task['conn']
+            request     = task['req']
+            callback    = task['cb']
+            connection.request(*request)
+            response    = connection.getresponse()
+            callback(None, response)
+        except queue.Empty:
+            return
+        except ConnectionError as e:
+            self._logger.exception(e)
+            callback(e)
+            
+    def putRequest(self, connection, request, callback):
+        while True:
+            try:
+                self._reqQueue.put( {'conn': connection, 'req': request, 'cb': callback}, True, QUEUE_WAIT_INTERVAL )
+                return
+            except queue.Full:
+                self._logger.error('Queue is full')                
+    
+    def getHandler(self):
+        return RequestHandler(self)
+    
+class   RequestHandler(object):
+    def __init__(self, client):
+        self.client     = client
+        self.connection = http.client.HTTPConnection(self.client.serverEndpoint[0], self.client.serverEndpoint[1],timeout=5)
+        self.connect()
+        self.mutex  = threading.Lock()
+        self.client._logger.info('Connection to {0}:{1} sucessfully established'.format(str(self.client.serverEndpoint[0]), str(self.client.serverEndpoint[1])))        
+    
+    def request(self, method, path, body=None, headers={}):
+        response    = {'result': None, 'error': None, 'ready': threading.Condition(self.mutex)}
+        def callback( _error, _response=None ):
+            response['result']    = _response  
+            with response['ready']:           
+                response['ready'].notify()
+        self.client.putRequest( self.connection, [method, path, body, headers], callback )
+        with response['ready']:
+            response['ready'].wait()
+        if response['error']:
+            self.client._logger.exception(response['error'])
+            self.connect()
+        print(response)
+        return response['result']
+        
+    def connect(self):
+        while True:
+            try:
+                self.connection.connect()
+                return
+            except ConnectionError:
+                self._logger.error('Connection to {0}:{1} failed. Reconnecting after {2} seconds'.format(self.client.serverEndpoint[0],
+                                                                                                         str(self.client.serverEndpoint[1]), 
+                                                                                                     str(RECONNECTION_INTERVAL)
+                                                                                                     )
+                                   )
+                time.sleep(RECONNECTION_INTERVAL)
+    
+    
+a = """
 class XMLRPC_Client(lemon.BaseAgentLemon):
     '''
     classdocs
@@ -117,4 +206,4 @@ class XMLRPC_Client(lemon.BaseAgentLemon):
                 return result
         except Exception as e:
             self._logger.exception(e)
-        
+"""     

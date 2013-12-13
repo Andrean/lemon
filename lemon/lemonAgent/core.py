@@ -28,7 +28,7 @@ COMPONENTS  = ['TASK_MANAGER', 'SCHEDULER', 'INTERFACE', 'CONTRACTOR','ENTITY_MA
 AGENT_COMPONENTS   = {  'STORAGE': storage.Storage, 
                         'TASK_MANAGER': taskmanager.TaskManager, 
                         'SCHEDULER': scheduler.Scheduler, 
-                        'INTERFACE': interface.XMLRPC_Client, 
+                        'INTERFACE': interface.HTTPClient, 
                         'CONTRACTOR': contractorLayer.Layer ,
                         'ENTITY_MANAGER': entity_manager.EntityManager    }
 core_instance   =    None
