@@ -6,21 +6,20 @@ Created on 08.07.2013
 VERSION = '0.1.2'
 
 import core
-import time
-
 
 if __name__ == '__main__':
     
     c    = core.Core()
-    core.setCoreInstance(c)   
-    c.start()
-    c.renewVersion(VERSION)
-    tmInstance          = c.getInstance('TASK_MANAGER')
-    schedulerInstance   = c.getInstance('SCHEDULER')
-    for schtask in schedulerInstance.getNotInitiatedDefaultTasks():
-        tmInstance.new_task('addScheduledTask', schtask)     
-    
     try:
+        core.setCoreInstance(c)   
+        c.start()
+        c.renewVersion(VERSION)
+        tmInstance          = c.getInstance('TASK_MANAGER')
+        schedulerInstance   = c.getInstance('SCHEDULER')
+        for schtask in schedulerInstance.getNotInitiatedDefaultTasks():
+            tmInstance.new_task('addScheduledTask', schtask)   
+    
+    
         print("""
         ##########################################################
         #                                                        #
@@ -35,8 +34,8 @@ if __name__ == '__main__':
         #                                                        #
         ##########################################################        
         """)
-        while c.is_alive():
-            time.sleep(0.1)           
+        c.join()           
     except KeyboardInterrupt:
+        pass
+    finally:
         c.stop()
-        

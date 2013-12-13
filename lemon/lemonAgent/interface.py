@@ -91,7 +91,6 @@ class   RequestHandler(object):
         if response['error']:
             self.client._logger.exception(response['error'])
             self.connect()
-        print(response)
         return response['result']
         
     def connect(self):
@@ -107,6 +106,22 @@ class   RequestHandler(object):
                                    )
                 time.sleep(RECONNECTION_INTERVAL)
     
+    def send_json(self, obj, url, headers={}):
+        body    = json.dumps(obj)
+        headers['Content-Length']   = len(body)
+        if 'Content-Type' not in headers.keys():
+            headers['Content-Type'] = 'application/json'
+        return self.request('POST', url, body, headers)
+    
+    def send_text(self, text, url, headers={}, encoding='utf-8'):
+        body    = bytes(text,encoding)
+        headers['Content-Length']   = len(body)
+        if 'Content-Type' not in headers.keys():
+            headers['Content-Type'] = 'text/plain' + ';charset={0}'.format(encoding)
+        return self.request('POST', url, body, headers)
+        
+    def get_content(self, url, headers={}):
+        return self.request('GET', url, "", headers)
     
 a = """
 class XMLRPC_Client(lemon.BaseAgentLemon):

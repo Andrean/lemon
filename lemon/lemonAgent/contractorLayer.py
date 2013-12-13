@@ -51,6 +51,7 @@ class Layer(lemon.BaseAgentLemon):
         self._logger.info("Layer started")
         while self._running:
             time.sleep(0.01) 
+        
         self._logger.info("Layer stopped")
         
     def addContractor(self, name, stream, revision=0,*args):
@@ -114,8 +115,8 @@ class Layer(lemon.BaseAgentLemon):
         c    = Contractor(self._logger, self._config, c_info, self._contractors[k], self.contractors_path + path, args)
         c.start()
     
-    def _stop(self, k, path):
-        pass
+    #def _stop(self, k, path):
+    #    pass
     
     def _write(self, path, content):
         try:

@@ -48,17 +48,19 @@ class TaskManager(lemon.BaseAgentLemon):
         self._logger.info('Task Manager started')
         while self._running:
             self._process()
+        self._pool.quit()
+        self._logger.info('Shutdown ThreadPool')
         self._logger.info('Task Manager shutdown')    
         
     
     def _process(self):
-        if self._taskQueue.empty() is False:
-            task    = self._taskQueue.get()
+        try:
+            task    = self._taskQueue.get(True, 5)
             #self._logger.debug('Trying to start task {0}'.format(task.id))
             self._pool.put(task)
             #task.start()
-        else:
-            time.sleep(0.01)
+        except queue.Empty:
+            return
         
         
     def add_task(self, _task): 

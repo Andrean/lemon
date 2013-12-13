@@ -61,7 +61,7 @@ class Storage(lemon.BaseAgentLemon):
             os.makedirs(self._config['data_path'])
         while(self._running):
             time.sleep(0.1)
-        self._logger.info("shutdown storage {0}".format(self._storageID))
+        self._logger.info("Shutdown storage {0}".format(self._storageID))
         
     # return byte content from file
     def readItem(self, item_id):

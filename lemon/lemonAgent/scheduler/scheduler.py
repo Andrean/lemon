@@ -54,6 +54,7 @@ class Scheduler(lemon.BaseAgentLemon):
             if it > STORE_INTERVAL :
                 it = 0
                 self._store_schedule()
+        self._logger.info('Shutdown scheduler')
             
     def add(self, func_type, name='default', start_time=None, interval = 5*MINUTES,  kwargs=None, revision=0):
         schtask = {}

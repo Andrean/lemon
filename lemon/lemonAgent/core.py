@@ -16,6 +16,7 @@ import uuid
 import threading
 import time
 import yaml
+import sys
 
 # core version
 VERSION     = '1.0.1'
@@ -24,7 +25,7 @@ CONFIG_PATH = 'conf'
 CONFIG_FILE = CONFIG_PATH + '/agent.yaml'
 
 # Do not change order of instances. Important: storage must be first, task_manager - second
-COMPONENTS  = ['TASK_MANAGER', 'SCHEDULER', 'INTERFACE', 'CONTRACTOR','ENTITY_MANAGER']
+COMPONENTS  = ['TASK_MANAGER', 'SCHEDULER', 'INTERFACE', 'CONTRACTOR']
 AGENT_COMPONENTS   = {  'STORAGE': storage.Storage, 
                         'TASK_MANAGER': taskmanager.TaskManager, 
                         'SCHEDULER': scheduler.Scheduler, 
@@ -121,6 +122,13 @@ class Core(object):
         self._instances[name]['instance'].start()
         self._instances[name]['instance'].waitReady()
         self._corelogger.info('start "{0}"'.format(name))
+    
+    def _stopStorage(self):
+        name    = 'STORAGE'
+        try:
+            self._instances[name]['instance'].quit()
+        except:
+            self._corelogger.exception(*(sys.exc_info()))
         
     def _initLoggers(self):
         self._corelogger.info('initiate all loggers')
@@ -143,27 +151,9 @@ class Core(object):
             config['logging'] = {
                 'file': 'conf/logging.yaml'
             }
-            
-            #config.add_section('STORAGE')
-            #storageConfig                   = config['STORAGE']
-            #storageConfig['data_path']      = 'data/storage/'
-            #config.add_section('SCHEDULER')
-            #config.add_section('TASK_MANAGER')
-            #config.add_section('INTERFACE')
-            #config.add_section('CONTRACTOR')
-            #config.add_section('ENTITY_MANAGER')
-            #interfaceConfig                 = config['INTERFACE']
-            #interfaceConfig['xmlrpc_server_addr'] = 'localhost'
-            #interfaceConfig['xmlrpc_server_port'] = '8000' 
-            #config.add_section('LOGGING')
-            #loggingConfig                   = config['LOGGING']
-            #loggingConfig['file']           = CONFIG_PATH + '/logging.conf'
-            
             os.makedirs(CONFIG_PATH,exist_ok=True)
             yaml.dump(config, open(CONFIG_FILE,'w'))
             return config
-        
-        #self._config  = configparser.ConfigParser()
         if os.path.exists(CONFIG_FILE):
             self._config = yaml.load(open(CONFIG_FILE))
         else:
@@ -188,8 +178,11 @@ class Core(object):
             self._corelogger.error('Cannot get instance "{0}"'.format(str(e)))
             
     def terminateInstances(self):
-        for k in COMPONENTS.reverse():
-            self._instances[k]['instance'].quit()
+        try:
+            for k in reversed(COMPONENTS):
+                self._instances[k]['instance'].quit()
+        except:
+            pass
     
     def getItem(self, item):
         try:
@@ -212,6 +205,10 @@ class Core(object):
         
     def is_alive(self):
         return self._running
+    
+    def join(self):
+        while self.is_alive():
+            time.sleep(0.01)
         
     def start(self):
         self._running = True
@@ -225,7 +222,9 @@ class Core(object):
         
     def stop(self):
         self.terminateInstances()
+        self._stopStorage()
         self._running   = False
+        self._corelogger.info('Shutdown Core')
         
     
     

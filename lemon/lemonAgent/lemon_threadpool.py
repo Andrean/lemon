@@ -5,7 +5,6 @@ Created on 14.08.2013
 '''
 import threading
 import queue
-import time
 
 class ThreadPool(threading.Thread):
     def __init__(self, max_threads=15):
@@ -29,12 +28,12 @@ class ThreadPool(threading.Thread):
         self._taskQueue.put(_task)       
     
     def _process(self):
-        if self._taskQueue.empty() is True:
-            time.sleep(0.05) 
-        else:
-            task    = self._taskQueue.get()
+        try:
+            task    = self._taskQueue.get(True, 5)
             n   = self._getFreeThread()
             self._start_task(n, task)
+        except queue.Empty:
+            return
                 
     def _start_task(self, thread_num, task):
         self._threads[thread_num].assign(task)
