@@ -12,8 +12,9 @@ def get_files( req, res ):
         em  = core.getCoreInstance().getInstance('ENTITY_MANAGER')
         files   = req.query.get('file', {})
         f = files[0]
+        fd  = None
         try:
-            fd, filename  = em.fileManager.getFileByLink(f)
+            fd, filename  = em.fileManager.getFileByLink(f) 
             fs = os.fstat(fd.fileno())            
             res.send_response(200)
             res.send_header('Content-Length', str(fs[6]))
@@ -24,7 +25,8 @@ def get_files( req, res ):
         except entity_manager.VirtualLinkNotExists:
             res.send_error(404)
         finally:
-            fd.close()
+            if fd:
+                fd.close()
     except KeyError:
         res.send_error(401)
         return
