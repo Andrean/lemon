@@ -45,9 +45,11 @@ WEB_INTERFACE_ROUTES = [
 ]
 
 class Router(object):
-    def __init__(self):
+    def __init__(self, logger):
         self._routes    = []
         self._handler   = {}
+        self._logger    = logger
+        self.name       = "DEFAULT"
     
     def apply_handler(self, request_handler, method='GET'):
         self._handler   = request_handler
@@ -61,8 +63,8 @@ class Router(object):
                         self.__make_request_ref(self._handler, path), 
                         self.__make_response_ref(self._handler) 
                     )
-                except:                    
-                    traceback.print_exception(sys.exc_info()[0],sys.exc_info()[1],sys.exc_info()[2])                   
+                except:
+                    self._logger.info('{0}    {1}'.format(self.name, traceback.format_exception(*(sys.exc_info()))))   
                     baseController.get_500( self.__make_request_ref(self._handler, path), self.__make_response_ref(self._handler) )
                 return
             
@@ -95,9 +97,11 @@ class Router(object):
             
 class AgentInterfaceRouter(Router):
     def load(self):
+        self.name   = 'AGENT LISTENER'
         super().load( AGENT_INTERFACE_ROUTES )
         
 class WebInterfaceRouter(Router):
     def load(self):
+        self.name   = 'WEB LISTENER'
         super().load( WEB_INTERFACE_ROUTES )
                     

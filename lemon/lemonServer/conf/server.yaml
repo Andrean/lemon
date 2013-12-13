@@ -3,7 +3,7 @@ LOGGING:
 SCHEDULER: {}
 SERVER: 
     agent_interface:
-       listenerEndpoint: 'localhost:8080'
+       listenerEndpoint: '0.0.0.0:8080'
     web_interface:
        listenerEndpoint: '0.0.0.0:10003'
 STORAGE: 
