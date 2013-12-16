@@ -6,14 +6,13 @@ Created on 08.07.2013
 
 import time
 import json
-import xmlrpc.client
 import lemon
 import core
 import queue
 import http.client
-import socket
 import threading
 import sys
+import socket
 
 
 ERROR_NOT_IDENTIFIED  = '0000001'
@@ -56,9 +55,9 @@ class HTTPClient(lemon.BaseAgentLemon):
             callback(None, response)
         except queue.Empty:
             return
-        except ConnectionError as e:
+        except (ConnectionError,ConnectionRefusedError, socket.timeout) as e:        
             self._logger.exception(e)
-            callback(e)
+            callback(e)        
             
     def putRequest(self, connection, request, callback):
         while True:
@@ -75,36 +74,42 @@ class   RequestHandler(object):
     def __init__(self, client):
         self.client     = client
         self.connection = http.client.HTTPConnection(self.client.serverEndpoint[0], self.client.serverEndpoint[1],timeout=5)
-        self.connect()
         self.mutex  = threading.Lock()
-        self.client._logger.info('Connection to {0}:{1} sucessfully established'.format(str(self.client.serverEndpoint[0]), str(self.client.serverEndpoint[1])))        
+        if self.connect():        
+            self.client._logger.info('Connection to {0}:{1} sucessfully established'.format(str(self.client.serverEndpoint[0]), str(self.client.serverEndpoint[1])))        
     
     def request(self, method, path, body=None, headers={}):
         response    = {'result': None, 'error': None, 'ready': threading.Condition(self.mutex)}
+        agentID       = core.getCoreInstance().getItem('agent')['__id']
+        headers['Lemon-Agent-ID']   = agentID
         def callback( _error, _response=None ):
             response['result']    = _response  
             with response['ready']:           
                 response['ready'].notify()
-        self.client.putRequest( self.connection, [method, path, body, headers], callback )
-        with response['ready']:
-            response['ready'].wait()
-        if response['error']:
-            self.client._logger.exception(response['error'])
-            self.connect()
+        if not self.connecting:
+            self.client.putRequest( self.connection, [method, path, body, headers], callback )
+            with response['ready']:
+                response['ready'].wait()
+            if response['error']:
+                self.client._logger.exception(response['error'])
+                self.connect()
         return response['result']
         
     def connect(self):
-        while True:
+        self.connecting = True
+        while self.client.is_alive():
             try:
                 self.connection.connect()
-                return
+                self.connecting = False
+                return True
             except ConnectionError:
-                self._logger.error('Connection to {0}:{1} failed. Reconnecting after {2} seconds'.format(self.client.serverEndpoint[0],
+                self.client._logger.error('Connection to {0}:{1} failed. Reconnecting after {2} seconds'.format(self.client.serverEndpoint[0],
                                                                                                          str(self.client.serverEndpoint[1]), 
                                                                                                      str(RECONNECTION_INTERVAL)
                                                                                                      )
                                    )
                 time.sleep(RECONNECTION_INTERVAL)
+        return 
     
     def send_json(self, obj, url, headers={}):
         body    = json.dumps(obj)
@@ -122,6 +127,10 @@ class   RequestHandler(object):
         
     def get_content(self, url, headers={}):
         return self.request('GET', url, "", headers)
+    
+    def close(self):
+        self.connection.close()
+        self.client._logger.info('Close connection to {0}:{1}'.format(self.client.serverEndpoint[0], str(self.client.serverEndpoint[1])))
     
 a = """
 class XMLRPC_Client(lemon.BaseAgentLemon):
