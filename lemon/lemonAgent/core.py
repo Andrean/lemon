@@ -9,7 +9,6 @@ import storage
 import interface
 import contractorLayer
 import entity_manager
-import configparser
 import logging.config
 import os
 import uuid
@@ -25,7 +24,7 @@ CONFIG_PATH = 'conf'
 CONFIG_FILE = CONFIG_PATH + '/agent.yaml'
 
 # Do not change order of instances. Important: storage must be first, task_manager - second
-COMPONENTS  = ['TASK_MANAGER', 'SCHEDULER', 'INTERFACE', 'CONTRACTOR']
+COMPONENTS  = ['TASK_MANAGER', 'INTERFACE', 'CONTRACTOR','ENTITY_MANAGER', 'SCHEDULER']
 AGENT_COMPONENTS   = {  'STORAGE': storage.Storage, 
                         'TASK_MANAGER': taskmanager.TaskManager, 
                         'SCHEDULER': scheduler.Scheduler, 
