@@ -60,25 +60,26 @@ class TaskManager(lemon.BaseAgentLemon):
             self._pool.put(task)
             #task.start()
         except queue.Empty:
-            return
-        
+            return        
         
     def add_task(self, _task): 
         self._taskQueue.put(_task)
         
-    def new_task(self, _func, kwargs=None):
+    def new_task(self, _func, **kwargs):
         _id                          = uuid.uuid4()
         self._tasks[_id]             = self._taskTemplate
         self._tasks[_id]['__id']     = _id
-        task                         = Task(_id, self._tasks[_id], self._logger, self, task_templates.CMD[_func], kwargs)
+        if type(_func) is str:
+            self.add_task( Task(_id, self._tasks[_id], self._logger, self, task_templates.CMD[_func], kwargs) )
+        elif hasattr(_func, '__call__'):
+            self.add_task( Task(_id, self._tasks[_id], self._logger, self, _func, kwargs) )
+        else:
+            raise NotTaskException
         #self._logger.debug('Adding new task into queue. Task id {0}'.format(_id))
-        self.add_task(task)
     
     def remove_task(self, task_id):
         self._tasks.pop(task_id) 
-        self._logger.debug('Task {0} successfully removed '.format(task_id))
-        
-           
+        self._logger.debug('Task {0} successfully removed '.format(task_id))       
           
         
 class Task(object):
@@ -107,15 +108,7 @@ class Task(object):
             logger.error('Error occured in task {0}: {1}'.format(self.id, str(e)))
             logger.exception(e)
             taskNote['exit_code'] = 1
-            taskNote['result'] = e 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+            taskNote['result'] = e
+    
+class NotTaskException(ValueError):
+    pass
