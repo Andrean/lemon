@@ -8,7 +8,7 @@ import queue
 import uuid
 import time
 from collections import namedtuple
-import task_templates
+import tasks
 import lemon
 import core
 import lemon_threadpool
@@ -70,9 +70,9 @@ class TaskManager(lemon.BaseAgentLemon):
         self._tasks[_id]             = self._taskTemplate
         self._tasks[_id]['__id']     = _id
         if type(_func) is str:
-            self.add_task( Task(_id, self._tasks[_id], self._logger, self, task_templates.CMD[_func], kwargs) )
+            self.add_task( Task(_id, self._tasks[_id], self._logger, self, tasks.CMD[_func], **kwargs) )
         elif hasattr(_func, '__call__'):
-            self.add_task( Task(_id, self._tasks[_id], self._logger, self, _func, kwargs) )
+            self.add_task( Task(_id, self._tasks[_id], self._logger, self, _func, **kwargs) )
         else:
             raise NotTaskException
         #self._logger.debug('Adding new task into queue. Task id {0}'.format(_id))
@@ -84,7 +84,7 @@ class TaskManager(lemon.BaseAgentLemon):
         
 class Task(object):
     
-    def __init__(self, _id ,_tm, _logger, _parent, _func, kwargs):
+    def __init__(self, _id ,_tm, _logger, _parent, _func, **kwargs):
         self.id    = _id
         self.func  = _func
         self.tm    = _tm
@@ -98,7 +98,10 @@ class Task(object):
         taskNote['__self']    = self
         taskNote['state']     = STATE.RUNNING
         try:
-            self.func(self, self.kwargs)
+            if self.kwargs:
+                self.func(self, **(self.kwargs))
+            else:
+                self.func(self)
             
             #logger.debug('task {0} started'.format(self.id))
             #print('i am task: {0}'.format(str(self.id)))
