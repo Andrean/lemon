@@ -7,91 +7,68 @@ Created on 21.08.2013
 import lemon
 import core
 import time
+import collections
+import json
+
+
+CMD_STATUS  = collections.namedtuple('CMD_STATUS',['present','submit','pending','completed','error'])
+status      = CMD_STATUS(
+                present  = 0,
+                submit    = 1,
+                pending   = 2,
+                completed = 3,
+                error     = -1
+            )
 
 class EntityManager(lemon.BaseAgentLemon):
    
     def __init__(self, _logger, _config, _info):
         lemon.BaseAgentLemon.__init__(self, _logger, _config, _info)
-        self.contractorList = []
-        self.scheduleList   = {}
-        self._revision      = 0
-        
+    
     def run(self):
-        self.contractorLayer    = core.getCoreInstance().getInstance('CONTRACTOR')
-        self.scheduler          = core.getCoreInstance().getInstance('SCHEDULER')
-        self._revision          = 0
-        self.readInfo()
+        self.commandHandler = CommandHandler(self)
+        self.commandHandler.schedule_self()
         self._setReady()
         while self._running:
-            time.sleep(0.5)
-            self.readInfo()
-            
-    def getItem(self, _id=None,_name=None):
-        if _id is not None:
-            return self.getList()[_id]
-        if _name is not None:
-            for v in self.contractorList.values():
-                if v['name'] == _name:
-                    return v
-            for v in self.scheduleList.values():
-                if v['name'] == _name:
-                    return v 
-                           
-    def getRevision(self):
-        return self._revision
+            time.sleep(0.01)
+        self.commandHandler.closeHandler()
+        self._logger.info('Shutdown Entity Manager')
         
         
-    def getList(self):
-        l   = self.contractorList
-        l.update(self.scheduleList)
+class CommandHandler(object):
+    def __init__(self, manager):
+        self.manager    = manager
+        self.interface  = core.getCoreInstance().getInstance('INTERFACE')
+        self.lemon_timestamp    = 0
+        self.request_handler    = None
         
-    def readInfo(self):
-        self.contractorList = [x for x in self.contractorLayer.getContractors()]
-        self.scheduleList   = [x for x in self.scheduler.getSchedule()]
-        
-    def updateList(self, cfg_list, _revision):
+    def schedule_self(self):
+        scheduler   = core.getCoreInstance().getInstance('SCHEDULER')
+        if not scheduler.getScheduledTask('get_commands'):
+            scheduler.add( 'get_commands', 'get_commands', start_time=None, interval=1 )
+    
+    def get_commands(self):
+        print('{0}    - i am get commands'.format(time.asctime()))
+        headers = {'Lemon-Agent-Timestamp': self.lemon_timestamp}
+        if self.request_handler is None:
+            self.request_handler  = self.interface.getHandler()
         try:
-            for row in cfg_list:
-                if row['__type'] == 'contractor':
-                    add = True
-                    for item in self.contractorList:
-                        if item['name'] == row['content']['name']:
-                            add = False 
-                            if item['__revision'] < row['__revision']:
-                                self.contractorLayer.removeContractor(item['name'])
-                                self.contractorLayer.addContractor(item['name'], row['content']['content'], row['__revision'], row['content']['args'])                        
-                    if add is True:
-                        self.contractorLayer.addContractor(row['content']['name'], row['content']['content'], row['__revision'])
-                if row['__type'] == 'scheduled_task':
-                    add = True
-                    for item in self.scheduleList:
-                        if item['name'] == row['content']['name']:
-                            add = False
-                            if item['__revision'] < row['__revision']:
-                                self.scheduler.remove(item['name'])
-                                r   = row['content']
-                                self.scheduler.add(r['func'],r['name'],r['start_time'],int(r['interval']),r['kwargs'],row['__revision'])
-                    if add is True:
-                        r   = row['content']
-                        self.scheduler.add(r['func'],r['name'],r['start_time'],int(r['interval']),r['kwargs'],row['__revision'])
-            for item in self.contractorList:
-                remove = True
-                for row in cfg_list:
-                    if row['__type'] == 'contractor' and row['content']['name'] == item['name']:
-                        remove = False
-                if remove:
-                    self.contractorLayer.removeContractor(item['name'])                    
-                    
-            for item in self.scheduleList:
-                if item['__revision'] < 0:
-                    continue
-                remove = True
-                for row in cfg_list:
-                    if row['__type'] == 'scheduled_task' and row['content']['name'] == item['name']:
-                        remove = False
-                if remove:
-                    print('removing item: '+item['name'])
-                    self.scheduler.remove(item['name'])
-            self._revision = _revision
-        except Exception as e:
-            self._logger.exception(e)            
+            res = self.request_handler.get_content(  '/commands', headers  )
+            if res is None:
+                return
+            print(res.status,res.reason)
+            print(res.headers)
+            try:
+                if res.status == 200:
+                    commands    = json.loads( str( res.read(), 'utf-8' ) )
+                    self.lemon_timestamp    = res.headers.get('Lemon-Server-Timestamp','0') 
+            finally:
+                if not res.closed:
+                    res.read()
+        except:
+            self.request_handler.close()
+            raise
+    
+    def closeHandler(self):
+        if self.request_handler:
+            self.request_handler.close()
