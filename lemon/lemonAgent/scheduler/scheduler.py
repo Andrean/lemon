@@ -129,11 +129,11 @@ class Scheduler(lemon.BaseAgentLemon):
         for k in keys:
             if self._schedule[k]['interval'] == 0:
                 self._startTask(k, self._schedule[k]['task'])
-                self._logger.info('scheduled task {0} started'.format(str(k)))
+                #self._logger.info('scheduled task {0} started'.format(str(k)))
                 remove_list.append(k)
             elif self._schedule[k]['last_time'] + self._schedule[k]['interval'] < timestamp:
                 self._startTask(k, self._schedule[k]['task'])
-                self._logger.info('scheduled task {0} started'.format(str(k)))
+                #self._logger.info('scheduled task {0} started'.format(str(k)))
                 self._schedule[k]['last_time']  = time.time()
         for remove_name in remove_list:
             self._remove_from_schedule(remove_name)
@@ -148,5 +148,5 @@ class Scheduler(lemon.BaseAgentLemon):
             self._scheduleModified = False
                 
     def _startTask(self, key, task):
-        self._taskManager.new_task(task['func'], task['args'])
-        self._logger.info('task {0} successfully send to task manager'.format(str(key)))
+        self._taskManager.new_task(task['func'], **( task['args'] or {} ))
+        #self._logger.info('task {0} successfully send to task manager'.format(str(key)))
