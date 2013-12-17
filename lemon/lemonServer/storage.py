@@ -54,6 +54,7 @@ class Storage(lemon.BaseServerComponent):
         self._setReady()
         while(self._running):
             time.sleep(0.5)
+        self._client.close()
         self._logger.info('Stop STORAGE {0} instance'.format(self._info['id']))
             
     def do(self, method, *args):

@@ -39,6 +39,7 @@ class Server(lemon.BaseServerComponent):
             self._setReady()         
             while self._running:
                 time.sleep(0.1)
+            self._logger.info('Server was successfully shutdown')
         except Exception as e:
             self._logger.exception(e)
             raise
@@ -46,11 +47,11 @@ class Server(lemon.BaseServerComponent):
     def shutdownListener(self):        
         self._agentListener.stop()
         self._webListener.stop()
-        self._logger.info('Server was successfully shutdown')
+        self._logger.info('Listeners are successfully shutdown')
                 
     def quit(self):
-        super(Server, self).quit()
         self.shutdownListener()
+        super(Server, self).quit()        
         
     def _getId(self):
         return self.__instanceId;

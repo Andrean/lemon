@@ -25,9 +25,11 @@ class Listener(threading.Thread):
 
     def listen(self):
         self._httpd = ThreadingHTTPServer(self._endpoint, self._handler)
-        self._httpd.request_router  = self._router 
+        self._httpd.daemon_threads  = True
+        self._httpd.request_router  = self._router
         self._httpd.serve_forever()
         
     def stop(self):
         if self._httpd is not None:
             self._httpd.shutdown()
+            self._httpd.socket.close()
