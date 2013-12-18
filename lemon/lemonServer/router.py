@@ -40,6 +40,7 @@ WEB_INTERFACE_ROUTES = [
     ,[  'POST', r'.*',              baseController.get_404                  ]
     ,[  'GET',  r'^/upload$', webController.test                            ]
     ,[  'GET',  r'^/agents$',   webController.get_agents                    ]
+    ,[  'GET',  r'^/update/status[?=%&_\-\+\w]*$',  webController.check_status]
     ,[  'GET',  r'.*',           baseController.get_404                     ]
     
 ]
@@ -64,7 +65,7 @@ class Router(object):
                         self.__make_response_ref(self._handler) 
                     )
                 except:
-                    self._logger.info('{0}    {1}'.format(self.name, traceback.format_exception(*(sys.exc_info()))))   
+                    self._logger.error('{0}\n{1}'.format(self.name, ''.join(traceback.format_exception(*(sys.exc_info())))))   
                     baseController.get_500( self.__make_request_ref(self._handler, path), self.__make_response_ref(self._handler) )
                 return
             
