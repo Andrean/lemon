@@ -101,6 +101,15 @@ def copy_services_to_agents( req, res):
         res.send_json( {'status': True, 'check_link': '/update/status?commands=' + ('+'.join(commands_id))} )    
     except:
         res.send_error(406)
+    
+def check_status( req, res ):
+    commands    = req.query.get('commands',[''])[0].split(' ')
+    em  = core.getCoreInstance().getInstance('ENTITY_MANAGER')
+    result  = {}
+    for _id in commands:
+        if _id:
+            result[_id] = em.commandManager.getCommandStatus(_id)
+    res.send_json(result)
               
 def test( req, res):
     res.send_content('test')
