@@ -7,6 +7,7 @@ import uuid
 import os
 import shutil
 import pefile
+import time
 
 UPDATE  = { 'services': [], 'map': {}}
 
@@ -52,14 +53,21 @@ def prepare_services( services, distr ):
     except:
         return
     zdistr.extractall(temp_dir)
+    update_timestamp   = time.strftime('%Y.%m.%d_%H.%M')    
     filelist    = []
     try:
         for _dir in os.listdir(temp_dir):
             if _dir in services:
+                os.makedirs(os.path.join(temp_dir, _dir, update_timestamp))
+                for item in os.listdir( os.path.join(temp_dir, _dir) ):
+                    if item == update_timestamp:
+                        continue
+                    shutil.move( os.path.join(temp_dir, _dir, item) , os.path.join(temp_dir, _dir, update_timestamp) )
+                    
                 zsrv    = zipfile.ZipFile(os.path.join(temp_dir, '..', _dir+".zip"),'w')
                 zipdir( os.path.join(temp_dir, _dir), zsrv)
                 zsrv.close()
-                filelist.append( {'service' : _dir, 'file': _dir+".zip"} )                
+                filelist.append( {'service' : _dir, 'file': _dir+".zip", 'stamp': update_timestamp} )                
     finally:
         shutil.rmtree(temp_dir)
     return filelist    
