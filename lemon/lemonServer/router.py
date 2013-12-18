@@ -40,7 +40,7 @@ WEB_INTERFACE_ROUTES = [
     ,[  'POST', r'.*',              baseController.get_404                  ]
     ,[  'GET',  r'^/upload$', webController.test                            ]
     ,[  'GET',  r'^/agents$',   webController.get_agents                    ]
-    ,[  'GET',  r'^/update/status[?=%&_\-\+\w]*$',  webController.check_status]
+    ,[  'GET',  r'^/commands/status[?=%&_\-\+\w]*$',  webController.check_status]
     ,[  'GET',  r'.*',           baseController.get_404                     ]
     
 ]

@@ -98,7 +98,7 @@ def copy_services_to_agents( req, res):
                     x['path'] = group['path']
                     args.append(x)
             commands_id.append( em.sendCommand(commands.copy_distr, args, [group['tag']] ) )
-        res.send_json( {'status': True, 'check_link': '/update/status?commands=' + ('+'.join(commands_id))} )    
+        res.send_json( {'status': True, 'check_link': '/commands/status?commands=' + ('+'.join(commands_id))} )    
     except:
         res.send_error(406)
     
