@@ -80,7 +80,7 @@ def copy_services_to_agents( req, res):
         
         #    Вид карты сервиса:
         #    [
-        #        { 'tag': tag, 'services': [ 'Service1','Service2' ], 'topology': [ 'server1', 'server2', .. ],    },
+        #        { 'tag': tag, 'services': [ 'Service1','Service2' ], 'topology': [ 'server1', 'server2', .. ], 'path': service_working_path   },
         #        { ... },
         #    ]
         #
@@ -90,8 +90,13 @@ def copy_services_to_agents( req, res):
         if not system_map:
             res.send_json(code=404,content={'status': False, 'msg': 'Information system not found' })
             return
-        for group in system_map['map']:
-            em.sendCommand(commands.copy_distr, [x for x in service_list if x['service'] in group['services']], [group['tag']] )
+        for group in system_map['map']:            
+            args    = []
+            for x in service_list:
+                if x['service'] in group['services']:
+                    x['path'] = group['path']
+                    args.append(x)
+            em.sendCommand(commands.copy_distr, args, [group['tag']] )
         res.send_json( {'status': True, 'check_link': '/update/status'} )    
     except:
         res.send_error(406)
