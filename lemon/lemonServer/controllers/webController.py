@@ -90,14 +90,15 @@ def copy_services_to_agents( req, res):
         if not system_map:
             res.send_json(code=404,content={'status': False, 'msg': 'Information system not found' })
             return
+        commands_id    = []
         for group in system_map['map']:            
             args    = []
             for x in service_list:
                 if x['service'] in group['services']:
                     x['path'] = group['path']
                     args.append(x)
-            em.sendCommand(commands.copy_distr, args, [group['tag']] )
-        res.send_json( {'status': True, 'check_link': '/update/status'} )    
+            commands_id.append( em.sendCommand(commands.copy_distr, args, [group['tag']] ) )
+        res.send_json( {'status': True, 'check_link': '/update/status?commands=' + ('+'.join(commands_id))} )    
     except:
         res.send_error(406)
               

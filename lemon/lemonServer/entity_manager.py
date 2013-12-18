@@ -57,8 +57,9 @@ class EntityManager(lemon.BaseServerComponent):
         self.sendCommand(commands.get_self_info, [], [agent_id])
         
     def sendCommand(self, cmd, args, tags=[]):
-        self.commandManager.addCommand(cmd, args, tags)
-        self._logger.info('SEND command "{0}" to groups "{1}"'.format(cmd, str(tags)))        
+        cmd_id  = self.commandManager.addCommand(cmd, args, tags)
+        self._logger.info('SEND command "{0}" to groups "{1}"'.format(cmd, str(tags)))
+        return cmd_id        
         
     def getConfig(self, agent_id):
         tags    = self.tagManager.getTags(agent_id)
@@ -66,7 +67,7 @@ class EntityManager(lemon.BaseServerComponent):
     
     def getCommands(self, agent_id, timestamp=0):        
         tags    = [x for x in self.tagManager.getTags(agent_id)] 
-        self._logger.debug('Trying to get commands byt agent {0}'.format(agent_id))       
+        self._logger.debug('Trying to get commands by agent {0}'.format(agent_id))       
         if len( tags ) > 0:
             return self.commandManager.getCommands(tags, timestamp)
         self._logger.info('Detected new agent with id {0}'.format(agent_id))
@@ -244,7 +245,8 @@ class CommandManager(object):
             'time': time.time()          
         })
         self._cmds_status[command_id]   = []
-        self.manager._logger.debug('Added command {0}:  {1},{2},{3}'.format(command_id,str(cmd),str(args),str(tags)))                   
+        self.manager._logger.debug('Added command {0}:  {1},{2},{3}'.format(command_id,str(cmd),str(args),str(tags)))
+        return command_id                   
         
     def changeStatus(self, agent_id, command_id, status):
         try:
@@ -252,6 +254,9 @@ class CommandManager(object):
         except KeyError:
             self.manager._logger.error('Attempt to change status of not existing command {0} from agent {1} with status {3}'.format(str(command_id), str(agent_id), str(status)))
             return
+        
+    def getCommandStatus(self, command_id):
+        return self._cmds_status.get(command_id)
     
     def _update(self):
         pass
