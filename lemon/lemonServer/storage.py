@@ -23,9 +23,9 @@ class Storage(lemon.BaseServerComponent):
         
         lemon.BaseServerComponent.__init__(self, _logger, _config, _info)
         self._collection    = ""
-        mongodb_addr    = 'localhost';
-        mongodb_port    = 27017;
-        db_name         = 'mydb';
+        mongodb_addr    = self._config['database'].get('host','localhost');
+        mongodb_port    = self._config['database'].get('port',27017);
+        db_name         = self._config['database'].get('db_name','lemon');
         try:
             self._client    = pymongo.MongoClient(mongodb_addr, mongodb_port)
             self._logger.info("Connection to mongodb successfully established")
