@@ -51,8 +51,8 @@ class EntityManager(lemon.BaseServerComponent):
             time.sleep(4)
         self._logger.info('stop ENTITY_MANAGER')
     
-    def addNewAgent(self, agent_id):
-        self.agentManager.add(agent_id)
+    def addNewAgent(self, agent_id, host):
+        self.agentManager.add(agent_id, host)
         self.tagManager.assignTag(agent_id, agent_id)
         self.sendCommand(commands.get_self_info, [], [agent_id])
         
@@ -65,13 +65,13 @@ class EntityManager(lemon.BaseServerComponent):
         tags    = self.tagManager.getTags(agent_id)
         return self.configManager.getConfig(tags)
     
-    def getCommands(self, agent_id, timestamp=0):        
+    def getCommands(self, agent_id, timestamp=0, client_address=('localhost',0)):        
         tags    = [x for x in self.tagManager.getTags(agent_id)] 
         self._logger.debug('Trying to get commands by agent {0}'.format(agent_id))       
         if len( tags ) > 0:
             return self.commandManager.getCommands(tags, timestamp)
         self._logger.info('Detected new agent with id {0}'.format(agent_id))
-        self.addNewAgent(agent_id)
+        self.addNewAgent(agent_id,client_address[0])
         return self.commandManager.getCommands([agent_id], 0)                
     
     def getFile(self, agent_id, file_id):
@@ -96,10 +96,10 @@ class AgentManager(object):
         self._agents    = core.getCoreInstance().getInstance('STORAGE').getInstance()
         self._agents.set_default_collection('agents')
         
-    def add(self, agent_id):
+    def add(self, agent_id, host='unknown'):
         if len([x for x in self._agents.find({'agent_id': agent_id})]) > 0:
             pass
-        agent   = {'agent_id': agent_id, 'tags': []}
+        agent   = {'agent_id': agent_id, 'name': host, 'tags': []}
         self._agents.save(agent)
     
     def get(self, agent_id=None):

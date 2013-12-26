@@ -16,8 +16,7 @@ def get_commands( req, res ):
         agent_id    = req.headers['Lemon-Agent-ID'] 
         agent_timestamp = req.headers.get('Lemon-Agent-Timestamp','0')      
         em          = core.getCoreInstance().getInstance('ENTITY_MANAGER')
-        em.sendCommand('get_self_info', [], [agent_id])
-        commands    = em.getCommands(agent_id, float(agent_timestamp))
+        commands    = em.getCommands(agent_id, float(agent_timestamp),req.client_address)
         s_commands  = json.dumps(commands)
         timestamp   = str(time.time())       
         res.send_content(s_commands, {'Lemon-Server-Timestamp': timestamp})
