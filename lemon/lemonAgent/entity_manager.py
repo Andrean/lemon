@@ -91,7 +91,7 @@ class CommandHandler(object):
                             self.send_command_status(cmd['id'], status.completed)
                         except:
                             self.manager._logger.exception(sys.exc_info()[1])
-                            self.send_command_status(cmd['id'], status.error)
+                            self.send_command_status(cmd['id'], status.error, str(sys.exc_info()[1]))
                     self.lemon_timestamp    = res.headers.get('Lemon-Server-Timestamp','0') 
             finally:
                 if not res.closed:
@@ -101,13 +101,13 @@ class CommandHandler(object):
             self.request_handler    = None
             raise
     
-    def send_command_status(self, cmd_id, status):
+    def send_command_status(self, cmd_id, status, msg=None):
         self.manager._logger.info('Send command status to server.')
         headers = {'Lemon-Agent-Timestamp': self.lemon_timestamp}
         if self.request_handler is None:
             self.request_handler  = self.interface.getHandler()        
         try:
-            res = self.request_handler.send_json([{'cmd_id': cmd_id, 'status': status}], '/commands/result', headers)
+            res = self.request_handler.send_json([{'cmd_id': cmd_id, 'status': status, 'msg':msg}], '/commands/result', headers)
             if res is None:
                 self.request_handler = None
                 return
