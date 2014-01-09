@@ -35,12 +35,14 @@ AGENT_INTERFACE_ROUTES  = [
 WEB_INTERFACE_ROUTES = [
      [  'POST', r'^/upload$', webController.upload                          ]
     ,[  'POST', r'^/update/distr$', webController.post_distr                ]
-    ,[  'POST', r'^/update/copy_to_agents$', webController.copy_services_to_agents   ]
+    ,[  'POST', r'^/update/copy_to_agents$', webController.copy_services_to_agents  ]
+    ,[  'POST', r'^/update/switch_services$', webController.switch_services ]
+    ,[  'POST', r'^/update/switch_fronts$', webController.switch_fronts     ]
     ,[  'POST', r'^/agents$', webController.post_agents                     ]
     ,[  'POST', r'.*',              baseController.get_404                  ]
     ,[  'GET',  r'^/upload$', webController.test                            ]
     ,[  'GET',  r'^/agents$',   webController.get_agents                    ]
-    ,[  'GET',  r'^/commands/status[?=%&_\-\+\w]*$',  webController.check_status]
+    ,[  'GET',  r'^/commands/status[?=%&_\-\+\w]*$',  webController.check_status    ]
     ,[  'GET',  r'.*',           baseController.get_404                     ]
     
 ]
@@ -77,7 +79,7 @@ class Router(object):
             self.add_route(*rule)
     
     def __make_request_ref(self, requestHandler, path):
-        requestHandler.query  = parse_qs( (urlsplit(path)).query )
+        requestHandler.query  = parse_qs( (urlsplit(path)).query )       
         return requestHandler
 
     def __make_response_ref(self, requestHandler):

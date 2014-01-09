@@ -13,6 +13,9 @@ import json
 import sys
 import shutil
 import zipfile
+import socket
+import http.client
+import subprocess
 
 
 CMD_STATUS  = collections.namedtuple('CMD_STATUS',['present','submit','pending','completed','error'])
@@ -27,7 +30,9 @@ status      = CMD_STATUS(
 def commands_router(cmd_handler):
     t   = [
            ['get_self_info',    cmd_handler.get_self_info   ]
-          ,['copy_distr',       cmd_handler.copy_distr      ] 
+          ,['copy_to',          cmd_handler.copy_to         ]
+          ,['switch_service_path',  cmd_handler.switch_service_path ]
+          ,['switch_front_path',    cmd_handler.switch_front_path   ] 
     ]
     return t
 
@@ -141,22 +146,52 @@ class CommandRouter():
     def get_self_info(self, cmd, headers):
         print('exec get_self_info')
     
-    def copy_distr(self, cmd, headers):
+    def copy_to(self, cmd, headers):
         args    = cmd['args']
         cmd_id  = cmd['id']
         i   = core.getCoreInstance().getInstance('INTERFACE')
         rh  = i.getHandler()
         for record in args:
             link    = record['link']
-            service = record['service']
             path    = os.path.normpath(record['path'])
             struct_file = rh.get_file('/files?file={0}'.format(link))
             if struct_file and struct_file['type'] == 'attachment':
-                os.makedirs('update/files', exist_ok=True)                
-                with open('update/files/'+struct_file['filename'],'wb') as f:
+                os.makedirs('files', exist_ok=True)                
+                with open('files/'+struct_file['filename'],'wb') as f:
                     shutil.copyfileobj(struct_file['file'], f, struct_file['length'])
                     # теперь нужно распаковать архив, собрать список файлов и папок и оправить на сервер            
-                zipfile.ZipFile('update/files/'+struct_file['filename']).extractall(path)
+                zipfile.ZipFile('files/'+struct_file['filename']).extractall(path)
             else:
-                raise Exception                
-       
+                raise Exception
+            
+    def switch_service_path(self, cmd, headers):
+        args    = cmd['args']
+        port    = args['port']
+        hostname    = socket.gethostname()
+        conn    = http.client.HTTPConnection(hostname,port)
+        for record in args['items']:
+            conn.request('GET','/GetServicePath?service={0}'.format(record['service']))
+            res = conn.getresponse()
+            if res.status != 200:
+                conn.close()
+                raise Exception()
+            path    = str(res.read(),'utf-8')
+            basefile    = os.path.basename(path)
+            new_path    = os.path.join(os.path.normpath(record['path']),basefile)
+            conn.request('GET','/ChangeServicePath?service={0}&fileName={1}'.format(record['service'],new_path))
+            res = conn.getresponse()
+            if res.status != 200:
+                raise Exception()
+            res.read()
+        conn.request('GET','/ApplyChanges')
+        res = conn.getresponse()
+        if res.status != 200:
+            raise Exception()
+        conn.close()
+            
+    def switch_front_path(self, cmd, headers):
+        args    = cmd['args']
+        iis_site    = args['iis_site']
+        for record in args['items']:
+            subprocess.check_call(['C:\\Windows\\System32\\inetsrv\\appcmd.exe','set','VDIR',iis_site+'/','/PhysicalPath:{0}'.format(os.path.normpath(record['path']))])
+        

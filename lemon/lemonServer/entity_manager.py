@@ -11,8 +11,11 @@ import uuid
 import collections
 import os
 
-COMMANDS    = collections.namedtuple('COMMANDS',['get_self_info', 'copy_distr'])
-commands    = COMMANDS(get_self_info='get_self_info', copy_distr='copy_distr')
+COMMANDS    = collections.namedtuple('COMMANDS',['get_self_info', 'copy_to','switch_service_path','switch_front_path'])
+commands    = COMMANDS(get_self_info='get_self_info', 
+                       copy_to='copy_to',
+                       switch_service_path='switch_service_path',
+                       switch_front_path='switch_front_path')
 CMD_STATUS  = collections.namedtuple('CMD_STATUS',['present','submit','pending','completed','error'])
 status      = CMD_STATUS(
                 present   = 0,

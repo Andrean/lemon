@@ -117,6 +117,29 @@ def getNewData(t, kwargs):
     for k in new_data:        
         item = i.get(k)       
         __dispatcher(t, {'command': k, 'item': item})
+
+@add
+def get_file(t, file):
+    i   = t._parent.interfaceInstance
+    file_id = file['id']
+    handler = i.getHandler()        
+    res = handler.request('GET','/files?file={0}'.format(file_id),"", {})
+    if res.status == 200:
+        f_length    = int(res.getheader('Content-Length'))
+        filename    = res.getheader('Content-Disposition').split(';')[1].split('=')[1].replace('"','')
+        with open(filename, 'wb') as f:
+            b_len   = 1024*1024
+            buf = []
+            while f_length > 0:
+                if f_length - b_len < 0:
+                    b_len = f_length
+                buf = res.read(b_len)
+                f_length -= b_len
+                f.write(buf)
+            t._logger.info('File {0} successfully downloaded'.format(filename))
+    else:
+        res.readall()
+        t._logger.info('Error while downloading file: {0} - {1}'.format(str(res.status), res.reason))
         
 def __dispatcher(t, kwargs):
     try:        

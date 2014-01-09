@@ -1,0 +1,48 @@
+extends ..\layout
+block head
+	title= title
+	link(rel='stylesheet', href='/stylesheets/css/update.css', type='text/css')
+	link(rel='stylesheet', href='/stylesheets/css/metro-bootstrap.css', type='text/css')		
+block content
+	include ..\page-header												
+	.metro
+		.page
+			#header.entity_info_header.bg-color-Dark(style="border-top: 1px solid white; border-bottom: 1px solid white;")
+				h3(style='margin-top:2px').fg-color-white Обновление #{service}
+			div.row
+				div.span3(style="float:left")
+					nav.sidebar
+						- var root = "/webpersonal/update/"
+							ul
+								li.title Сервисы
+								li
+									a(href="#{root}kopf") 
+										i.icon-wrench
+										| Контур-Отчет ПФ
+								li
+									a(href="#{root}checkexpress") 
+										i.icon-wrench
+										| Check Express
+								li
+									a(href="#{root}fssbenefit") 
+										i.icon-wrench
+										| FSS Benefit		
+				div(style="float:left")
+					div.lemon-container
+						- if(!service || service=='')
+								h2 Инструкция по обновлению
+						- if(service=='kopf')
+								h2 Контур-Отчет ПФ
+								.grid
+									.update-process-container.row
+										form(id='upload_form',method="post",action="#{root}kopf/upload",enctype="multipart/form-data").span4
+											div(style="height:40px").hidden_upload.button.default.large.span3 Загрузить дистрибутив
+												input(type='file',name='file',size='1')
+										.span4
+											button#setup_copy.button.fg-white.large.span3 Начать установку
+										.span4
+											button#switch_services.button.fg-white.large.span3 Переключить службы
+										.span4
+											button#switch_fronts.button.fg-white.large.span3 Переключить фронты
+											
+	script(src='/javascripts/webpersonal/update.js')

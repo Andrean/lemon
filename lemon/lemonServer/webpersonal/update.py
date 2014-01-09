@@ -70,23 +70,34 @@ def prepare_services( services, distr ):
                 filelist.append( {'service' : _dir, 'file': _dir+".zip", 'stamp': update_timestamp} )                
     finally:
         shutil.rmtree(temp_dir)
-    return filelist    
+    return filelist 
+
+def getSettingsArchive(filename, settings, cfg_path):
+    downloads   = 'files'
+    os.makedirs(downloads,exist_ok=True);
+    zsettings   = zipfile.ZipFile(os.path.join(downloads,filename), 'w')
+    for file in os.listdir(cfg_path):
+        for stg in settings:
+            if stg['fileName'] == file:
+                zsettings.write(os.path.join(cfg_path,file), stg['name'])
 
 def getFileVersion(path):
     def LOWORD(dword):
         return str(dword & 0x0000ffff)
     def HIWORD(dword): 
         return str(dword >> 16)
-
-    pe = pefile.PE(path)
-    if not pe.is_dll() and not pe.is_exe() and not pe.is_driver():
-        return None
-    #print PE.dump_info()
-
-    ms = pe.VS_FIXEDFILEINFO.ProductVersionMS
-    ls = pe.VS_FIXEDFILEINFO.ProductVersionLS
-    pe.close()
-    return "{0}.{1}.{2}.{3}".format(HIWORD (ms), LOWORD (ms), HIWORD (ls), LOWORD (ls))
+    try:
+        pe = pefile.PE(path)
+        if not pe.is_dll() and not pe.is_exe() and not pe.is_driver():
+            return None
+        #print PE.dump_info()
+    
+        ms = pe.VS_FIXEDFILEINFO.ProductVersionMS
+        ls = pe.VS_FIXEDFILEINFO.ProductVersionLS
+        pe.close()
+        return "{0}.{1}.{2}.{3}".format(HIWORD (ms), LOWORD (ms), HIWORD (ls), LOWORD (ls))
+    except:
+        return ''    
 
 def zipdir(path, zip):
     rootlen = len(os.path.dirname(path)) + 1

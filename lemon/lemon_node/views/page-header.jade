@@ -1,26 +1,27 @@
-#page1.page
-	- var bg_color = "bg-color-blueDark"
-		#page-header.page-header(class="#{bg_color}")
-			#page-header-content.page-header-content.grid
-				.row
-					a(href="/").span3
-						#logo.logo
-							img(src='/images/logo.png')
-					div(style='float:left; margin-left: 20px; min-width: 600px; height:100px;')
-						#page-header-bar.page-header-bar
-							#bar.nav-bar(class="#{bg_color}")
-								#bar-inner.nav-bar-inner
-									ul.menu
-										li 
-											a(href="/monitoring") Monitoring										
-										li(data-role='dropdown')
-											a Inventory
-											ul.dropdown-menu(class="#{bg_color}")
-												li 
-													a(href="/inventory/entities").fg-color-white Entities
-												li
-													a(href="/inventory/groups").fg-color-white Groups
-										li
-											a(href="/") Administration
-										li
-											a(href="/") Documentation
+.metrouicss
+	#page1.page
+		- var bgcolor = bg_color || "bg-color-blueDark" 
+			#page-header.page-header(class="#{bgcolor}")
+				#page-header-content.page-header-content.grid
+					.row
+						a(href="/").span3
+							#logo.logo
+								img(src='/images/logo.png')
+						div(style='float:left; margin-left: 20px; min-width: 600px; height:100px;')
+							#page-header-bar.page-header-bar
+								#bar.nav-bar(class="#{bgcolor}")
+									#bar-inner.nav-bar-inner
+										ul.menu
+											li 
+												a(href="/monitoring") Monitoring										
+											li(data-role='dropdown')
+												a Inventory
+												ul.dropdown-menu(class="#{bgcolor}")
+													li 
+														a(href="/inventory/entities").fg-color-white Entities
+													li
+														a(href="/inventory/groups").fg-color-white Groups
+											li
+												a(href="/") Administration
+											li
+												a(href="/") Documentation

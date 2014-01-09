@@ -20,8 +20,8 @@ updateCoreStat      = formSchTask('updateStat', 'Update core stat', 5, None, {'c
 checkCommands       = formSchTask('check_commands', 'Check for new commands', 5)
 
 tasks   = {}
-tasks['refresh']                = refreshServer
-tasks['sendSelfInfoOnStart']    = sendSelfInfoOnStart
-tasks['sendSelfInfo']           = sendSelfInfo
-tasks['updateCoreStat']         = updateCoreStat
-tasks['checkCommands']          = checkCommands
+#tasks['refresh']                = refreshServer
+#tasks['sendSelfInfoOnStart']    = sendSelfInfoOnStart
+#tasks['sendSelfInfo']           = sendSelfInfo
+#tasks['updateCoreStat']         = updateCoreStat
+#tasks['checkCommands']          = checkCommands
