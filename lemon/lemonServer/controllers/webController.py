@@ -9,6 +9,7 @@ import re
 import os
 import webpersonal.update as update
 import urllib
+from collections import OrderedDict
 from entity_manager import commands
 
 def upload( req, res ):
@@ -99,13 +100,15 @@ def copy_services_to_agents( req, res):
         for srv in service_list:
             srv['link'] = em.fileManager.createVirtualLink(srv['file'])
         print(service_list)
-        (commands_id, stamp)    = getServicesByTag(service_list, session['info_system'])    
-        (scommands_id, stamp)   = getSettingsByService(service_list, session['info_system'], 'D:/cfg/'+session['info_system']+'/settings')
-        commands_id.extend(scommands_id)    
+        (commands_id, stamp, tags)    = getServicesByTag(service_list, session['info_system'])    
+        (scommands_id, stamp, stags)   = getSettingsByService(service_list, session['info_system'], 'D:/cfg/'+session['info_system']+'/settings')
+        commands_id.extend(scommands_id) 
+        tags.extend(stags)
+        tags    = list(OrderedDict.fromkeys(tags))   
         session['services'] = body['services']
         session['stamp']    = stamp        
         db.save(session)
-        res.send_json( {'status': True, 'session_id':session['session_id'], 'stamp':stamp, 'check_link': '/commands/status?commands=' + (','.join(commands_id))} )    
+        res.send_json( {'status': True, 'session_id':session['session_id'], 'stamp':stamp, 'tags':tags, 'check_link': '/commands/status?commands=' + (','.join(commands_id))} )    
     except:        
         res.send_error(406)
         
@@ -122,6 +125,7 @@ def getServicesByTag(srv_list, system_name):
     system_map = db.findOne({'type': 'map', 'info_system': system_name})
     commands_id    = []
     stamp           =''
+    tags    = []
     for group in system_map['map']:            
         args    = []
         for srv in group['services']:
@@ -131,7 +135,8 @@ def getServicesByTag(srv_list, system_name):
                     stamp   = x['stamp']
         if len(args) > 0:
             commands_id.append( em.sendCommand(commands.copy_to, args, [group['tag']] ) )
-    return (commands_id, stamp)
+            tags.append(group['tag'])
+    return (commands_id, stamp, tags)
     
 def getSettingsByService(srv_list, system_name, cfg_path):
     em  = core.getCoreInstance().getInstance('ENTITY_MANAGER')
@@ -140,6 +145,7 @@ def getSettingsByService(srv_list, system_name, cfg_path):
     system_map = db.findOne({'type': 'map', 'info_system': system_name})
     commands_id    = []
     stamp           =''
+    tags            = []
     for group in system_map['map']:            
         args    = []
         for srv in group['services']:
@@ -154,7 +160,8 @@ def getSettingsByService(srv_list, system_name, cfg_path):
                     args.append({'link': link, 'path': path})                        
         if len(args) > 0:
             commands_id.append( em.sendCommand(commands.copy_to, args, [group['tag']] ) )
-    return (commands_id, stamp)
+            tags.append(group['tag'])
+    return (commands_id, stamp, tags)
         
 def check_status( req, res ):
     commands    = req.query.get('commands',[''])[0].split(' ')
@@ -199,7 +206,7 @@ def switch_services( req ,res ):
     if 'Front' in session['services']:
         session['services'].remove('Front')
     command_id  = em.sendCommand(commands.switch_service_path, switch_info, tags.keys())
-    res.send_json( {'status': True, 'session_id':session['session_id'], 'check_link': '/commands/status?commands='+command_id } )
+    res.send_json( {'status': True, 'session_id':session['session_id'], 'tags':list(tags.keys()), 'check_link': '/commands/status?commands='+command_id } )
             
 def switch_fronts( req ,res ):
     content_type    = req.headers.get('Content-Type','text/plain;charset=utf-8')
@@ -232,7 +239,7 @@ def switch_fronts( req ,res ):
     db.set_default_collection( 'agents')
     if 'Front' in session['services']:
         command_id  = em.sendCommand(commands.switch_front_path, switch_info, tags.keys())
-        res.send_json( {'status': True, 'session_id':session['session_id'], 'check_link': '/commands/status?commands='+command_id } )
+        res.send_json( {'status': True, 'session_id':session['session_id'], 'tags':list(tags.keys()),'check_link': '/commands/status?commands='+command_id } )
               
 def test( req, res):
     res.send_content('test')
