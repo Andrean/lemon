@@ -6,7 +6,7 @@ import http.server
 from socketserver import ThreadingMixIn
 import threading
 
-SOCKET_TIMEOUT  = 10
+SOCKET_TIMEOUT  = 60
 
 class ThreadingHTTPServer(ThreadingMixIn, http.server.HTTPServer):
     pass
