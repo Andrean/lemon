@@ -69,7 +69,6 @@ class CommandHandler(object):
             scheduler.add( 'get_commands', 'get_commands', start_time=None, interval=1 )
     
     def get_commands(self):
-        print('{0}    - i am get commands'.format(time.asctime()))
         headers = {'Lemon-Agent-Timestamp': self.lemon_timestamp}
         if self.request_handler is None:
             self.request_handler  = self.interface.getHandler()        
@@ -77,8 +76,6 @@ class CommandHandler(object):
             res = self.request_handler.get_content(  '/commands', headers  )
             if res is None:
                 return
-            print(res.status,res.reason)
-            print(res.headers)
             try:
                 if res.status == 200:
                     commands    = json.loads( str( res.read(), 'utf-8' ) )
@@ -148,7 +145,6 @@ class CommandRouter():
     
     def copy_to(self, cmd, headers):
         args    = cmd['args']
-        cmd_id  = cmd['id']
         i   = core.getCoreInstance().getInstance('INTERFACE')
         rh  = i.getHandler()
         for record in args:
