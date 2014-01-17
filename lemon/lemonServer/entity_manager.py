@@ -265,11 +265,14 @@ class CommandManager(object):
         pass
         
     def clean(self):
-        self.manager._logger.debug('Calling cleaning commands')
+        self.manager._logger.debug('Call cleaning commands')
         print(self._cmds)
         
         timestamp = time.time() - 60
-        self._cmds[:] = [x for x in self._cmds if x['time'] > timestamp]
+        try:
+            self._cmds[:] = [x for x in self._cmds if x['time'] > timestamp]
+        except Exception as e:
+            self.manager._logger.exception(e)
         print(self._cmds)
             
 class FileManager(object):
