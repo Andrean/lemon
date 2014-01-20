@@ -1,114 +1,79 @@
-extends ..\layout
-block head
-	title= title
-	link(rel='stylesheet', href='/stylesheets/css/configure.css', type='text/css')
-	link(rel='stylesheet', href='/stylesheets/css/metro-bootstrap.css', type='text/css')		
-block content
-	include ..\page-header
-	.metro
-		.page
-			#header.entity_info_header.bg-color-Dark(style="border-top: 1px solid white; border-bottom: 1px solid white;")
-				h3(style='margin-top:2px').fg-color-white Настройка #{service}
-			div.row
-				div.span3(style="float:left")
-					nav.sidebar
-						- var root = "/webpersonal/configure/"
-							ul
-								li.title Сервисы
-								li
-									a(href="#{root}kopf") 
-										i.icon-wrench
-										| Контур-Отчет ПФ
-								li
-									a(href="#{root}checkexpress") 
-										i.icon-wrench
-										| Check Express
-								li
-									a(href="#{root}fssbenefit") 
-										i.icon-wrench
-										| FSS Benefit		
-				div(style="position:relative;margin-left:220px;")
-					div.lemon-container	
-						- if(!service || service == '')
-								h2 Конфигурация
-						- else
-								h2 #{map.name || map.info_system}
-								.grid
-									.row(style="height: 30px;")
-										.span3
-											p Имя системы: 
-										.span2
-											p #{map.name || 'unknown'}
-										.span4
-											button(data-action="showinput").button.default Изменить
-											input(type="text",name="name",is-hidden="true")
-									.row(style="height: 30px;")
-										.span3
-											p Порт ServiceManager:
-										.span2
-											p #{map.sm_port || 'Не установлен'}
-										.span4
-											button(data-action="showinput").button.default Изменить
-											input(type="text",name="sm_port",is-hidden="true")
-									.row(style="height: 30px;")
-										.span3
-											p IIS Site:
-										.span2
-											p #{map.iis_site || 'Не установлен'}
-										.span4
-											button(data-action="showinput").button.default Изменить
-											input(type="text",name="iis_site",is-hidden="true")			 
-								.grid								
-									.row
-										each item in map.map
-											.span4								
-												a.tile.double.double-vertical.bg-darkTeal(data-role="toggle-click",data-target='div[data-show="#{item.tag}"]')
-													.tile-content
-														.padding20
-															h2.fg-white #{item.tag}
-															h4.fg-white #{item.path}
-															p.textuary-text.fg-white Services:
-																each srv in item.services
-																	p.textuary-text.fg-white.no-margin - #{srv.name}
-												.btn-panel(data-show="#{item.tag}",is-hidden="true")
-													button.button.bg-darkBlue.icon-pencil
-													button.button.danger.icon-cancel-2(style="margin-top:10px;",data-action='delete_map',tag="#{item.tag}")
-												.listview.small.span4(style="margin-left:0")
-													each agent in item.agents
-														a.list.bg-darkCobalt.fg-white
-															.list-content
-																span.icon.icon-windows
-																.data
-																	span.list-title #{agent.name || agent.agent_id}
-																	span.list-remark #{agent.agent_id}
-												
-												div(style="margin-bottom: 20px;")
-													button(tag="#{item.tag}",data-action="select_add_agent",data-role='toggle',alt-text='Отмена',aria-hidden='true',data-target='div[id="wrap_add_agent_'+"#{item.tag}"+'"]').default.large Добавить сервер
-													div(id="wrap_add_agent_#{item.tag}",style="display:none").span4.form-wrapper
-														.input-control.select
-															select(name='agents',multiple,size=6)
-														button(tag="#{item.tag}",data-action="add_agent").default.large Добавить																								
-								.span6.no-margin	
-									.span3								
-										button#add_servicegroup.span3.default.large(data-role='toggle',alt-text='Отмена',aria-hidden='true',data-target='#wrap_add_servicegroup') Добавить группу
-									#wrap_add_servicegroup.span6(style="margin-left:0;display:none;").form-wrapper								
-										form#form_add_servicegroup(method="post",action="#{root}#{service}/map",enctype="multipart/form-data")
-											fieldset
-												legend Добавление группы сервисов
-												label Тэг
-												.input-control.text
-													input(type="text",name="tag",placeholder="Уникальный тэг группы",required)
-												label Локальный путь
-												.input-control.text
-													input(type="text",name="path",value="C:\\WebPersonal\\KOPF",placeholder="C:\\WebPersonal\\KOPF",required)
-												label Службы
-												.input-control.select
-													select(name="services[]",multiple,size=6,required)
-														each srv in map.services
-															option(value="#{srv.name}") #{srv.name}
-										button#submit.default.large Добавить													
-		script(src='/javascripts/webpersonal/functions.js')
-		script(src='/javascripts/webpersonal/configure.js')														
-											
-											
-											
+div.lemon-container
+	if(!service || service == '')
+		h2 Конфигурация
+	else
+		h2 #{map.name || map.info_system}
+		.grid
+			.row(style="height: 30px;")
+				.span3
+					p Имя системы: 
+				.span2
+					p #{map.name || 'unknown'}
+				.span4
+					button(data-action="showinput").button.default Изменить
+					input(type="text",name="name",is-hidden="true")
+			.row(style="height: 30px;margin-top:5px;")
+				.span3
+					p Порт ServiceManager:
+				.span2
+					p #{map.sm_port || 'Не установлен'}
+				.span4
+					button(data-action="showinput").button.default Изменить
+					input(type="text",name="sm_port",is-hidden="true")
+			.row(style="height: 30px;margin-top:5px;")
+				.span3
+					p IIS Site:
+				.span2
+					p #{map.iis_site || 'Не установлен'}
+				.span4
+					button(data-action="showinput").button.default Изменить
+					input(type="text",name="iis_site",is-hidden="true")			 
+		.grid								
+			.row
+				each item in map.map
+					.span4								
+						a.tile.double.double-vertical.bg-darkTeal(data-role="toggle-click",data-target='div[data-show="#{item.tag}"]')
+							.tile-content
+								.padding20
+									h2.fg-white #{item.tag}
+									h4.fg-white #{item.path}
+									p.textuary-text.fg-white Services:
+										each srv in item.services
+											p.textuary-text.fg-white.no-margin - #{srv.name}
+						.btn-panel(data-show="#{item.tag}",is-hidden="true")
+							button.button.bg-darkBlue.fg-white.icon-pencil
+							button.button.danger.icon-cancel-2(style="margin-top:10px;",data-action='delete_map',tag="#{item.tag}")
+						.listview.small.span4(style="margin-left:0")
+							each agent in item.agents
+								a.list.bg-darkCobalt.fg-white
+									.list-content
+										span.icon.icon-windows
+										.data
+											span.list-title #{agent.name || agent.agent_id}
+											span.list-remark #{agent.agent_id}
+						
+						div(style="margin-bottom: 20px;")
+							button(tag="#{item.tag}",data-action="select_add_agent",data-role='toggle',alt-text='Отмена',aria-hidden='true',data-target='div[id="wrap_add_agent_'+"#{item.tag}"+'"]').default.large Добавить сервер
+							div(id="wrap_add_agent_#{item.tag}",style="display:none").span4.form-wrapper
+								.input-control.select
+									select(name='agents',multiple,size=6)
+								button(tag="#{item.tag}",data-action="add_agent").default.large Добавить
+		.span6.no-margin
+			.span3								
+				button#add_servicegroup.span3.default.large(data-role='toggle',alt-text='Отмена',aria-hidden='true',data-target='#wrap_add_servicegroup') Добавить группу
+			#wrap_add_servicegroup.span6(style="margin-left:0;display:none;").form-wrapper								
+				form#form_add_servicegroup(method="post",action="#{root}/configure/#{service}/map",enctype="multipart/form-data")
+					fieldset
+						legend Добавление группы сервисов
+						label Тэг
+						.input-control.text
+							input(type="text",name="tag",placeholder="Уникальный тэг группы",required)
+						label Локальный путь
+						.input-control.text
+							input(type="text",name="path",value="C:\\WebPersonal\\KOPF",placeholder="C:\\WebPersonal\\KOPF",required)
+						label Службы
+						.input-control.select
+							select(name="services[]",multiple,size=6,required)
+								each srv in map.services
+									option(value="#{srv.name}") #{srv.name}
+				button#submit.default.large Добавить

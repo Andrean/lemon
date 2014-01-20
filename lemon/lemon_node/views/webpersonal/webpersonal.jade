@@ -1,0 +1,80 @@
+extends ..\layout
+block head
+	title= title
+	link(rel='stylesheet', href='/stylesheets/css/webpersonal.css', type='text/css')
+	link(rel='stylesheet', href='/stylesheets/css/metro-bootstrap.css', type='text/css')		
+block content
+	include ..\page-header
+	.metro
+		.page
+			#header.entity_info_header.bg-color-Dark(style="border-top: 1px solid white; border-bottom: 1px solid white;")
+				h3(style='margin-top:2px').fg-color-white
+					case action 
+						when 'configure'
+							| Настройка #{map? (map.name || map.info_system):''}
+						when 'update'
+							| Обновление #{map? (map.name || map.info_system):''}
+						when 'configure_services'
+							| Настройка служб #{map? (map.name || map.info_system):''}
+						default
+							| Проекты СКБ Контур
+			div.row
+				div.span3(style="float:left")
+					nav.sidebar
+						- var root = "/webpersonal"
+							ul
+								li.title Проекты
+								- each system in wp
+									li
+										a.dropdown-toggle
+											| #{system.name || system.info_system}
+										ul(data-role="dropdown")
+											li
+												a(href="#{root}/update/#{system.info_system}")
+													i.icon-upload
+													| Обновление
+											li
+												a(href="#{root}/configure/#{system.info_system}")
+													i.icon-cog
+													| Общая настройка
+											li
+												a(href="#{root}/configure/#{system.info_system}/services")
+													i.icon-pencil
+													| Настройка служб
+								li#new_project.add-project
+									a
+										i.icon-plus-2
+										| Добавить проект										
+				div(style="position:relative;margin-left:220px;")
+					case action
+						when 'configure'
+							include configure
+						when 'configure_services'
+							include configure_services
+						when 'update'
+							include update
+						default
+							.lemon-container
+								h1 Проекты СКБ Контур
+								#form_new_project(style="display:none").span6
+									form(action="#{root}/projects/new",method="put")
+										fieldset
+											legend Создание нового проекта
+											label INFO-SYSTEM
+											.input-control.text
+												input(type="text",name="info_system",placeholder="Имя системы на латинице",required)
+											#submit.button.default.large Создать																						
+	script(src='/javascripts/webpersonal/functions.js')
+	script(src='/javascripts/jquery/jquery.widget.min.js')
+	script(src='/javascripts/metroui/metro.min.js')
+	script(src='/javascripts/metroui/metro-dropdown.js')
+	script(src='/javascripts/webpersonal/main.js')
+	case action
+		when 'configure'
+			script(src='/javascripts/webpersonal/configure.js')
+		when 'configure_services'
+			script(src='/javascripts/webpersonal/configure.js')
+		when 'update'
+			script(src='/javascripts/webpersonal/update.js')
+		
+		

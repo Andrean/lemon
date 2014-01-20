@@ -46,9 +46,11 @@ app.use(express.errorHandler());
 /* 
  * 	routes 
  */
-app.get('/', function( req, res ){	res.redirect('/webpersonal/update'); });
+app.get('/', function( req, res ){	res.redirect('/webpersonal'); });
 // webpersonal functions
 app.param('service'	, wp.loadServiceMap);	// returns req.map
+app.all( '/webpersonal(/*)?', 	wp.loadSystems					);
+app.get( '/webpersonal',		wp.main_view					);	
 app.get( '/webpersonal/update/:service?'		, wp.view 		);
 app.post('/webpersonal/update/:service/upload'	, wp.upload 	);
 app.post('/webpersonal/update/:service/setup'	, wp.setup		);
@@ -61,6 +63,7 @@ app.del('/webpersonal/configure/:service/map'	, wp.del_map	);
 app.post('/webpersonal/configure/:service/system', wp.edit_system_map);
 app.get( '/webpersonal/configure/:service/services'	, wp.services		);
 app.post('/webpersonal/configure/:service/services'	, wp.edit_services	);
+app.put( '/webpersonal/projects/new',	wp.projects_new			);
 // common routes
 app.get( '/agents',		agent.list			);
 app.post('/agents',		agent.modify		);

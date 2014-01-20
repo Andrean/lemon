@@ -1,0 +1,48 @@
+.bg-color-Dark {
+	background-color: #3D3D3D !important;
+}
+.lemon-container {
+	padding: 22px 20px;
+	margin: 0;
+	width: 100%;
+}
+.form-wrapper {
+	margin-top: 20px;
+	margin-left: 0 !important;
+}
+.btn-panel {
+	margin-left: -7px;
+	width: 42px;
+	height: 250px;
+	float:left;
+}
+.update-process-container {
+	padding-top: 20px;
+}
+.button  .line-loader {
+	margin: auto ;
+	width: 100px;
+}
+.metro .sidebar > ul li.add-project a {
+	background-color: #008287;
+}
+.metro .sidebar > ul li.add-project a:hover {
+	cursor: pointer;
+	background-color: #008287;
+} 
+.metro .sidebar > ul li.add-project a:active {
+	cursor: pointer;
+	background-color: #000;
+} 
+.popup-alert {
+	margin-top: 10px;
+	width: auto;
+	height: auto;
+	padding: 10px;
+	text-align: center;
+	background-color: #ff2d19;
+	color: white;
+}
+h2,h3,h4,p {
+	word-wrap: break-word;
+}

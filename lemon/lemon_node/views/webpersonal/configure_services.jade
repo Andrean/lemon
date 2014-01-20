@@ -1,65 +1,31 @@
-extends ..\layout
-block head
-	title= title
-	link(rel='stylesheet', href='/stylesheets/css/configure.css', type='text/css')
-	link(rel='stylesheet', href='/stylesheets/css/metro-bootstrap.css', type='text/css')		
-block content
-	include ..\page-header
-	.metro
-		.page
-			#header.entity_info_header.bg-color-Dark(style="border-top: 1px solid white; border-bottom: 1px solid white;")
-				h3(style='margin-top:2px').fg-color-white Настройка #{service}
-			div.row
-				div.span3(style="float:left")
-					nav.sidebar
-						- var root = "/webpersonal/configure/"
-							ul
-								li.title Сервисы
-								li
-									a(href="#{root}kopf/services") 
-										i.icon-wrench
-										| Контур-Отчет ПФ
-								li
-									a(href="#{root}checkexpress/services") 
-										i.icon-wrench
-										| Check Express
-								li
-									a(href="#{root}fssbenefit/services") 
-										i.icon-wrench
-										| FSS Benefit		
-				div(style="position:relative;margin-left:220px;")
-					div.lemon-container	
-						h2 Конфигурация служб системы
-						h2 #{service}
-						h3 #{map.name}
-						.grid
-							.row
-								each item in map.services
-									.span4
-										a.tile.double.triple-vertical.bg-darkTeal
-												.tile-content
-													.padding20
-														h2.fg-white #{item.name}
-														p.textuary-text.fg-white Settings:
-															each setting in item.settings
-																p.textuary-text.fg-white.no-margin - #{setting}
-								.span6(style="margin-left:0;")
-									button#add_service.button.default.large(data-role='toggle',alt-text='Отмена',aria-hidden='true',data-target='#wrap_add_service') Добавить службу
-									#wrap_add_service(style="display:none")
-										form#form_add_service(method="post",action="#{root}#{service}/services",enctype="multipart/form-data")
-													fieldset
-														legend Добавление службы
-														label Имя
-														.input-control.text
-															input(type="text",name="name",placeholder="Имя службы",required)
-														label Файлы настроек службы
-														.input-control.text
-															.grid
-																.row
-																	.span5
-																		input(type="text",name="settings[]",placeholder="Имя файла настройки",required)
-																	.span1
-																		div.button.default.icon-plus-2(data-role="copy",data-copy=".input-control",style="height:29px;margin-top:1px;padding:5px")
-												button#submit.default.large Добавить																																
-		script(src='/javascripts/webpersonal/functions.js')
-		script(src='/javascripts/webpersonal/configure.js')
+div.lemon-container
+	h2 Конфигурация служб системы #{map.name || map.info_system}
+	.grid
+		.row
+			each item in map.services
+				.span4(style="margin-left:0")
+					a.tile.double.triple-vertical.bg-darkTeal
+							.tile-content
+								.padding20
+									h2.fg-white #{item.name}
+									p.textuary-text.fg-white Settings:
+										each setting in item.settings
+											p.textuary-text.fg-white.no-margin - #{setting}
+			.span6(style="margin-left:0;")
+				button#add_service.button.default.large(data-role='toggle',alt-text='Отмена',aria-hidden='true',data-target='#wrap_add_service') Добавить службу
+				#wrap_add_service(style="display:none")
+					form#form_add_service(method="post",action="#{root}/configure/#{service}/services",enctype="multipart/form-data")
+								fieldset
+									legend Добавление службы
+									label Имя
+									.input-control.text
+										input(type="text",name="name",placeholder="Имя службы",required)
+									label Файлы настроек службы
+									.input-control.text
+										.grid
+											.row
+												.span5
+													input(type="text",name="settings[]",placeholder="Имя файла настройки",required)
+												.span1
+													div.button.default.icon-plus-2(data-role="copy",data-copy=".input-control",style="height:29px;margin-top:1px;padding:5px")
+							button#submit.default.large Добавить

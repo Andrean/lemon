@@ -9,18 +9,37 @@ var http		= require('http')
 	, ServiceMap= mongoose.model('ServiceMap')
 	, Agent		= mongoose.model('Agent');
 
-exports.loadServiceMap	= function( req, res, next, name ){
-	ServiceMap.load( name, function(err, map){
+exports.loadSystems	= function( req, res, next ){
+	ServiceMap.load_all( function(err, systems ){
 		if(err) return next(err);
-		if(!map) map = new ServiceMap({info_system: name});
-		req.map	= map;
+		req.wp	= systems || [];
 		next();
 	});
 };
 
+exports.loadServiceMap	= function( req, res, next, name ){
+	req.wp.map( function(sys){
+		if(sys.info_system == name)
+			req.map	= sys;		
+	});
+	next();
+};
+
+exports.main_view	= function( req, res ){
+	console.log(req.wp);
+	res.render('webpersonal/webpersonal', { title: 'WebPersonal project', bg_color: 'bg-color-Dark', wp: req.wp });
+};
+
 exports.view	= function( req, res ){
 	var service	= req.params.service || '';
-	res.render('webpersonal/update', { title: 'Update service ' + service, bg_color: 'bg-color-Dark', service: service});	
+	res.render('webpersonal/webpersonal', 
+			{ 	title: 'Update service ' + service,
+				wp:	req.wp,
+				map:	req.map,
+				action: 'update',
+				bg_color: 'bg-color-Dark', 
+				service: service
+			});	
 };
 
 exports.upload	= function( req, res ){
@@ -183,7 +202,14 @@ exports.get_status	= function( req ,res ){
 exports.configure	= function( req, res, next ){
 	var service	= req.params.service || '';
 	if(service == ''){
-		res.render('webpersonal/configure', {title:'Настройка '+service, bg_color: 'bg-color-Dark', service: service, map: req.map});
+		res.render('webpersonal/webpersonal', 
+				{	title:'Настройка '+service,
+					wp:	req.wp,
+					action: 'configure',
+					bg_color: 'bg-color-Dark', 
+					service: service, 
+					map: req.map
+				});
 		return;
 	}
 		
@@ -199,7 +225,14 @@ exports.configure	= function( req, res, next ){
 		function(err, new_map){
 			if(err) return next(err);
 			req.map.map	= new_map;
-			res.render('webpersonal/configure', {title:'Настройка '+service, bg_color: 'bg-color-Dark', service: service, map: req.map});
+			res.render('webpersonal/webpersonal', 
+					{	title:'Настройка '+service,
+						wp:	req.wp,
+						action: 'configure', 
+						bg_color: 'bg-color-Dark', 
+						service: service, 
+						map: req.map
+					});
 		}
 	);
 		
@@ -256,18 +289,17 @@ exports.load_settingsList	= function( req, res, next ){
 		next();
 	});*/
 };
-
 exports.services	= function( req, res ){
 	var service	= req.params.service || '';
-	console.log(req.map);
-	res.render('webpersonal/configure_services', 
-			{	title:'Настройка '+service, 
-				bg_color: 'bg-color-Dark', 
-				service: service, 
-				map: req.map 
+	res.render('webpersonal/webpersonal', 
+			{	title:		'Настройка службы '+service,
+				wp:			req.wp,
+				action: 	'configure_services',
+				bg_color: 	'bg-color-Dark', 
+				service: 	service, 
+				map: 		req.map 
 			});
 };
-
 exports.edit_services	= function( req, res ){
 	req.map.services.push(req.body);
 	req.map.save(function(err, data){
@@ -280,12 +312,10 @@ exports.switch_services	= function( req, res ){
 	var session_id	= req.body.session_id;
 	lemon_switchrequest('/update/switch_services', req, res, session_id);
 };
-
 exports.switch_fronts	= function( req, res ){
 	var session_id	= req.body.session_id;
 	lemon_switchrequest('/update/switch_fronts', req, res, session_id);
 };
-
 function lemon_switchrequest(path, req, res, session_id){
 	var lemon		= req.app.locals.config.lemon;
 	var status	= {'status':'error',msg:''};
@@ -328,3 +358,9 @@ function lemon_switchrequest(path, req, res, session_id){
 	l_req.write(body);
 	l_req.end();	
 }
+exports.projects_new	= function( req, res ){
+	ServiceMap.create(req.body, function(err, system){
+		if(err){ res.send(500); console.log(err); return;}
+		res.send(system);
+	});
+};

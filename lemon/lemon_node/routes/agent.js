@@ -7,16 +7,25 @@ var mongoose	= require('mongoose')
 	, Agent		= mongoose.model('Agent');
 
 exports.list	= function( req, res, next){
-	var tag	= req.param('tag') || '';
+	var tags	= (req.param('tag') || []).split(',') || [''];
+	console.log(tags);
 	var exclude	= req.param('exclude') || '';
 	var agents	= {excluded: [], data: []};	
 	async.parallel([
-	    function(cb){
-	    	Agent.listByTag(tag, function( err, data){
-	    		if(err) return cb(err);
-	    		agents.data	= data || [];
-	    		cb();
-	    	});
+	    function(callback){
+		    async.map(
+		    	tags,            
+			    function(tag, cb){
+			    	Agent.listByTag(tag, function( err, data){
+			    		if(err) return cb(err);		    		
+			    		cb(null, data[0] || []);
+			    	});
+			    },
+			    function(err, agents_by_tag){
+			    	agents.data	= agents_by_tag;
+			    	callback();
+			    }
+			);			
 	    },
 	    function(cb){
 	    	Agent.listExcludeTag(exclude, function(err, data){
