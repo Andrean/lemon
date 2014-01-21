@@ -69,8 +69,8 @@ class CommandHandler(object):
             raise
     
     def sendCommandStatus(self, cmd_id, status, msg=None):
-        self.manager._logger.info('Send command status to server.')
-        headers = {'Lemon-Agent-Timestamp': self.lemon_timestamp}
+        self.manager._logger.debug('Send command status to server.')
+        headers = { 'Lemon-Agent-Timestamp': self.lemon_timestamp }
         if self.request_handler is None:
             self.request_handler  = self.interface.getHandler()        
         try:
@@ -80,12 +80,11 @@ class CommandHandler(object):
                 return
             try:
                 if res.status == 200:
-                    return True
-                else:
-                    return False
+                    return True                    
             finally:
                 if not res.closed:
                     res.read()
+            return False
         except:
             self.request_handler.close()
             raise
