@@ -70,7 +70,6 @@ class EntityManager(lemon.BaseServerComponent):
     
     def getCommands(self, agent_id, timestamp=0, client_address=('localhost',0)):        
         tags    = [x for x in self.tagManager.getTags(agent_id)] 
-        self._logger.debug('Trying to get commands by agent {0}'.format(agent_id))       
         if len( tags ) > 0:
             return self.commandManager.getCommands(tags, timestamp)
         self._logger.info('Detected new agent with id {0}'.format(agent_id))
@@ -265,15 +264,11 @@ class CommandManager(object):
         pass
         
     def clean(self):
-        self.manager._logger.debug('Call cleaning commands')
-        print(self._cmds)
-        
         timestamp = time.time() - 60
         try:
             self._cmds[:] = [x for x in self._cmds if x['time'] > timestamp]
         except Exception as e:
-            self.manager._logger.exception(e)
-        print(self._cmds)
+            self.manager._logger.exception(e)        
             
 class FileManager(object):
     def __init__(self, files_directory):

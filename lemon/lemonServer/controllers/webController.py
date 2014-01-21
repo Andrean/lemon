@@ -9,6 +9,7 @@ import re
 import os
 import webpersonal.update as update
 import urllib
+import time
 from collections import OrderedDict
 from entity_manager import commands
 
@@ -43,7 +44,8 @@ def post_distr( req, res ):
                'distr': {'filename': ''}, 
                'services':[],
                'stamp': '',
-               'info_system':'' 
+               'info_system':'',
+               'history': {'begin': time.time(), 'load_distr': None, 'distribute_files': None, 'switch_services': None, 'switch_fronts': None, 'end': None } 
                }
     content_type    = req.headers.get('Content-Type','text/plain;charset=utf-8')
     content_length  = int(req.headers.get('Content-Length',0))
@@ -67,6 +69,9 @@ def post_distr( req, res ):
             if not result:
                 res.send_json( {'status': False, 'session_id': session['session_id'] } )
                 return
+            session = db.findOne({'session_id': session['session_id']})
+            session['history']['load_distr'] = time.time()
+            db.save(session)
             res.send_json( {'status': True, 'data': result, 'session_id': session['session_id']} )
         else:
             res.send_error(404) 
@@ -106,7 +111,8 @@ def copy_services_to_agents( req, res):
         tags.extend(stags)
         tags    = list(OrderedDict.fromkeys(tags))   
         session['services'] = body['services']
-        session['stamp']    = stamp        
+        session['stamp']    = stamp
+        session['history']['distribute_files']  = time.time()        
         db.save(session)
         res.send_json( {'status': True, 'session_id':session['session_id'], 'stamp':stamp, 'tags':tags, 'check_link': '/commands/status?commands=' + (','.join(commands_id))} )    
     except:        
@@ -201,7 +207,8 @@ def switch_services( req ,res ):
             if srv['name'] in session['services']:                
                 tags[_map['tag']] = True
                 switch_info['items'].append({'service': srv['name'], 'path': _map['path'] + '\\' + srv['name']+ '\\' + session['stamp'] })
-    
+    session['history']['switch_services'] = time.time()
+    db.save(session)
     db.set_default_collection( 'agents')
     if 'Front' in session['services']:
         session['services'].remove('Front')
@@ -236,8 +243,9 @@ def switch_fronts( req ,res ):
         if 'Front' in session['services']:                
             tags[_map['tag']] = True
             switch_info['items'].append({'service':'Front', 'path': _map['path'] + '/Front/' + session['stamp']})
-    db.set_default_collection( 'agents')
     if 'Front' in session['services']:
+        session['history']['switch_fronts'] = time.time()
+        db.save(session)
         command_id  = em.sendCommand(commands.switch_front_path, switch_info, tags.keys())
         res.send_json( {'status': True, 'session_id':session['session_id'], 'tags':list(tags.keys()),'check_link': '/commands/status?commands='+command_id } )
               
