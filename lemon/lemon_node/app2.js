@@ -64,9 +64,11 @@ app.post('/webpersonal/configure/:service/system', wp.edit_system_map);
 app.get( '/webpersonal/configure/:service/services'	, wp.services		);
 app.post('/webpersonal/configure/:service/services'	, wp.edit_services	);
 app.put( '/webpersonal/projects/new',	wp.projects_new			);
+app.get( '/webpersonal/settings/pull',	wp.git_pull);
 // common routes
 app.get( '/agents',		agent.list			);
 app.post('/agents',		agent.modify		);
+
 
 /////////////////////////////////////////////////////////////////////////
 http.createServer(app).listen(app.get('port'), function(){

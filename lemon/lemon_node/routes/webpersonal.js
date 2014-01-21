@@ -7,7 +7,10 @@ var http		= require('http')
 	, mongoose 	= require('mongoose')
 	, async		= require('async')
 	, ServiceMap= mongoose.model('ServiceMap')
-	, Agent		= mongoose.model('Agent');
+	, Agent		= mongoose.model('Agent')
+	, path		= require('path')
+	, subprocess	= require('child_process')
+	, _			= require('underscore');
 
 exports.loadSystems	= function( req, res, next ){
 	ServiceMap.load_all( function(err, systems ){
@@ -25,8 +28,7 @@ exports.loadServiceMap	= function( req, res, next, name ){
 	next();
 };
 
-exports.main_view	= function( req, res ){
-	console.log(req.wp);
+exports.main_view	= function( req, res ){	
 	res.render('webpersonal/webpersonal', { title: 'WebPersonal project', bg_color: 'bg-color-Dark', wp: req.wp });
 };
 
@@ -38,8 +40,8 @@ exports.view	= function( req, res ){
 				map:	req.map,
 				action: 'update',
 				bg_color: 'bg-color-Dark', 
-				service: service
-			});	
+				service: service				
+			});
 };
 
 exports.upload	= function( req, res ){
@@ -53,7 +55,8 @@ exports.upload	= function( req, res ){
 			if(err){ res.send(status);	return; }
 			var headers	= {
 					'Content-Disposition': 'attachment;filename='+file.name,
-					'Content-Length':file.size
+					'Content-Length':file.size,
+					'Connection':'close'
 			};
 			var options	= {
 				'hostname': lemon.server.hostname,
@@ -71,6 +74,7 @@ exports.upload	= function( req, res ){
 						'Content-Type': 'application/json;charset=utf-8',
 						'Connection': 'close'
 					};
+					lemon_res.read();
 					lemon_req_2	= http.request( options, function( lemon_res_2 ){
 						if(lemon_res_2.statusCode == 200){
 							var data 	= '';
@@ -110,6 +114,25 @@ exports.upload	= function( req, res ){
 		return;
 	}
 	res.send(404, {'status': 'error','msg':'File not found'});
+	
+};
+exports.git_pull= function( req, res ){
+	var config	= req.app.locals.config;
+	var repo_path	= config.webpersonal.settingsPath;
+	var git_path	= config.webpersonal.gitPath || '';
+	var env	= _.clone(process.env);
+	env.Path += ';'+path.resolve(git_path);
+	subprocess.exec(
+			'git.exe pull',
+			{ cwd: path.resolve(repo_path), env: env }, 
+			function(error, stdout, stderr){
+				if(error){
+					console.log(error);
+					res.send('Ошибка: '+ error.Error + '\n' + stderr);
+				}
+				else
+					res.send(stdout);
+	});
 	
 };
 exports.setup	= function( req, res ){

@@ -1,11 +1,13 @@
 !function($){
 	var session_id	= '';
 	var status	= ['present','submit','pending','completed','error'];
+	status[-1]	= 'error';
 	$('#upload_form > div > input').on('change', function(){
 		distr_file	= this.files[0].name;
 		var parent = $(this).parent().parent();
 		var formData = new FormData(parent[0]);		
 		enable_loader($('#upload_form > div'));
+		$('#console').hide();
 		$.ajax({
 			url: $('#upload_form').attr('action'), 
 			type: 'POST',				
@@ -146,10 +148,17 @@
 		if(err)
 			$('.lemon-container').find('#' + btn).text('Ошибка').removeClass('default').addClass('danger');
 		$('.lemon-container').find('#' + btn).text('Готово').removeClass('default').addClass('success');
-		var $switch_services	= $('.lemon-container').find('#switch_services').addClass('default');
-		$switch_services.on('click', function(){ switch_services(this); });
-		var $switch_fronts	= $('.lemon-container').find('#switch_fronts').addClass('default');
-		$switch_fronts.on('click', function(){ switch_fronts(this); });
+		var $switch_services	= $('.lemon-container').find('#switch_services');
+		if(!$switch_services.hasClass('default'))
+			$switch_services
+				.on('click',function(){ switch_services(this); })
+				.addClass('default');
+		var $switch_fronts	= $('.lemon-container').find('#switch_fronts');
+		if(!$switch_fronts.hasClass('default'))
+			$switch_fronts
+				.on('click',function(){ switch_fronts(this); })
+				.addClass('default');
+		
 	}
 	function switch_services(btn){
 		var $this	= $(btn);
@@ -172,7 +181,7 @@
 		});
 	}
 	
-	function switch_fronts(btn){
+	function switch_fronts(btn){		
 		var $this	= $(btn);
 		enable_loader($this);
 		$.ajax({
@@ -192,4 +201,11 @@
 			}
 		});
 	}
+	
+	$(document).ready( function(){
+		$.get('/webpersonal/settings/pull',function(data){
+			$('#console').remove();
+			$('.lemon-container').append($('<textarea id="console" cols="60" rows="4">').text("Executing git pull...\n"+data));
+		});
+	});
 }(window.jQuery);
