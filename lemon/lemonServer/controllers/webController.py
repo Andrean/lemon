@@ -248,6 +248,8 @@ def switch_fronts( req ,res ):
         db.save(session)
         command_id  = em.sendCommand(commands.switch_front_path, switch_info, tags.keys())
         res.send_json( {'status': True, 'session_id':session['session_id'], 'tags':list(tags.keys()),'check_link': '/commands/status?commands='+command_id } )
+    else:
+        res.send_json( {'status': False, 'session_id':session['session_id']})
               
 def test( req, res):
     res.send_content('test')
