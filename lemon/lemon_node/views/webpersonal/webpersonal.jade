@@ -23,7 +23,8 @@ block content
 					nav.sidebar
 						- var root = "/webpersonal"
 							ul
-								li.title Проекты
+								li
+									a(href="/webpersonal").title Проекты
 								- each system in wp
 									li
 										a.dropdown-toggle
