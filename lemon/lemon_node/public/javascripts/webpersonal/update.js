@@ -7,7 +7,8 @@
 		var parent = $(this).parent().parent();
 		var formData = new FormData(parent[0]);		
 		enable_loader($('#upload_form > div'));
-		$('#console').hide();
+		$('#console').remove();
+		$('#update_instruction').remove();
 		$.ajax({
 			url: $('#upload_form').attr('action'), 
 			type: 'POST',				
@@ -35,7 +36,7 @@
 								return;
 							}
 							$(this).removeClass('selected');
-							$(this).find('.icon-checkbox').addClass('icon-checkbox-unchecked').removeClass('icon-checkbox')
+							$(this).find('.icon-checkbox').addClass('icon-checkbox-unchecked').removeClass('icon-checkbox');
 						});
 						$ul.append($a);
 					}

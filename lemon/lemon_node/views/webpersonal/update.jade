@@ -14,6 +14,17 @@ div.lemon-container
 						button#switch_services.button.fg-white.large.span3 Переключить службы
 					.span4
 						button#switch_fronts.button.fg-white.large.span3 Переключить фронты
+				#update_instruction.row.no-margin
+					.span6
+						h3 Инструкция по обновлению
+						br
+						p Обновление состоит их 3 этапов:
+						p - загрузка и проверка дистрибутива
+						p - выбор служб и их копирование на сервера
+						p - переключение служб и фронтов на новые версии
+						p Дистрибутив загружается в виде архива формата ZIP. Архив содержит папки с файлами, каждая папка по имени службы.
+						p Например, папки Front, IndexService, ImportService в корне архива deploy.zip
+						
 				.row
 					.span6
 						#console.button.default.large.span3
