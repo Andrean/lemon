@@ -46,3 +46,6 @@
 h2,h3,h4,p {
 	word-wrap: break-word;
 }
+#history td {
+	vertical-align:top;
+}

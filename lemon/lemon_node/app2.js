@@ -22,6 +22,7 @@ mongoose.connect(config.db);
 // load models
 require('./models/ServiceMap');
 require('./models/Agent');
+require('./models/UpdateSession');
 
 // load routes
 
@@ -65,6 +66,7 @@ app.get( '/webpersonal/configure/:service/services'	, wp.services		);
 app.post('/webpersonal/configure/:service/services'	, wp.edit_services	);
 app.put( '/webpersonal/projects/new',	wp.projects_new			);
 app.get( '/webpersonal/settings/pull',	wp.git_pull);
+app.get( '/webpersonal/history/:service?',	wp.get_history		);
 // common routes
 app.get( '/agents',		agent.list			);
 app.post('/agents',		agent.modify		);

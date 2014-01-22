@@ -280,7 +280,3 @@ def post_agents( req, res ):
         if del_tag:
             em.tagManager.removeTag(agent_id, del_tag)
     res.send_json( {'status': True} )
-        
-    
-    
-    

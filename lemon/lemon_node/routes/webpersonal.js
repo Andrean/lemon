@@ -8,6 +8,7 @@ var http		= require('http')
 	, async		= require('async')
 	, ServiceMap= mongoose.model('ServiceMap')
 	, Agent		= mongoose.model('Agent')
+	, History	= mongoose.model('UpdateSession')
 	, path		= require('path')
 	, subprocess	= require('child_process')
 	, _			= require('underscore');
@@ -29,7 +30,10 @@ exports.loadServiceMap	= function( req, res, next, name ){
 };
 
 exports.main_view	= function( req, res ){	
-	res.render('webpersonal/webpersonal', { title: 'WebPersonal project', bg_color: 'bg-color-Dark', wp: req.wp });
+	History.load( function( err, list ){
+		if(err){ console.log(err); list = []; }
+		res.render('webpersonal/webpersonal', { title: 'WebPersonal project', bg_color: 'bg-color-Dark', wp: req.wp, history: list });
+	});	
 };
 
 exports.view	= function( req, res ){
@@ -386,4 +390,20 @@ exports.projects_new	= function( req, res ){
 		if(err){ res.send(500); console.log(err); return;}
 		res.send(system);
 	});
+};
+
+exports.get_history		= function( req, res ){
+	History.load(function( err, list ){
+		async.map(
+			list,
+			function(el, cb){
+				if(el.info_system == req.params.service || !req.params.service)
+					cb(null, el);
+			},
+			function(err, selected_list){
+				if(err){ res.send({}); return; }
+				res.send(selected_list || []);
+			}
+		);
+	});	
 };

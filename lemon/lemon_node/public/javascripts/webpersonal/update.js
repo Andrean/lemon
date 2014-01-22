@@ -149,12 +149,12 @@
 			$('.lemon-container').find('#' + btn).text('Ошибка').removeClass('default').addClass('danger');
 		$('.lemon-container').find('#' + btn).text('Готово').removeClass('default').addClass('success');
 		var $switch_services	= $('.lemon-container').find('#switch_services');
-		if(!$switch_services.hasClass('default'))
+		if(!$switch_services.hasClass('default') && !$switch_services.hasClass('success'))
 			$switch_services
 				.on('click',function(){ switch_services(this); })
 				.addClass('default');
 		var $switch_fronts	= $('.lemon-container').find('#switch_fronts');
-		if(!$switch_fronts.hasClass('default'))
+		if(!$switch_fronts.hasClass('default') && !$switch_fronts.hasClass('success'))
 			$switch_fronts
 				.on('click',function(){ switch_fronts(this); })
 				.addClass('default');
@@ -162,16 +162,20 @@
 	}
 	function switch_services(btn){
 		var $this	= $(btn);
+		$this.off();
 		enable_loader($this);
 		$.ajax({
 			url: location +'/switch_services',
 			type: 'POST',
 			data: {'session_id': session_id},
 			success: function(data){
-				if(data.status){
-					console.log(data);
+				if(data.status != 'error'){
 					$('.lemon-container').children('.listview').remove();
 					setTimeout(function(){ check_status(data.check_link, data.tags, $this.attr('id')) ;} , 500);
+				}
+				else{
+					disable_loader($this);
+					$this.addClass('danger').removeClass('default').text('Ошибка');
 				}
 			},
 			error: function(error){
@@ -183,16 +187,20 @@
 	
 	function switch_fronts(btn){		
 		var $this	= $(btn);
+		$this.off();
 		enable_loader($this);
 		$.ajax({
 			url: location +'/switch_fronts',
 			type: 'POST',
 			data: {'session_id': session_id},
 			success: function(data){
-				if(data.status){
-					console.log(data);
+				if(data.status != 'error'){
 					$('.lemon-container').children('.listview').remove();
 					setTimeout(function(){ check_status(data.check_link, data.tags, $this.attr('id')) ;} , 500);
+				}
+				else{
+					disable_loader($this);
+					$this.addClass('danger').removeClass('default').text('Ошибка');
 				}
 			},
 			error: function(error){

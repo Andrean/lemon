@@ -63,7 +63,19 @@ block content
 											label INFO-SYSTEM
 											.input-control.text
 												input(type="text",name="info_system",placeholder="Имя системы на латинице",required)
-											#submit.button.default.large Создать																						
+											#submit.button.default.large Создать			
+								h2 История обновлений
+								table.table#history.span12.striped.hover.bordered
+									tbody
+										- each record in history
+											tr
+												td.span3 #{new Date(record.history.begin*1000)}
+												td #{record.info_system}
+												td
+													- each srv in record.services
+														| #{srv}<br>
+												
+																																								
 	script(src='/javascripts/webpersonal/functions.js')
 	script(src='/javascripts/jquery/jquery.widget.min.js')
 	script(src='/javascripts/metroui/metro.min.js')
