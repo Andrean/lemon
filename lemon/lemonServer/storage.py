@@ -40,13 +40,13 @@ class Storage(lemon.BaseServerComponent):
             exit(1);
             
         self._cmd           = {
-                               'update': self.update,
-                               'insert': self.insert,
-                               'save'   : self.save,
-                               'remove': self.remove,
-                               'set_default_collection': self.set_default_collection,
-                               'find': self.find,
-                               'findOne': self.findOne
+                               'update':    self.update,
+                               'insert':    self.insert,
+                               'save':      self.save,
+                               'remove':    self.remove,
+                               'set_default_collection':    self.set_default_collection,
+                               'find':      self.find,
+                               'findOne':   self.findOne
                                }            
         
     @updateTimer
