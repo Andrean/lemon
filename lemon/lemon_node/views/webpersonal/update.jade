@@ -5,9 +5,10 @@ div.lemon-container
 			h2 #{map.name || map.info_system}
 			.grid
 				.update-process-container.row
-					form(id='upload_form',method="post",action="#{root}/update/#{service}/upload",enctype="multipart/form-data").span4
-						div(style="height:40px").hidden_upload.button.default.large.span3 Загрузить дистрибутив							
-							input(type='file',name='file',size='1')
+					.span4
+						form(id='upload_form',method="post",action="#{root}/update/#{service}/upload",enctype="multipart/form-data")
+							div(style="height:40px").hidden_upload.button.default.large.span3 Загрузить дистрибутив							
+								input(type='file',name='file',size='1')
 					.span4
 						button#setup_copy.button.fg-white.large.span3 Начать установку
 					.span4
@@ -23,8 +24,7 @@ div.lemon-container
 						p - выбор служб и их копирование на сервера
 						p - переключение служб и фронтов на новые версии
 						p Дистрибутив загружается в виде архива формата ZIP. Архив содержит папки с файлами, каждая папка по имени службы.
-						p Например, папки Front, IndexService, ImportService в корне архива deploy.zip
-						
+						p Например, папки Front, IndexService, ImportService в корне архива deploy.zip						
 				.row
 					.span6
 						#console.button.default.large.span3
