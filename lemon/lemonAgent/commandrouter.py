@@ -47,7 +47,7 @@ class   Router(object):
                     rule[1](command)
                     self.request_handler.sendCommandStatus(command.get('id'), status.completed)
                 except:
-                    self._logger.error('Command {0} completed with errors\n{1}'.format(command.get('cmd'),str(sys.exc_info()[1])))                    
+                    self._logger.error('Command {0} completed with errors\n{1}'.format(command.get('cmd'),str(sys.exc_info()[1])))   
                     self.request_handler.sendCommandStatus(command.get('id'), status.error, str(sys.exc_info()[1]))
 
 class CommandRouter(Router):

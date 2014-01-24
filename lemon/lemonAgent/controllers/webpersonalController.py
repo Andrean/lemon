@@ -34,25 +34,27 @@ def switch_service_path(cmd):
     port    = args['port']
     hostname    = socket.gethostname()
     conn    = http.client.HTTPConnection(hostname,port)
-    for record in args['items']:
-        conn.request('GET','/GetServicePath?service={0}'.format(record['service']))
+    try:
+        for record in args['items']:
+            conn.request('GET','/GetServicePath?service={0}'.format(record['service']))
+            res = conn.getresponse()
+            if res.status != 200:
+                conn.close()
+                raise Exception()
+            path    = str(res.read(),'utf-8')
+            basefile    = os.path.basename(path)
+            new_path    = os.path.join(os.path.normpath(record['path']),basefile)
+            conn.request('GET','/ChangeServicePath?service={0}&fileName={1}'.format(record['service'],new_path))
+            res = conn.getresponse()
+            if res.status != 200:
+                raise Exception()
+            res.read()
+        conn.request('GET','/ApplyChanges')
         res = conn.getresponse()
         if res.status != 200:
-            conn.close()
-            raise Exception()
-        path    = str(res.read(),'utf-8')
-        basefile    = os.path.basename(path)
-        new_path    = os.path.join(os.path.normpath(record['path']),basefile)
-        conn.request('GET','/ChangeServicePath?service={0}&fileName={1}'.format(record['service'],new_path))
-        res = conn.getresponse()
-        if res.status != 200:
-            raise Exception()
-        res.read()
-    conn.request('GET','/ApplyChanges')
-    res = conn.getresponse()
-    if res.status != 200:
-        raise Exception()
-    conn.close()
+            raise Exception("Changes not applied because {0}".format(str(res.reason)))
+    finally:
+        conn.close()
 
 
 def switch_front_path(cmd):
