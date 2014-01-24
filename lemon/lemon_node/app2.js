@@ -7,7 +7,26 @@ var express = require('express')
 			, config	= require('./config')
 			, http = require('http')
 			, path = require('path')
-			, mongoose	= require('mongoose');
+			, mongoose	= require('mongoose')
+			, winston	= require('winston');
+
+winston.loggers.add('production',{
+	console: {
+		level: 'debug',
+		colorize: true
+	},
+	file:	{
+		filename: path.join(__dirname,'lemon.web.log'),
+		json: false,
+		level: 'debug'
+	}
+});
+var logger	= winston.loggers.get('production');
+var winstonStream = {
+	    write: function(message, encoding){
+	        logger.info(message);
+	    }
+	};
 
 var app		= express();
 var db		= mongoose.connection;
