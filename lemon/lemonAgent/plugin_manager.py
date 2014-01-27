@@ -56,6 +56,7 @@ class PluginManager(object):
                 if plugin['name'] == plugin_name:
                     loader  = importlib.machinery.SourceFileLoader('plugins.' + plugin['name'],plugin['main'])
                     plugin['module']    = loader.load_module('plugins.' + plugin['name'])
+                    
         except:
             self._logger.error('Failed to load plugin {0}'.format(str(plugin_name)))
             self._logger.exception(sys.exc_info()[1])
@@ -75,6 +76,11 @@ class PluginManager(object):
     
     def disablePlugin(self, name=None):
         pass
+    
+    def getCommands(self, filter=None):
+        for plugin in self.plugins:
+            if plugin['module'] is not None:
+                yield plugin['module'].get_commands() 
     
     def _store(self):
         def clean(p):

@@ -4,9 +4,9 @@ Created on 20 янв. 2014 г.
 @author: Andrean
 '''
 import sys
+import core
 import collections
 from controllers import baseController
-from controllers import webpersonalController
 
 CMD_STATUS  = collections.namedtuple('CMD_STATUS',['present','submit','pending','completed','error'])
 status      = CMD_STATUS(
@@ -20,10 +20,7 @@ status      = CMD_STATUS(
 #    Commands routing table
 ##############################################################################
 COMMANDS    = [
-        [ 'get_self_info',   baseController.get_self_info    ] 
-       ,[ 'copy_to',         webpersonalController.copy_to   ]
-       ,[ 'switch_service_path', webpersonalController.switch_service_path   ]
-       ,[ 'switch_front_path',   webpersonalController.switch_front_path     ]
+        [ 'get_self_info',   baseController.get_self_info    ]
     ]
 ##############################################################################
 
@@ -53,4 +50,7 @@ class   Router(object):
 class CommandRouter(Router):
     def load(self):
         self.name   = 'COMMAND_ROUTER'
-        super().load( COMMANDS );
+        pm  = core.getCoreInstance().pluginManager
+        for route_list in pm.getCommands():
+            COMMANDS.extend(route_list)
+        super().load( COMMANDS )
