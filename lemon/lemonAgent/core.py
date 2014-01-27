@@ -8,6 +8,7 @@ import taskmanager
 import storage
 import interface
 import contractorLayer
+import plugin_manager
 import entity_manager
 import logging.config
 import os
@@ -198,7 +199,14 @@ class Core(object):
             self._stat['agent']['instances'].append( {'name': k,'state': v['state'], 'threads': v['threads'], 'exceptions':v['exceptions'],'errors': v['errors']} )
         self._stat['agent']['version']  = self.agentVersion
         return self._stat
-        
+    
+    def _loadPluginManager(self):
+        self.pluginManager   = plugin_manager.PluginManager(self._corelogger)
+        self.pluginManager.loadPlugins()
+    
+    def _unloadPluginManager(self):
+        self.pluginManager.unload()
+                
     def renewVersion(self, _version):
         self.agentVersion = _version
         
@@ -216,11 +224,13 @@ class Core(object):
         self._initLoggers()
         self._initInstances()
         self._startStorage()
+        self._loadPluginManager()
         self._updateStat()
-        self._startInstances()
+        self._startInstances()        
         
     def stop(self):
         self.terminateInstances()
+        self._unloadPluginManager()
         self._stopStorage()
         self._running   = False
         self._corelogger.info('Shutdown Core')
