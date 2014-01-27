@@ -7,7 +7,7 @@ var mongoose	= require('mongoose')
 	, Agent		= mongoose.model('Agent');
 
 exports.list	= function( req, res, next){
-	var tags	= (req.param('tag') || []).split(',') || [''];
+	var tags	= (req.param('tag') || '').split(',');
 	console.log(tags);
 	var exclude	= req.param('exclude') || '';
 	var agents	= {excluded: [], data: []};	
