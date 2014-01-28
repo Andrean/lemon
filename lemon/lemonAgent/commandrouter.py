@@ -20,7 +20,7 @@ status      = CMD_STATUS(
 #    Commands routing table
 ##############################################################################
 COMMANDS    = [
-        [ 'get_self_info',   baseController.get_self_info    ]
+        [ '_.get_self_info',   baseController.get_self_info    ]
     ]
 ##############################################################################
 
@@ -53,4 +53,5 @@ class CommandRouter(Router):
         pm  = core.getCoreInstance().pluginManager
         for route_list in pm.getCommands():
             COMMANDS.extend(route_list)
+            self._logger.debug('Added commands: {0}'.format(str(route_list)))
         super().load( COMMANDS )

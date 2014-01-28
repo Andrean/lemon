@@ -80,7 +80,8 @@ class PluginManager(object):
     def getCommands(self, filter=None):
         for plugin in self.plugins:
             if plugin['module'] is not None:
-                yield plugin['module'].get_commands() 
+                # rename command by adding plugin name prefix
+                yield [ ["{module}.{command}".format(module=plugin['name'],command=x[0]), x[1]] for x in plugin['module'].get_commands()] 
     
     def _store(self):
         def clean(p):
