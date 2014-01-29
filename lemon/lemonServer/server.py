@@ -17,9 +17,7 @@ class Server(lemon.BaseServerComponent):
         self._tmInstance    = None
         self.__instanceId   = uuid.uuid4();
         aiRouter    = router.AgentInterfaceRouter(self._logger)
-        aiRouter.load()
         webRouter   = router.WebInterfaceRouter(self._logger)
-        webRouter.load()
         self._agentListener = httpListener.Listener(httpHandler.httpRequestHandler, aiRouter )
         self._webListener   = httpListener.Listener(httpHandler.httpRequestHandler, webRouter) 
         self.cmdInterface   = None       

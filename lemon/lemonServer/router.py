@@ -9,23 +9,33 @@ import types
 import sys
 import json
 import traceback
+import core
 import controllers.commandController as commandController
 import controllers.baseController    as baseController
 import controllers.dataController    as dataController
 import controllers.webController     as webController
 import controllers.fileController    as fileController
 
+####
+# LOADER FOR PLUGIN'S ROUTES
+####
+def loader(_filter, method):
+    pm  = core.getCoreInstance().getInstance('PLUGIN_MANAGER')
+    return pm.getRoutes(method, _filter)
 #####################################################################################
 #    Routes for routing agent's requests
 #####################################################################################
 AGENT_INTERFACE_ROUTES  = [
      [  'GET',  r'^/commands[?=%&\w]*$',  commandController.get_commands    ]
-    ,[  'GET',  r'^/files[?=%,&_\-\w]*$',    fileController.get_files          ] 
+    ,[  'GET',  r'^/files[?=%,&_\-\w]*$',    fileController.get_files          ]
+    ,[  '#LOAD',None, lambda: loader('agent','GET')   ] 
     ,[  'GET',  r'.*',           baseController.get_404                     ]
     ,[  'POST', r'^/commands/result$',  commandController.post_commands_result      ]    
     ,[  'POST', r'^/data/AgentState$',   dataController.post_agent_state    ]
+    ,[  '#LOAD',None, lambda: loader('agent','POST')   ]
     ,[  'POST', r'.*',              baseController.get_404                  ]
     ,[  'PUT',  r'^/data$',         dataController.put_data                 ]
+    ,[  '#LOAD',None, lambda: loader('agent','PUT')   ]
     ,[  'PUT',  r'.*',              baseController.get_404                  ]
     
 ]
@@ -33,16 +43,14 @@ AGENT_INTERFACE_ROUTES  = [
 #    Routes for routing request from WEB-Server as web-interface
 #####################################################################################
 WEB_INTERFACE_ROUTES = [
-     [  'POST', r'^/upload$', webController.upload                          ]
-    ,[  'POST', r'^/update/distr$', webController.post_distr                ]
-    ,[  'POST', r'^/update/copy_to_agents$', webController.copy_services_to_agents  ]
-    ,[  'POST', r'^/update/switch_services$', webController.switch_services ]
-    ,[  'POST', r'^/update/switch_fronts$', webController.switch_fronts     ]
+     [  'POST', r'^/upload$', webController.upload                          ]    
     ,[  'POST', r'^/agents$', webController.post_agents                     ]
+    ,[  '#LOAD',None, lambda: loader('web','POST')   ]
     ,[  'POST', r'.*',              baseController.get_404                  ]
     ,[  'GET',  r'^/upload$', webController.test                            ]
     ,[  'GET',  r'^/agents$',   webController.get_agents                    ]
     ,[  'GET',  r'^/commands/status[?=%&_\-\+\w]*$',  webController.check_status    ]
+    ,[  '#LOAD',None, lambda: loader('web','GET')   ]
     ,[  'GET',  r'.*',           baseController.get_404                     ]
     
 ]
@@ -72,11 +80,21 @@ class Router(object):
                 return
             
     def add_route(self , method, url_pattern, action):
+        if method == '#LOAD':
+            self.__load(action())
+            return
         self._routes.append( { 'pattern':url_pattern, 'action':action, 'method': method } )
-            
+          
     def load(self, routes):
+        self._logger.debug('Loading routes')
+        self.__load(routes)        
+          
+    def __load(self, routes): 
         for rule in routes:
-            self.add_route(*rule)
+            try:
+                self.add_route(*rule)
+            except Exception as e:
+                self._logger.exception(e)
     
     def __make_request_ref(self, requestHandler, path):
         requestHandler.query  = parse_qs( (urlsplit(path)).query )       

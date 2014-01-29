@@ -10,3 +10,4 @@ STORAGE:
     data_path: data/storage/
     database: {'host': localhost, 'port':27017,'db_name':'lemon'}
 TASK_MANAGER: {}
+PLUGIN_MANAGER: {}

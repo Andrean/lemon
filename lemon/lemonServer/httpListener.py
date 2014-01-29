@@ -20,10 +20,13 @@ class Listener(threading.Thread):
         threading.Thread.__init__(self)
         
     def run(self):
+        self._router.load()
         self.listen()
         
     def setEndpoint(self, server_address):
         self._endpoint  = server_address
+        
+    
 
     def listen(self):
         self._httpd = ThreadingHTTPServer(self._endpoint, self._handler)

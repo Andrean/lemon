@@ -93,7 +93,7 @@ class Storage(lemon.BaseServerComponent):
         if collection is None:
             collection  = self._collection
         try:
-            return self._db[collection].save(to_save)
+            return self._db[collection].save(to_save, manipulate=False)
         except pymongo.errors.PyMongoError as err:
             self._logger.exception(err)
             

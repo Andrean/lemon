@@ -22,6 +22,9 @@ loggers:
     CORE:
         level:       DEBUG
         handlers:   [consoleHandler, fileHandler]
+    PLUGIN_MANAGER:
+        level:       DEBUG
+        handlers:   [consoleHandler, fileHandler]
     TASK_MANAGER:
         level:       DEBUG
         handlers:   [consoleHandler, fileHandler]

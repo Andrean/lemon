@@ -11,11 +11,13 @@ import uuid
 import collections
 import os
 
-COMMANDS    = collections.namedtuple('COMMANDS',['get_self_info', 'copy_to','switch_service_path','switch_front_path'])
-commands    = COMMANDS(get_self_info='get_self_info', 
-                       copy_to='copy_to',
-                       switch_service_path='switch_service_path',
-                       switch_front_path='switch_front_path')
+commands    = { 
+               'get_self_info' : '_.get_self_info' 
+            } 
+#COMMANDS(get_self_info='get_self_info', 
+#                       copy_to='copy_to',
+#                       switch_service_path='switch_service_path',
+#                       switch_front_path='switch_front_path')
 CMD_STATUS  = collections.namedtuple('CMD_STATUS',['present','submit','pending','completed','error'])
 status      = CMD_STATUS(
                 present   = 0,
@@ -36,6 +38,7 @@ class EntityManager(lemon.BaseServerComponent):
         self.agentManager   = {}
         
     def run(self):
+        self._loadCommands()
         self.configManager  = Configuration()
         self.tagManager     = TagManager() 
         self.commandManager = CommandManager(self)
@@ -53,7 +56,13 @@ class EntityManager(lemon.BaseServerComponent):
             self.fileManager.removeOldLinks()
             time.sleep(4)
         self._logger.info('stop ENTITY_MANAGER')
-    
+        
+    def _loadCommands(self):
+        self._logger.debug('Loading commands')
+        pm  = core.getCoreInstance().getInstance('PLUGIN_MANAGER')
+        commands.update(pm.getCommands())
+        print(commands)
+        
     def addNewAgent(self, agent_id, host):
         self.agentManager.add(agent_id, host)
         self.tagManager.assignTag(agent_id, agent_id)
