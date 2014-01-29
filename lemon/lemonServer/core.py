@@ -8,6 +8,7 @@ import logging.config
 import storagemanager
 import task_manager
 import entity_manager
+import plugin_manager
 import scheduler.scheduler as scheduler
 import server
 import os
@@ -18,8 +19,8 @@ CONFIG_PATH = 'conf'
 #CONFIG_FILE = CONFIG_PATH + '/server.conf'
 CONFIG_FILE = CONFIG_PATH + '/server.yaml'
 
-COMPONENTS          = ['TASK_MANAGER', 'SERVER','SCHEDULER', 'ENTITY_MANAGER']
-SERVER_COMPONENTS   = {'STORAGE': storagemanager.StorageManager, 'TASK_MANAGER': task_manager.TaskManager, 'SERVER': server.Server, 'SCHEDULER': scheduler.Scheduler, 'ENTITY_MANAGER': entity_manager.EntityManager} 
+COMPONENTS          = ['PLUGIN_MANAGER', 'TASK_MANAGER', 'SERVER', 'SCHEDULER', 'ENTITY_MANAGER']
+SERVER_COMPONENTS   = {'STORAGE': storagemanager.StorageManager, 'TASK_MANAGER': task_manager.TaskManager, 'SERVER': server.Server, 'SCHEDULER': scheduler.Scheduler, 'ENTITY_MANAGER': entity_manager.EntityManager, 'PLUGIN_MANAGER': plugin_manager.PluginManager} 
 TM_HANDLERS         = {'store': task_manager.StoreTaskHandler, 'scheduler': task_manager.SchedulerTaskHandler}
 
 CORE_INSTANCE   = None
@@ -82,6 +83,7 @@ class Core(object):
     def _startInstances(self):
         for name in COMPONENTS:
             self._instances[name]['instance'].start()
+            self._instances[name]['instance'].waitReady()
             self._clogger.info('start '+str(name))
         
     def _initLoggers(self):
@@ -103,6 +105,7 @@ class Core(object):
             cfg['TASK_MANAGER'] = {}
             cfg['SERVER']   = {}
             cfg['SCHEDULER']= {}
+            cfg['PLUGIN_MANAGER'] = {}
             cfg['LOGGING']  = {
                 'file': 'conf/logging.yaml'
             }
