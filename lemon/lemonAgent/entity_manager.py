@@ -8,6 +8,7 @@ import lemon
 import core
 import time
 import json
+import uuid
 import commandrouter
 
 class EntityManager(lemon.BaseAgentLemon):
@@ -47,8 +48,8 @@ class CommandHandler(object):
         headers = {'Lemon-Agent-Timestamp': self.lemon_timestamp}
         if self.request_handler is None:
             self.request_handler  = self.interface.getHandler()        
-        try:
-            res = self.request_handler.get_content(  '/commands', headers  )
+        try:           
+            res = self.request_handler.get_content( '/commands', headers  )
             if res is None:
                 return
             try:

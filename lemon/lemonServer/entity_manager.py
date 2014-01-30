@@ -14,10 +14,7 @@ import os
 commands    = { 
                'get_self_info' : '_.get_self_info' 
             } 
-#COMMANDS(get_self_info='get_self_info', 
-#                       copy_to='copy_to',
-#                       switch_service_path='switch_service_path',
-#                       switch_front_path='switch_front_path')
+
 CMD_STATUS  = collections.namedtuple('CMD_STATUS',['present','submit','pending','completed','error'])
 status      = CMD_STATUS(
                 present   = 0,
@@ -60,8 +57,7 @@ class EntityManager(lemon.BaseServerComponent):
     def _loadCommands(self):
         self._logger.debug('Loading commands')
         pm  = core.getCoreInstance().getInstance('PLUGIN_MANAGER')
-        commands.update(pm.getCommands())
-        print(commands)
+        commands.update(pm.getCommands())        
         
     def addNewAgent(self, agent_id, host):
         self.agentManager.add(agent_id, host)
@@ -180,7 +176,6 @@ class TagManager(object):
         if agent_id is None:
             for x in self._st_tags.find({}):
                 yield x
-        tags   = [x for x in self._st_tags.find({})]
         for item in self._st_agents.find({'agent_id': agent_id}):
             for tag in item.get('tags',[]):     
                 #if tag in tags or tag == agent_id:               

@@ -81,7 +81,7 @@ class   RequestHandler(object):
         self.connect()             
     
     def request(self, method, path, body=None, headers={}):
-        if self.connected.wait(5) is False:     # максимальное время ожидания запроса. Если за это время не соединилось - послать запрос к черту
+        if self.connected.wait(1) is False:     # максимальное время ожидания запроса. Если за это время не соединилось - послать запрос к черту
             return
         response    = {'result': None, 'error': None, 'ready': threading.Condition(self.mutex), 'reconnect': False}
         agentID       = core.getCoreInstance().getItem('agent')['__id']
@@ -148,7 +148,7 @@ class   RequestHandler(object):
             headers['Content-Type'] = 'application/octet-stream'
         return self.request('POST', url, body, headers)
         
-    def get_content(self, url, headers={}):
+    def get_content(self,url, headers={}):
         return self.request('GET', url, "", headers)
     
     def get_file(self, url, headers={}):
