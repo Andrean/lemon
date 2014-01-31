@@ -1,10 +1,10 @@
-extends ..\layout
+extends ..\..\layout
 block head
 	title= title
-	link(rel='stylesheet', href='/stylesheets/css/webpersonal.css', type='text/css')
+	link(rel='stylesheet', href='/plugins/webpersonal/css/main.css', type='text/css')
 	link(rel='stylesheet', href='/stylesheets/css/metro-bootstrap.css', type='text/css')		
 block content
-	include ..\page-header
+	include ..\..\page-header
 	.metro
 		.page
 			#header.entity_info_header.bg-color-Dark(style="border-top: 1px solid white; border-bottom: 1px solid white;")
@@ -77,17 +77,17 @@ block content
 														| #{srv}<br>
 												
 																																								
-	script(src='/javascripts/webpersonal/functions.js')
+	script(src='/plugins/webpersonal/js/functions.js')
 	script(src='/javascripts/jquery/jquery.widget.min.js')
 	script(src='/javascripts/metroui/metro.min.js')
 	script(src='/javascripts/metroui/metro-dropdown.js')
-	script(src='/javascripts/webpersonal/main.js')
+	script(src='/plugins/webpersonal/js/main.js')
 	case action
 		when 'configure'
-			script(src='/javascripts/webpersonal/configure.js')
+			script(src='/plugins/webpersonal/js/configure.js')
 		when 'configure_services'
-			script(src='/javascripts/webpersonal/configure.js')
+			script(src='/plugins/webpersonal/js/configure.js')
 		when 'update'
-			script(src='/javascripts/webpersonal/update.js')
+			script(src='/plugins/webpersonal/js/update.js')
 		
 		

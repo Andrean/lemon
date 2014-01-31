@@ -4,7 +4,7 @@
 
 var mongoose	= require('mongoose')
 	, async		= require ('async')
-	, Agent		= mongoose.model('Agent');
+	, Agent		= mongoose.model('system.Agent');
 
 exports.list	= function( req, res, next){
 	var tags	= (req.param('tag') || '').split(',');

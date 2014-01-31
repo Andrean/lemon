@@ -46,4 +46,7 @@ ServiceMapSchema.statics	= {
 };
 ServiceMapSchema.set('collection', 'service_map');
 
-module.exports	= mongoose.model('ServiceMap',ServiceMapSchema);
+function load( __prefix__ ){
+	mongoose.model(__prefix__ + 'ServiceMap',ServiceMapSchema);
+} 
+module.exports	= load;

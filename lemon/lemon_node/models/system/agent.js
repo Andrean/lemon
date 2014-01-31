@@ -26,4 +26,4 @@ AgentSchema.statics	= {
 };
 AgentSchema.set('collection','agents');
 
-module.exports	= mongoose.model('Agent',AgentSchema);
+module.exports	= function( __prefix__ ){	mongoose.model(__prefix__ + 'Agent',AgentSchema); };

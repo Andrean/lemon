@@ -6,13 +6,14 @@ var http		= require('http')
 	, fs		= require('fs')
 	, mongoose 	= require('mongoose')
 	, async		= require('async')
-	, ServiceMap= mongoose.model('ServiceMap')
-	, Agent		= mongoose.model('Agent')
-	, History	= mongoose.model('UpdateSession')
+	, ServiceMap= mongoose.model('webpersonal.ServiceMap')
+	, Agent		= mongoose.model('system.Agent')
+	, History	= mongoose.model('webpersonal.UpdateSession')
 	, path		= require('path')
 	, subprocess	= require('child_process')
 	, _			= require('underscore');
 
+var __prefix__	= 'plugins/';
 exports.loadSystems	= function( req, res, next ){
 	ServiceMap.load_all( function(err, systems ){
 		if(err) return next(err);
@@ -32,13 +33,13 @@ exports.loadServiceMap	= function( req, res, next, name ){
 exports.main_view	= function( req, res ){	
 	History.load( function( err, list ){
 		if(err){ console.log(err); list = []; }
-		res.render('webpersonal/webpersonal', { title: 'WebPersonal project', bg_color: 'bg-color-Dark', wp: req.wp, history: list });
+		res.render(__prefix__ + 'webpersonal/webpersonal', { title: 'WebPersonal project', bg_color: 'bg-color-Dark', wp: req.wp, history: list });
 	});	
 };
 
 exports.view	= function( req, res ){
 	var service	= req.params.service || '';
-	res.render('webpersonal/webpersonal', 
+	res.render(__prefix__ + 'webpersonal/webpersonal', 
 			{ 	title: 'Update service ' + service,
 				wp:	req.wp,
 				map:	req.map,
@@ -229,7 +230,7 @@ exports.get_status	= function( req ,res ){
 exports.configure	= function( req, res, next ){
 	var service	= req.params.service || '';
 	if(service == ''){
-		res.render('webpersonal/webpersonal', 
+		res.render(__prefix__ + 'webpersonal/webpersonal', 
 				{	title:'Настройка '+service,
 					wp:	req.wp,
 					action: 'configure',
@@ -252,7 +253,7 @@ exports.configure	= function( req, res, next ){
 		function(err, new_map){
 			if(err) return next(err);
 			req.map.map	= new_map;
-			res.render('webpersonal/webpersonal', 
+			res.render(__prefix__ + 'webpersonal/webpersonal', 
 					{	title:'Настройка '+service,
 						wp:	req.wp,
 						action: 'configure', 
@@ -318,7 +319,7 @@ exports.load_settingsList	= function( req, res, next ){
 };
 exports.services	= function( req, res ){
 	var service	= req.params.service || '';
-	res.render('webpersonal/webpersonal', 
+	res.render(__prefix__ + 'webpersonal/webpersonal', 
 			{	title:		'Настройка службы '+service,
 				wp:			req.wp,
 				action: 	'configure_services',

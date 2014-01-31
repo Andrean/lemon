@@ -39,4 +39,8 @@ UpdateSessionSchema.statics	= {
 	};
 UpdateSessionSchema.set('collection', 'update.sessions');
 
-module.exports	= mongoose.model('UpdateSession',UpdateSessionSchema);
+function load( __prefix__ ){
+	mongoose.model(__prefix__ + 'UpdateSession',UpdateSessionSchema);
+} 
+
+module.exports	= load;
