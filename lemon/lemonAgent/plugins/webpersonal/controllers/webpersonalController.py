@@ -26,7 +26,7 @@ def copy_to(cmd):
                 # теперь нужно распаковать архив, собрать список файлов и папок и оправить на сервер            
             zipfile.ZipFile('files/'+struct_file['filename']).extractall(path)
         else:
-            raise Exception
+            raise Exception('Error while getting file')
 
 
 def switch_service_path(cmd):

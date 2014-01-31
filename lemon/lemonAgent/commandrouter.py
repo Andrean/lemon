@@ -43,6 +43,10 @@ class   Router(object):
                     self.request_handler.sendCommandStatus(command['id'],status.pending)
                     rule[1](command)
                     self.request_handler.sendCommandStatus(command.get('id'), status.completed)
+                except Exception as e:
+                    self._logger.error('Command {0} completed with errors'.format(command.get('cmd')))
+                    self._logger.exception(e);
+                    self.request_handler.sendCommandStatus(command.get('id'), status.error, str(e))
                 except:
                     self._logger.error('Command {0} completed with errors\n{1}'.format(command.get('cmd'),str(sys.exc_info()[1])))   
                     self.request_handler.sendCommandStatus(command.get('id'), status.error, str(sys.exc_info()[1]))
