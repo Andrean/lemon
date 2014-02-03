@@ -56,12 +56,12 @@ app.use(express.errorHandler());
 /////////////////////////////////////////////////////////////////////////
 
 //load models
-var a = require('./models');
+require('./models');
 // load controllers
-var b = require('./controllers')( app, function(){
+require('./controllers')( app, function(){
 	// load routes
 	require('./routes')( app );
-} );
+});
 
 /////////////////////////////////////////////////////////////////////////
 http.createServer(app).listen(app.get('port'), function(){

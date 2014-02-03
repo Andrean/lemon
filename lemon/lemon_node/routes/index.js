@@ -23,6 +23,10 @@ module.exports	= function( app ){
 	    	cb();	
 	     },
 	     function(cb){
+	    	 require('./configuration')(app);
+	    	 cb();
+	     },
+	     function(cb){
 	    	Plugin.find({ enabled: true }, function(err, plugins){
     			if( err ){ console.log(err); return; }
     			plugins.forEach( function( plugin ){

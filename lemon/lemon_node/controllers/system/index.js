@@ -11,3 +11,5 @@ exports.get404	= function(req, res){
 exports.get500	= function(req, res){};
 
 exports.agent	= require('./agent');
+
+exports.configuration	= require('./configuration');

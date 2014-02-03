@@ -1,0 +1,13 @@
+extends ..\layout
+block head
+	title= title
+	link(rel='stylesheet', href='/stylesheets/css/metro-bootstrap.css', type='text/css')		
+block content
+	include ..\page-header
+	.metro
+		.page
+			#header.entity_info_header.bg-color-Dark(style="border-top: 1px solid white; border-bottom: 1px solid white;")
+				h3(style='margin-top:2px').fg-color-white
+					case action 
+						default
+							| Plugins

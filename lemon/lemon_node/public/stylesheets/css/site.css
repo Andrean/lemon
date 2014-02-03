@@ -1654,3 +1654,6 @@ input[type="button"].btn-block {
   -webkit-transition: height 0.35s ease;
           transition: height 0.35s ease;
 }
+.bg-color-Dark {
+	background-color: #3D3D3D !important;
+}
