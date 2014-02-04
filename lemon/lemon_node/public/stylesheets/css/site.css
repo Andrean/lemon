@@ -22,33 +22,36 @@ body {
 .metrouicss .fontsize40 {
 	font-size: 100px;
 }
-.metrouicss .page .page-header .page-header-content {
-	margin: auto;	
+.page-header .page-header-content {	
+	position: relative;
+	margin: auto;		
 }
-.metrouicss .page .page-header {
-	padding-bottom:10px;
-	
+.page-header .page-header-content .h-bottom {
+	position: absolute;
+	bottom:0;
+}
+.page-header {				
 }
 .metrouicss .with-rightpanel {
 	margin-right: 300px;
 	
 }
-.metrouicss .logo {
-    height: 100px;
-	width: 200px;
+.logo {
+    width: 200px;
+	height: 70px;
+	margin-bottom:8px;
 	position:relative;
-	display:block;
-	
+	display:block;	
+	float:left;
 }
-.metrouicss .logo  img{
-	position: relative;
+.logo  img{
 	width: 160px;
 	height: auto;
 	margin: auto;
-	top: 30px;
+	position: absolute;
 	left:30px;
+	bottom: 0;
 	-webkit-mask: -webkit-gradient(radial, 115 26, 150, 115 26, 165, from(rgb(0, 0, 0)), color-stop(0.5, rgba(0, 0, 0, 0.2)), to(rgb(0, 0, 0)));
-	
 }
 .metrouicss .input-control > input[type=datetime-local],
 .metrouicss .input-control > input[type=time]{
@@ -694,17 +697,24 @@ background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.15) 25%, transpa
 	padding-top: 1px;
 	
 }
-.entity_info_header {
+.info_header {
 	position:relative;
 	padding-left: 10px;
-	padding-top: 1px;
 	width: 100%;
-	min-height: 40px;
+	height: 40px;
 	text-align: left;
+	border-top: 1px solid white; 
+	border-bottom: 1px solid white;	
 	/*
 	#background-image: -webkit-linear-gradient(left, #603cba 0%,#603cba 220px, white 100%);	
 	#background-image: linear-gradient(left, #603cba 0%,#603cba 220px, white 100%);	
 		*/
+}
+.info_header  h2,h3,h4,h5 {
+	font-weight: 400 !important;
+	font-size: 21px !important;
+	line-height: 34px !important;
+	margin: auto !important;
 }
 .page-entity-info  {
 	position: relative;
@@ -1655,5 +1665,25 @@ input[type="button"].btn-block {
           transition: height 0.35s ease;
 }
 .bg-color-Dark {
-	background-color: #3D3D3D !important;
+	background-color: #3d3d3d !important;
+}
+.dark {
+	background-color: #3d3d3d !important;
+	border: 2px #3d3d3d solid !important;
+	color: white;
+}
+.medium  li a{
+	font-size: 16px !important;
+}
+.metro .dropdown-menu >li >a.dropdown-toggle:after{
+	font-family:iconFont;
+	font-size:.7em;
+	content:"\203A" !important; 
+	left:85%;
+	top:.85em;
+	-webkit-transform:rotate(0deg);
+	-moz-transform:rotate(0deg);
+	-ms-transform:rotate(0deg);
+	-o-transform:rotate(0deg);
+	transform:rotate(0deg)
 }

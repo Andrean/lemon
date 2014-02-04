@@ -38,15 +38,6 @@
                 e.preventDefault();
             });
 
-            $('html').on('click', function(e){
-                //e.preventDefault();
-                $('.dropdown-menu').each(function(i, el){
-                    if (!$(el).hasClass('keep-open') && $(el).css('display')=='block') {
-                        that._close(el);
-                        /* Почему то срабатывает трижды */
-                    }
-                });
-            });
         },
 
         _open: function(el){
@@ -76,4 +67,45 @@
     });
 })( jQuery );
 
+/*
+(function($){
+    $.fn.PullDown = function( options ){
+        var defaults = {
+        };
 
+        var $this = $(this)
+            ;
+
+        var initSelectors = function(selectors){
+
+            addTouchEvents(selectors[0]);
+
+            selectors.on('click', function(e){
+                var $m = $this.parent().children(".element-menu");
+                console.log($m);
+                if ($m.css('display') == "block") {
+                    $m.slideUp('fast');
+                } else {
+                    $m.slideDown('fast');
+                }
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        };
+
+        return this.each(function(){
+            if ( options ) {
+                $.extend(defaults, options);
+            }
+
+            initSelectors($this);
+        });
+    };
+
+    $(function () {
+        $('.pull-menu, .menu-pull').each(function () {
+            $(this).PullDown();
+        });
+    });
+})(window.jQuery);
+*/
