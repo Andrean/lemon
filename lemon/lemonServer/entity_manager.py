@@ -43,14 +43,8 @@ class EntityManager(lemon.BaseServerComponent):
         self.agentManager   = AgentManager()
         self.dataManager    = DataManager()
         self._setReady()
-        i = 0
         while(self._running):
-            if i > 60:
-                self.commandManager.clean()
-                i = 0
-            i+= 4                               
             self.update()
-            self.fileManager.removeOldLinks()
             time.sleep(4)
         self._logger.info('stop ENTITY_MANAGER')
         
@@ -268,11 +262,13 @@ class CommandManager(object):
         pass
         
     def clean(self):
+        print(self._cmds)
         timestamp = time.time() - 60
         try:
             self._cmds[:] = [x for x in self._cmds if x['time'] > timestamp]
         except Exception as e:
             self.manager._logger.exception(e)        
+        print(self._cmds)
             
 class FileManager(object):
     def __init__(self, files_directory):

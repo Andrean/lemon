@@ -18,9 +18,11 @@ def formSchTask(func, name, interval, start_time=None, kwargs={}):
                 }
     return _task
 
-refreshServerStat   =   formSchTask('refreshServerStat', 'Refreshing server state and statistics', 10, None)
-checkManageUpdate   =   formSchTask('updateContractors', 'Check database for new update of commands and configuration', 10, None)
-loadContractors     =   formSchTask('updateContractors', 'Load all configuration info for agents from database', 0, None, {'onStart': True} ) 
+add( formSchTask('clean_commands', 'Cleaning old commands', 60) )
+add( formSchTask('remove_old_links', 'Delete old file virtual links', 60) )
+#refreshServerStat   =   formSchTask('refreshServerStat', 'Refreshing server state and statistics', 10, None)
+#checkManageUpdate   =   formSchTask('updateContractors', 'Check database for new update of commands and configuration', 10, None)
+#loadContractors     =   formSchTask('updateContractors', 'Load all configuration info for agents from database', 0, None, {'onStart': True} ) 
 
 #add(refreshServerStat)
 #add(checkManageUpdate)

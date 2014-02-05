@@ -58,9 +58,9 @@ class CommandHandler(object):
                     # commands is a list of dicts such
                     # { 'cmd': string, 'args': [string], 'id': string }
                     #
+                    self.lemon_timestamp    = res.headers.get('Lemon-Server-Timestamp','0')
                     for cmd in commands:
-                        self.router.dispatch(cmd)                        
-                    self.lemon_timestamp    = res.headers.get('Lemon-Server-Timestamp','0') 
+                        self.router.dispatch(cmd)                                             
             finally:
                 if not res.closed:
                     res.read()

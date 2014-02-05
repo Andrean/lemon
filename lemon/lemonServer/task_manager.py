@@ -10,9 +10,9 @@ import uuid
 import time
 import exception.lemonException as lemonException
 import tasks
+import sys
 import lemon
 import core
-import sys
 
 def synchronized(f):
     '''Synchronization method decorator.'''
@@ -44,17 +44,13 @@ class TaskManager(lemon.BaseServerComponent):
         self._setReady()
         self._logger.info("Task manager started")
         while(self._running):
-            if self._checkForTasks():
-                self._process()
-            else:
-                time.sleep(0.1)
+            self._process()            
         self._logger.info('Task Manager was successfully shutdown')
     
     def addTask(self, proc, *args):
         taskId  = str(uuid.uuid4())
         timestamp   = time.time()
         task    = {'id': taskId, 'start_timestamp': timestamp, 'end_timestamp': None, 'proc': proc, 'args' : args}
-        self._logger.debug('add task %s' % taskId)
         self._addTask(task)
         
     def connectHandler(self, _handler):
@@ -63,22 +59,24 @@ class TaskManager(lemon.BaseServerComponent):
         else:
             self._handlerList[_handler.getName()] = _handler
             _handler._taskmanager   = self
-            self._logger.debug('handler %s connected' % _handler.getName())
+            self._logger.debug('Handler %s connected' % _handler.getName())
             
     def shutdown(self):
-        self._logger.info('attempting to shutdown TaskManager')
+        self._logger.info('Attempting to shutdown TaskManager')
         self._running   = False
         
-    def _process(self):
-        task = self._TaskQueue.get()
-        taskId = task['id']
+    def _process(self):        
         try:
-            self._logger.debug("Task {0} is processed".format(taskId))
+            task = self._TaskQueue.get(timeout=1)
+            taskId = task['id']        
+            self._logger.debug("Task=\"{0}\" taskId={1} is processed".format(task['proc'],taskId))
             for taskHandler in self._handlerList.values():
                 taskHandler.do(task)
-            self._logger.debug("Task {0} was processed without errors".format(taskId))
+            self._logger.debug("Task=\"{0}\" taskId={1} was processed without errors".format(task['proc'],taskId))
+        except queue.Empty:
+            return
         except Exception as e:
-            self._logger.error("Task {0} was processed with error: {1}".format(taskId, str(e)))
+            self._logger.error("Task=\"{0}\" taskId={1} was processed with error: {1}".format(task['proc'], taskId, str(e)))
             
     def _checkForTasks(self):
         if self._TaskQueue.empty():
@@ -90,7 +88,7 @@ class TaskManager(lemon.BaseServerComponent):
         try:
             self._TaskQueue.put(task)
         except Exception as ex:
-            print(ex)
+            self._logger.exception(ex)
         
         
 class BaseTaskHandler(object):
@@ -108,8 +106,8 @@ class BaseTaskHandler(object):
         if task_cmd in self._commandList:
             try:
                 self._dispatchMethod(task_cmd, task)
-            except Exception as e:
-                self._taskmanager._logger.exception('Exception in task cmd '+ task_cmd, e)
+            except:
+                self._taskmanager._logger.exception('Exception in task cmd '+ task_cmd, sys.exc_info()[1])
     
     def _dispatchMethod(self, cmd, task):
         args    = task['args']
@@ -131,6 +129,6 @@ class SchedulerTaskHandler(BaseTaskHandler):
     
     def __init__(self, name):
         BaseTaskHandler.__init__(self, name)
-        self._commandList = ['addScheduledTask', 'refreshServerStat','updateContractors']
+        self._commandList = ['addScheduledTask', 'refreshServerStat','updateContractors','clean_commands','remove_old_links']
     
     

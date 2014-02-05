@@ -11,7 +11,8 @@ var PluginSchema	= mongoose.Schema({
 		version: 	{ type: Number},
 		enabled: 	{ type: Boolean},
 		files: 		[ { type: String } ],
-		main:		{ type: String }
+		main:		{ type: String },
+		description: {type: String, "default": ""}
 });
 PluginSchema.set('collection','plugins');
 

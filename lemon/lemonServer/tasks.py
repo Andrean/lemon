@@ -40,6 +40,18 @@ def add(f):
     CMD[f.__name__] = f
     
 @add
+def clean_commands(t, kwargs):
+    print("CLEAN_COMMANDS: Trying to remove commands older 1 minute")
+    em  = core.getCoreInstance().getInstance('ENTITY_MANAGER')
+    em.commandManager.clean()
+    
+@add
+def remove_old_links(t, kwargs):
+    print("REMOVE_OLD_LINKS: Trying to remove older links")
+    em  = core.getCoreInstance().getInstance('ENTITY_MANAGER')
+    em.fileManager.removeOldLinks()
+    
+@add
 def storeAgentData(tm, dict_data):
     print("STORE AGENT DATA")
     agent_data  = dict_data['agent']

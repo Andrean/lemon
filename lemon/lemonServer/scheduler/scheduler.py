@@ -38,7 +38,6 @@ class Scheduler(lemon.BaseServerComponent):
         self._sm        = core.getCoreInstance().getInstance('STORAGE')
         self._storage   = self._sm.getInstance()
         self._storage.set_default_collection('scheduler')
-        print('Scheduler started')
         self._taskManager   = core.getCoreInstance().getInstance('TASK_MANAGER')
         self._logger.info('Scheduler started')
         
@@ -62,7 +61,6 @@ class Scheduler(lemon.BaseServerComponent):
             
     def add(self, func_type, name='default', start_time=None, interval = 5*MINUTES,  kwargs=None):
         schtask = {}
-        print('ADDING TO SCHEDULE: '+str(name))
         if start_time is None:
             start_time  = time.time()
         schtask['__id'] = str(uuid.uuid4())
@@ -97,7 +95,6 @@ class Scheduler(lemon.BaseServerComponent):
             q       = {'name': key}
             storing = {'name': key, 'task': obj}
             item    = self._storage.findOne(q)
-            print('STORING TASK: '+ str(storing))
             if item:
                 self._storage.update(q, storing)
             else:
@@ -115,11 +112,8 @@ class Scheduler(lemon.BaseServerComponent):
                 for key in headers:
                     item    = self._storage.findOne({'name': key})
                     self._add_to_schedule(key, item['task'])
-                self._logger.info('schedule loaded')
             else:
-                self._storage.insert({'type': 'task_list', 'list': []})
-            print('schedule loaded')
-            self._logger.info('schedule loaded')
+                self._storage.insert({'type': 'task_list', 'list': []})            
         except Exception as e:
             self._logger.error('Error occured in _loadStorage: {0}'.format(str(e)))
             
@@ -130,11 +124,9 @@ class Scheduler(lemon.BaseServerComponent):
         for k in keys:
             if self._schedule[k]['interval'] == 0:
                 self._startTask(k, self._schedule[k]['task'])
-                self._logger.info('scheduled task {0} started'.format(str(k)))
                 remove_list.append(k)
             elif self._schedule[k]['last_time'] + self._schedule[k]['interval'] < timestamp:
                 self._startTask(k, self._schedule[k]['task'])
-                self._logger.info('scheduled task {0} started'.format(str(k)))
                 self._schedule[k]['last_time']  = time.time()
         for remove_name in remove_list:
             self._remove_from_schedule(remove_name)
@@ -151,5 +143,4 @@ class Scheduler(lemon.BaseServerComponent):
             self._scheduleModified = False
                 
     def _startTask(self, key, task):
-        self._taskManager.addTask(task['func'], task['args'])
-        self._logger.info('task {0} successfully send to task manager'.format(str(key)))
+        self._taskManager.addTask(task['func'], task['args'])        
