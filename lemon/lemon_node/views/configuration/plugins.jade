@@ -15,25 +15,34 @@ block content
 					ul
 						li.title Menu
 						li
-							a(href="#install")	Install new plugin	
-			section.container(style="float:left;padding: 10px 0 0 20px;")
-				h2 Installed plugins
-				br
-				each p in plugins
-					if p.enabled
-						.tile.double.bg-darkGreen.fg-white
-							.tile-content
-								.padding10(style="padding-left:20px")
-									h3.fg-white #{p.name}									
-									p.textuary-text.fg-white version: #{p.version}
-									p.textuary-text.fg-white state: ENABLED									
-				each p in plugins
-					unless p.enabled
-						.tile.double.bg-steel.fg-white
-							.tile-content
-								.padding10(style="padding-left:20px")
-									h2.fg-white #{p.name}
-									p.textuary-text.fg-white version: #{p.version}
-									p.textuary-text.fg-white state: DISABLED					
+							a(href="#install",data-role="modern-switch-tab",data-target="#install",data-container="#workspace")	Install new plugin	
+			section#workspace.container(style="float:left;padding: 10px 0 0 20px;")
+				#plugins_list
+					h1 Installed plugins
+					br
+					each p in plugins
+						if p.enabled
+							.tile.double.bg-darkGreen.fg-white
+								.tile-content
+									.padding10(style="padding-left:20px")
+										h3.fg-white #{p.name}									
+										p.textuary-text.fg-white version: #{p.version}
+										p.textuary-text.fg-white state: ENABLED									
+					each p in plugins
+						unless p.enabled
+							.tile.double.bg-steel.fg-white
+								.tile-content
+									.padding10(style="padding-left:20px")
+										h2.fg-white #{p.name}
+										p.textuary-text.fg-white version: #{p.version}
+										p.textuary-text.fg-white state: DISABLED					
+				#install(style="display:none")
+					h1 
+						a(href="#",data-action="backward-tab",data-target="#plugins_list",data-hide="#install")
+							i.icon-arrow-left-3.fg-dark
+						|	Install new plugin
 					
-				
+	script(src="/javascripts/plugins.js")
+	script(src="http://jquery-ui.googlecode.com/svn/tags/latest/ui/jquery.effects.core.js")
+	script(src="http://jquery-ui.googlecode.com/svn/tags/latest/ui/jquery.effects.slide.js")
+					
