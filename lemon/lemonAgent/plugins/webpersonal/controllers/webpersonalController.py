@@ -47,7 +47,7 @@ def switch_service_path(cmd):
             conn.request('GET','/ChangeServicePath?service={0}&fileName={1}'.format(record['service'],new_path))
             res = conn.getresponse()
             if res.status != 200:
-                raise Exception()
+                raise Exception("ChangeServicePath not applied: {0}".format(str(res.reason)))
             res.read()
         conn.request('GET','/ApplyChanges')
         res = conn.getresponse()
