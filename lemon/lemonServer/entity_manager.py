@@ -248,9 +248,9 @@ class CommandManager(object):
         self.manager._logger.debug('Added command {0}:  {1},{2},{3}'.format(command_id,str(cmd),str(args),str(tags)))
         return command_id                   
         
-    def changeStatus(self, agent_id, command_id, status):
+    def changeStatus(self, agent_id, command_id, status, msg=None):
         try:
-            self._cmds_status[command_id].append({'agent_id': agent_id, 'status': status, 'time': time.time()})
+            self._cmds_status[command_id].append({'agent_id': agent_id, 'status': status, 'message': msg, 'time': time.time()})
         except KeyError:
             self.manager._logger.error('Attempt to change status of not existing command {0} from agent {1} with status {3}'.format(str(command_id), str(agent_id), str(status)))
             return

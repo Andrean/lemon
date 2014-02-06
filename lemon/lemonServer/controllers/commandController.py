@@ -46,7 +46,7 @@ def post_commands_result( req, res ):
         body_params    = json.loads(str(req.rfile.read(content_length), charset))
         em          = core.getCoreInstance().getInstance('ENTITY_MANAGER')
         for cmd in body_params:
-            em.commandManager.changeStatus(agent_id, cmd['cmd_id'], cmd['status'])
+            em.commandManager.changeStatus(agent_id, cmd['cmd_id'], cmd['status'], cmd['msg'])
         res.send_content('') 
     except KeyError:
         res.send_error(401)
