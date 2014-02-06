@@ -118,9 +118,13 @@
 					for(var item_i in command){
 						var item	= command[item_i];
 						var $a	=	$ul.children('a[agent_id='+item.agent_id+']');
-						if($a.find('span[cmd_id='+i+']').length == 0)
-							$a.find('.data').append($('<span cmd_id="'+i+'" class="list-remark"></span>'));						
-						$a.find('span[cmd_id='+i+']').text(status[item.status]);										
+						if($a.find('span[cmd_id='+i+']').length == 0){
+							$a.find('.data').append($('<span cmd_id="'+i+'" class="list-remark"></span>'));
+							$a.find('.data').append($('<span cmd_id="'+i+'" class="message"></span>'));
+						}
+						$a.find('span[cmd_id='+i+']:not("message")').text(status[item.status]);
+						console.log('MESSAGE: '+(item.message || ""));
+						$a.find('span[cmd_id='+i+'].message').text(item.message || "");
 					}
 				}							
 			});	
