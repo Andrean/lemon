@@ -31,7 +31,7 @@ exports.loadServiceMap	= function( req, res, next, name ){
 };
 
 exports.main_view	= function( req, res ){	
-	History.load( function( err, list ){
+	History.load( { perPage: 10} ,function( err, list ){
 		if(err){ console.log(err); list = []; }
 		res.render(__prefix__ + 'webpersonal/webpersonal', { title: 'WebPersonal project', bg_color: 'bg-color-Dark', wp: req.wp, history: list });
 	});	

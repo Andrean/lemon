@@ -27,8 +27,11 @@ var UpdateSessionSchema	= new Schema({
 });
 
 UpdateSessionSchema.statics	= {		
-		load:	function(cb)	{
-			this.find( {}, cb );		
+		load:	function(options, cb)	{
+			this.find( options.criteria || {} )
+				.limit(options.perPage)
+				.sort( '-history.begin' )
+				.exec(cb);		
 		},
 		findBySystem: function( info_system, cb ){
 			this.find({ info_system: info_system}, cb );

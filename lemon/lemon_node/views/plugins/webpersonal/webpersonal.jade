@@ -26,7 +26,7 @@ block content
 									a(href="/webpersonal").title Проекты
 								- each system in wp
 									li
-										a.dropdown-toggle
+										a(href="#").dropdown-toggle
 											| #{system.name || system.info_system}
 										ul(data-role="dropdown")
 											li

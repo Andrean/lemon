@@ -7,7 +7,7 @@ var mongoose	= require('mongoose');
 var Schema		= mongoose.Schema;
 
 var ServiceMapSchema	= new Schema({
-	type:			{ type: String, trim: true, default: 'map' },
+	type:			{ type: String, trim: true, "default": 'map' },
 	info_system: 	{ type: String, trim: true, unique: true, match: /.+/ },
 	name:			{ type: String, trim: true },
 	sm_port:		{ type: Number},
