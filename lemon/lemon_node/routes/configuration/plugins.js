@@ -7,5 +7,8 @@
 module.exports	= function( app ){
 	var plugins_controller	= app.controllers.system.configuration.plugins;
 	
-	app.get( '/configuration/plugins/:name?', plugins_controller.show	);
+	app.all( '/configuration/plugins', plugins_controller.load			);
+	app.get( '/configuration/plugins/:name?', plugins_controller.show	);	
+	app.put( '/configuration/plugins', 		  plugins_controller.add	);
+	app.post('/configuration/plugins/:name?', plugins_controller.edit	);
 };

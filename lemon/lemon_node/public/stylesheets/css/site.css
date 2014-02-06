@@ -39,17 +39,16 @@ body {
 .logo {
     width: 200px;
 	height: 70px;
-	margin-bottom:8px;
+	margin-bottom:15px;
 	position:relative;
 	display:block;	
-	float:left;
 }
 .logo  img{
 	width: 160px;
 	height: auto;
 	margin: auto;
 	position: absolute;
-	left:30px;
+	left:20px;
 	bottom: 0;
 	-webkit-mask: -webkit-gradient(radial, 115 26, 150, 115 26, 165, from(rgb(0, 0, 0)), color-stop(0.5, rgba(0, 0, 0, 0.2)), to(rgb(0, 0, 0)));
 }
@@ -699,7 +698,7 @@ background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.15) 25%, transpa
 }
 .info_header {
 	position:relative;
-	padding-left: 10px;
+	padding-left: 20px;
 	width: 100%;
 	height: 40px;
 	text-align: left;
@@ -1686,4 +1685,7 @@ input[type="button"].btn-block {
 	-ms-transform:rotate(0deg);
 	-o-transform:rotate(0deg);
 	transform:rotate(0deg)
+}
+.horizontal-menu.dark li:hover {
+	background-color: #201a1a;
 }

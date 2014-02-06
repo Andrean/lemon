@@ -10,3 +10,30 @@ block content
 					case action 
 						default
 							| Plugins
+			aside.span3(style="float:left")
+				nav.sidebar
+					ul
+						li.title Menu
+						li
+							a(href="#install")	Install new plugin	
+			section.container(style="float:left;padding: 10px 0 0 20px;")
+				h2 Installed plugins
+				br
+				each p in plugins
+					if p.enabled
+						.tile.double.bg-darkGreen.fg-white
+							.tile-content
+								.padding10(style="padding-left:20px")
+									h3.fg-white #{p.name}									
+									p.textuary-text.fg-white version: #{p.version}
+									p.textuary-text.fg-white state: ENABLED									
+				each p in plugins
+					unless p.enabled
+						.tile.double.bg-steel.fg-white
+							.tile-content
+								.padding10(style="padding-left:20px")
+									h2.fg-white #{p.name}
+									p.textuary-text.fg-white version: #{p.version}
+									p.textuary-text.fg-white state: DISABLED					
+					
+				

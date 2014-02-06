@@ -6,29 +6,30 @@
 					a(href="/")
 						#logo.logo
 							img(src='/images/logo.png')
-						//div(style='float:left; margin-left: 20px; min-width: 600px; height:100px;')
-					nav.horizontal-menu.medium.bg-color-Dark.h-bottom(style="float: left;margin-left: 220px")
-						ul.element-menu.fg-white.no-margin
-							li
-								a(href="/monitoring")
-									| Monitoring
-							li
-								a.dropdown-toggle
-									| Inventory
-								ul.dropdown-menu.dark(data-role="dropdown", data-effect="slide")
-									li 
-										a(href="/inventory/entities") Entities
-									li
-										a(href="/inventory/groups") Groups
-							li
-								a.dropdown-toggle
-									| Administration
-								ul.dropdown-menu.dark(data-effect="slide",data-role="dropdown")
-									li 
-										a(href="/configuration").dropdown-toggle Configuration
-										ul.dropdown-menu.dark(data-show="hover")
-											li
-												a(href="/configuration/plugins")	Plugins	
-							li
-								a(href="/documentation")
-									| Documentation
+					div.navigation-bar.dark(style="float: left;margin-left: 220px;width:auto !important;border:0 !important;")
+						div.navigation-bar-content.container.medium.h-bottom
+							//nav.horizontal-menu.medium.dark.h-bottom(style="float: left;margin-left: 220px")
+							ul.element-menu.no-margin
+								li
+									a(href="/monitoring")
+										| Monitoring
+								li
+									a(href="#").dropdown-toggle
+										| Inventory
+									ul.dropdown-menu.dark(data-role="dropdown", data-effect="slide")
+										li 
+											a(href="/inventory/entities") Entities
+										li
+											a(href="/inventory/groups") Groups
+								li
+									a(href="#").dropdown-toggle
+										| Administration
+									ul.dropdown-menu.dark(data-effect="slide",data-role="dropdown")
+										li 
+											a(href="/configuration").dropdown-toggle Configuration
+											ul.dropdown-menu.dark(data-show="hover")
+												li
+													a(href="/configuration/plugins")	Plugins	
+								li
+									a(href="/documentation")
+										| Documentation
