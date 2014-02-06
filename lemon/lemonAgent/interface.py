@@ -14,12 +14,6 @@ import threading
 import sys
 import socket
 
-
-ERROR_NOT_IDENTIFIED  = '0000001'
-ERROR_NOT_AUTHORIZED  = '0000002'
-
-TASK_SUCCESSFULLY_ADDED = '11'
-
 RECONNECTION_INTERVAL      = 10
 QUEUE_WAIT_INTERVAL         = 10
 
@@ -77,6 +71,7 @@ class   RequestHandler(object):
         self.client     = client
         self.connection = http.client.HTTPConnection(self.client.serverEndpoint[0], self.client.serverEndpoint[1],timeout=5)
         self.mutex  = threading.Lock()
+        self.lock   = threading.Lock()
         self.connected = threading.Event()   
         self.connect()             
     
