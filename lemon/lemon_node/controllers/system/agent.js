@@ -8,7 +8,6 @@ var mongoose	= require('mongoose')
 
 exports.list	= function( req, res, next){
 	var tags	= (req.param('tag') || '').split(',');
-	console.log(tags);
 	var exclude	= req.param('exclude') || '';
 	var agents	= {excluded: [], data: []};	
 	async.parallel([
@@ -18,12 +17,15 @@ exports.list	= function( req, res, next){
 			    function(tag, cb){
 			    	Agent.listByTag(tag, function( err, data){
 			    		if(err) return cb(err);		    		
-			    		cb(null, data[0] || []);
+			    		cb(null, data || []);
 			    	});
 			    },
 			    function(err, agents_by_tag){
-			    	agents.data	= agents_by_tag;
-			    	callback();
+			    	for(var i in agents_by_tag)
+			    	{
+			    		agents.data.push.apply(agents.data,agents_by_tag[i]);
+			    	}	
+			    	callback();			    	    	
 			    }
 			);			
 	    },
