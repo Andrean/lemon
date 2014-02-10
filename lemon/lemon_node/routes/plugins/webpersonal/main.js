@@ -5,7 +5,7 @@
 */
 
 module.exports	= function( app ){
-	var wp	= app.controllers.webpersonal;
+	var wp	= require('./controllers');
 	
 	app.param('service'	, wp.loadServiceMap			);	// returns req.map
 	app.all( '/webpersonal(/*)?', 	wp.loadSystems					);

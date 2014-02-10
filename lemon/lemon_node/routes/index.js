@@ -5,7 +5,8 @@
  */
 var mongoose	= require('mongoose')
 	, async		= require('async')
-	, Plugin	= mongoose.model('system.Plugin');
+	, Plugin	= mongoose.model('system.Plugin')
+	, system	= require('./controllers');
 
 module.exports	= function( app ){
 	
@@ -38,6 +39,6 @@ module.exports	= function( app ){
 	],
 	function( err, _ ){
 		//////////////////////////////////////////////////////////////////////
-		app.all('*', app.controllers.system.get404);	
+		app.all('*', system.get404);	
 	});	
 };

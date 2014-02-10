@@ -5,5 +5,6 @@
  */
 
 module.exports	= function( app ){
-	require('./plugins')( app );
+	var controllers	= require('./controller.configuration.js');
+	require('./plugins')( app, controllers.plugins );
 };

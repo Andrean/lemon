@@ -56,11 +56,9 @@ app.use(express.errorHandler());
 /////////////////////////////////////////////////////////////////////////
 
 //load models
-require('./models');
-// load controllers
-require('./controllers')( app, function(){
-	// load routes
-	require('./routes')( app );
+require('./models')( function(){
+	// load routes and controllers
+	require('./routes')( app );	
 });
 
 /////////////////////////////////////////////////////////////////////////

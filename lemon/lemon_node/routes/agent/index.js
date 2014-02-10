@@ -5,7 +5,7 @@
  */
 
 module.exports	= function( app ){
-	var agent	= app.controllers.system.agent;
+	var agent	= require('./controller.agent');
 	
 	app.get( '/agents',		agent.list		);
 	app.post('/agents',		agent.modify	);
