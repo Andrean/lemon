@@ -10,35 +10,45 @@ exports.list	= function( req, res, next){
 	var tags	= (req.param('tag') || '').split(',');
 	var exclude	= req.param('exclude') || '';
 	var agents	= {excluded: [], data: []};	
-	async.parallel([
-	    function(callback){
-		    async.map(
-		    	tags,            
-			    function(tag, cb){
-			    	Agent.listByTag(tag, function( err, data){
-			    		if(err) return cb(err);		    		
-			    		cb(null, data || []);
-			    	});
-			    },
-			    function(err, agents_by_tag){
-			    	for(var i in agents_by_tag)
-			    	{
-			    		agents.data.push.apply(agents.data,agents_by_tag[i]);
-			    	}	
-			    	callback();			    	    	
-			    }
-			);			
-	    },
-	    function(cb){
-	    	Agent.listExcludeTag(exclude, function(err, data){
-	    		if(err) return cb(err);
-	    		agents.excluded	= data || [];
-	    		cb();
-	    	});
-	    }
-	], function(err){
-		res.send(agents);
+	if(req.xhr){
+		async.parallel([
+		    function(callback){
+			    async.map(
+			    	tags,            
+				    function(tag, cb){
+				    	Agent.listByTag(tag, function( err, data){
+				    		if(err) return cb(err);		    		
+				    		cb(null, data || []);
+				    	});
+				    },
+				    function(err, agents_by_tag){
+				    	for(var i in agents_by_tag)
+				    	{
+				    		agents.data.push.apply(agents.data,agents_by_tag[i]);
+				    	}	
+				    	callback();			    	    	
+				    }
+				);			
+		    },
+		    function(cb){
+		    	Agent.listExcludeTag(exclude, function(err, data){
+		    		if(err) return cb(err);
+		    		agents.excluded	= data || [];
+		    		cb();
+		    	});
+		    }
+		], function(err){
+			res.send(agents);
+		});
+		return;
+	}
+	///////////////////////////////////////////////////////////////////////////
+	// not XMLHTTPRequest
+	Agent.find({}, function(err, agents){
+		if(err){ console.log(err); res.send(500); return; }
+		res.render( 'agents/list', {title: "Agents", agents: agents, bg_color: "bg-color-Dark"} );
 	});
+	
 	
 };
 exports.modify	= function( req, res ){

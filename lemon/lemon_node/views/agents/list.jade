@@ -1,0 +1,22 @@
+extends ..\layout
+block head
+	title= title
+block content
+	include ..\page-header
+	.metro
+		.page
+			#header.info_header.bg-color-Dark
+				h3.fg-white
+					case action 
+						default
+							| Agents
+			section#workspace.container(style="float:left;padding: 10px 0 0 20px;")
+				#agents_list
+					h1 Agents
+					br
+					each p in agents
+						a(href="/agents/#{p.agent_id}").tile.double.bg-darkGreen.fg-white
+							.tile-content
+								.padding10(style="padding-left:20px")
+									h3.fg-white #{p.name}
+												
