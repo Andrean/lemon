@@ -55,9 +55,12 @@ class Scheduler(lemon.BaseServerComponent):
         self._logger.info('stop SCHEDULER')
     
     def loadDefaultTasks(self):
+        self._logger.debug('Load default tasks')
         default_tasks   = scheduler.tasks.CMD
         for task in default_tasks:
-            self._taskManager.addTask('addScheduledTask', task)   
+            if self.getScheduledTask(task['name']) is None:
+                self._logger.debug('Load task "{0}"'.format(task['name']))
+                self.add(task['func'],task['name'],task['start_time'],task['interval'],task['kwargs'])
             
     def add(self, func_type, name='default', start_time=None, interval = 5*MINUTES,  kwargs=None):
         schtask = {}
