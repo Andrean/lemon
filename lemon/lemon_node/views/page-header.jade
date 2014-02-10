@@ -8,7 +8,6 @@
 							img(src='/images/logo.png')
 					div.navigation-bar.dark(style="float: left;margin-left: 220px;width:auto !important;border:0 !important;")
 						div.navigation-bar-content.container.medium.h-bottom
-							//nav.horizontal-menu.medium.dark.h-bottom(style="float: left;margin-left: 220px")
 							ul.element-menu.no-margin
 								li
 									a(href="/monitoring")
@@ -17,10 +16,10 @@
 									a(href="#").dropdown-toggle
 										| Inventory
 									ul.dropdown-menu.dark(data-role="dropdown", data-effect="slide")
-										li 
+										li.disabled 
 											a(href="/inventory/entities") Entities
 										li
-											a(href="/inventory/groups") Groups
+											a(href="/agents") Agents
 								li
 									a(href="#").dropdown-toggle
 										| Administration
