@@ -225,14 +225,10 @@ class CommandManager(object):
     def getCommands(self, tags, timestamp=0):
         result  = []        
         tags    = [x for x in tags]
-        print(tags)
-        print(self._cmds)
-        print(timestamp)
         for cmd in self._cmds:            
             for tag in cmd['tags']:
                 if tag in tags and cmd['time'] > timestamp:
                     result.append({'cmd': cmd['cmd'], 'args':cmd['args'], 'id':cmd['id']})
-        print(result)
         return result
     
     def addCommand(self, cmd, args, tags):
