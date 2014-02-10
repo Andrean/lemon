@@ -22,6 +22,9 @@ AgentSchema.statics	= {
 	},
 	listExcludeTag: function( tag, cb){
 		this.find( { tags: {$ne: tag} }, cb);
+	},
+	findByAgentId: function( agent_id, cb){
+		this.findOne( {agent_id: agent_id}, cb);
 	}
 };
 AgentSchema.set('collection','agents');

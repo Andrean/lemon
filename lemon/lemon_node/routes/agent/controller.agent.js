@@ -67,3 +67,10 @@ exports.modify	= function( req, res ){
 		}
 	);
 };
+
+exports.show_one	= function( req, res ){
+	Agent.findByAgentId( req.params.id, function(err, agent){
+		if(err){ console.log(err); res.send(500); return; }
+		res.render( 'agents/agent', { title: "Agent - " + agent.name, agent: agent, bg_color: 'bg-color-Dark' });
+	});
+};
