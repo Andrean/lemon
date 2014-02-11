@@ -67,10 +67,24 @@ exports.modify	= function( req, res ){
 		}
 	);
 };
-
-exports.show_one	= function( req, res ){
+//////////////////////////////////////////////////////////////////////////
+// /agents/:id/* handlers
+//////////////////////////////////////////////////////////////////////////
+exports.load_agent	= function( req, res, next ){
 	Agent.findByAgentId( req.params.id, function(err, agent){
-		if(err){ console.log(err); res.send(500); return; }
-		res.render( 'agents/agent', { title: "Agent - " + agent.name, agent: agent, bg_color: 'bg-color-Dark' });
+		if(err) return next(err);
+		if(!agent) return exports.show_agentNotFound( req, res );
+		res.agent	= agent;
+		next();		
 	});
+};
+exports.show_agentNotFound= function( req, res){
+	res.render( 'agents/agent', { tiitle: "Agent not found", bg_color: 'bg-color-Dark', action: 'not'});
+};
+exports.show_one	= function( req, res ){
+	res.render( 'agents/agent', { title: "Agent - " + res.agent.name, agent: res.agent, bg_color: 'bg-color-Dark' });	
+};
+
+exports.show_update	= function( req, res ){
+	res.render( 'agents/agent.update.jade', { title: "Agent update - " + res.agent.name, agent: res.agent, bg_color: 'bg-color-Dark' });
 };

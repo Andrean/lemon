@@ -1,0 +1,19 @@
+extends ..\layout
+block head
+	title= title
+block content
+	include ..\page-header
+	.metro
+		.page
+			#header.info_header.bg-color-Dark
+				h3.fg-white
+					| Agent updating
+			section(style="float:left;padding: 10px 0 0 20px;")
+				div
+					h1 
+						a(href="/agents/#{agent.agent_id}")
+							i.icon-arrow-left-3.fg-dark
+						|	#{agent.name} Update							
+					div.span10(style="padding-left: 60px;padding-top:20px;float:left")
+						h2(style="font-size:34px !important;") Update
+					
