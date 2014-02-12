@@ -84,7 +84,14 @@ exports.show_agentNotFound= function( req, res){
 exports.show_one	= function( req, res ){
 	res.render( 'agents/agent', { title: "Agent - " + res.agent.name, agent: res.agent, bg_color: 'bg-color-Dark' });	
 };
-
 exports.show_update	= function( req, res ){
 	res.render( 'agents/agent.update.jade', { title: "Agent update - " + res.agent.name, agent: res.agent, bg_color: 'bg-color-Dark' });
+};
+exports.accept_update= function( req, res ){
+	console.log(req.files);
+	// save to mongodb this session and session_id and filename
+	res.send();
+};
+exports.install_update= function( req, res ){
+	res.send();
 };

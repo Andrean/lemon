@@ -15,5 +15,37 @@ block content
 							i.icon-arrow-left-3.fg-dark
 						|	#{agent.name} Update							
 					div.span10(style="padding-left: 60px;padding-top:20px;float:left")
-						h2(style="font-size:34px !important;") Update
-					
+						h2(style="font-size:34px !important;") Upload new version
+						br
+						p You can upload files only of format ".alemon". 
+						p This format is a ZIP archive, where stored Lemon agent structure of files and setup script "__update__.py"
+						#upload_box.upload-box
+							span 
+								| Drop here
+							form(method="post",enctype="multipart/form-data")
+								.button.large.primary.hidden_upload(style="width: 100%; height: 60px;padding-top: 20px")
+									input(type='file',name='file',size='1')
+									| Click to upload file
+						br
+						#upload_progress_box.upload-progress-panel(style="display:none;width: 100%; height: 40px;")
+							.u-panel-header.bg-darkBlue.fg-white
+								| Uploading file... 
+								i.icon-upload-3.icon 								
+							.u-panel-content
+								#file_item.file-item
+									.item-header(style="height: 30px;padding:2px 0;")
+										i.icon-cancel-2(style="float:right").close
+										#install_btn.toolbar.transparent(style="display:none;float:right;margin-right:25px;")
+											button
+												i.icon-upload-2.on-left 
+												| Install
+										h2(style="width:auto;overflow:hidden;margin:auto;line-height:26px;height:26px;")
+											i.icon-arrow-up-3
+											|  test.alemon										
+									div(style="height:10px;")
+									.progress
+										span
+											| 0%
+										.progress-bar.large(style="width:auto;overflow:hidden",data-role="progress-bar",data-color="bg-darkGreen")
+	script(src='/javascripts/configuration/agents.js')
+	script(src='/javascripts/metroui/metro-progressbar.js')				
