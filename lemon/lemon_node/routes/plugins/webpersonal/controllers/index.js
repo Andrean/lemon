@@ -58,63 +58,65 @@ exports.upload	= function( req, res ){
 		var file	= files.file;
 		fs.readFile( file.path, function(err,data){
 			if(err){ res.send(status);	return; }
-			var headers	= {
-					'Content-Disposition': 'attachment;filename='+file.name,
-					'Content-Length':file.size,
-					'Connection':'close'
-			};
-			var options	= {
-				'hostname': lemon.server.hostname,
-				'port': lemon.server.port,
-				'path': '/upload',
-				'method': 'POST',
-				'headers': headers 
-			};
-			var lemon_req	= http.request(options, function(lemon_res){
-				if(lemon_res.statusCode == 201){
-					body	= JSON.stringify({ 'info_system':service, 'distr': {'name': file.name }});
-					options.path	= '/update/distr';
-					options.headers	= {
-						'Content-Length': body.length,
-						'Content-Type': 'application/json;charset=utf-8',
-						'Connection': 'close'
-					};
-					lemon_res.read();
-					lemon_req_2	= http.request( options, function( lemon_res_2 ){
-						if(lemon_res_2.statusCode == 200){
-							var data 	= '';
-							lemon_res_2.on('data', function(chunk){
-								data += chunk;
-							});
-							lemon_res_2.on('end', function(){
-								var result	= JSON.parse(data);
-								res.send(result);
-							});
-						}
-						else
-							res.send(status);
-					});
-					lemon_req_2.on('error', function(e){
+			fs.unlink( file.path, function(err){
+				var headers	= {
+						'Content-Disposition': 'attachment;filename='+file.name,
+						'Content-Length':file.size,
+						'Connection':'close'
+				};
+				var options	= {
+					'hostname': lemon.server.hostname,
+					'port': lemon.server.port,
+					'path': '/upload',
+					'method': 'POST',
+					'headers': headers 
+				};
+				var lemon_req	= http.request(options, function(lemon_res){
+					if(lemon_res.statusCode == 201){
+						body	= JSON.stringify({ 'info_system':service, 'distr': {'name': file.name }});
+						options.path	= '/update/distr';
+						options.headers	= {
+							'Content-Length': body.length,
+							'Content-Type': 'application/json;charset=utf-8',
+							'Connection': 'close'
+						};
+						lemon_res.read();
+						lemon_req_2	= http.request( options, function( lemon_res_2 ){
+							if(lemon_res_2.statusCode == 200){
+								var data 	= '';
+								lemon_res_2.on('data', function(chunk){
+									data += chunk;
+								});
+								lemon_res_2.on('end', function(){
+									var result	= JSON.parse(data);
+									res.send(result);
+								});
+							}
+							else
+								res.send(status);
+						});
+						lemon_req_2.on('error', function(e){
+							status.status	= 'error';
+							status.msg		= e.message;
+							res.send(500,status);				
+						});
+						lemon_req_2.write(body);
+						lemon_req_2.end();
+					}
+					else{
 						status.status	= 'error';
-						status.msg		= e.message;
-						res.send(500,status);				
-					});
-					lemon_req_2.write(body);
-					lemon_req_2.end();
-				}
-				else{
+						status.msg		= lemon_res.reason;
+						res.send(500,status);
+					}
+				});
+				lemon_req.on('error', function(e){
 					status.status	= 'error';
-					status.msg		= lemon_res.reason;
-					res.send(500,status);
-				}
+					status.msg		= e.message;
+					res.send(500,status);				
+				});			
+				lemon_req.write(data);
+				lemon_req.end();
 			});
-			lemon_req.on('error', function(e){
-				status.status	= 'error';
-				status.msg		= e.message;
-				res.send(500,status);				
-			});			
-			lemon_req.write(data);
-			lemon_req.end();
 		});
 		return;
 	}
