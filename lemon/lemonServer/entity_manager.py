@@ -12,7 +12,8 @@ import collections
 import os
 
 commands    = { 
-               'get_self_info' : '_.get_self_info' 
+               'get_self_info' : '_.get_self_info',
+               'update_agent'  : '_.update_agent'
             } 
 
 CMD_STATUS  = collections.namedtuple('CMD_STATUS',['present','submit','pending','completed','error'])

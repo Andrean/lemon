@@ -4,12 +4,8 @@
 #
 import core
 import json
-import uuid
 import re
-import os
 import urllib
-import time
-from collections import OrderedDict
 from entity_manager import commands
 
 def upload( req, res ):
@@ -72,3 +68,24 @@ def post_agents( req, res ):
         if del_tag:
             em.tagManager.removeTag(agent_id, del_tag)
     res.send_json( {'status': True} )
+    
+def update_agents( req, res ):
+    em  = core.getCoreInstance().getInstance('ENTITY_MANAGER')
+    # we allow "tag" and "update_filename"
+    tags = req.query['tag']
+    update_filename = req.query['update_filename'][0]
+    status  = {'status':'error'}
+    if tags and update_filename:
+        if em.fileManager.isExistsFile( update_filename ):
+            link    = em.fileManager.createVirtualLink( update_filename )
+            command = em.sendCommand( commands['update_agent'], {'link': link} )
+            status['status']='ok'
+            status['command'] = command
+            res.send_json(status)
+            return
+        status['message'] = 'File not exists'
+        res.send_json(status,code=500)
+        return
+    status['message']='wrong parameters'
+    res.send_json(status,code=500)
+    return

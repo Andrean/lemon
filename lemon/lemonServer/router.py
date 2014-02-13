@@ -49,6 +49,7 @@ WEB_INTERFACE_ROUTES = [
     ,[  'POST', r'.*',              baseController.get_404                  ]
     ,[  'GET',  r'^/upload$', webController.test                            ]
     ,[  'GET',  r'^/agents$',   webController.get_agents                    ]
+    ,[  'GET',  r'^/agents/update[?=%&_\-\+\w]*$',   webController.update_agents    ]
     ,[  'GET',  r'^/commands/status[?=%&_\-\+\w]*$',  webController.check_status    ]
     ,[  '#LOAD',None, lambda: loader('web','GET')   ]
     ,[  'GET',  r'.*',           baseController.get_404                     ]
