@@ -102,8 +102,10 @@ exports.accept_update= function( req, res ){
 };
 exports.cancel_update	= function( req, res ){
 	req.body.update_session_id;
+	res.send();
 };
 exports.install_update= function( req, res ){
+	res.agent;
 	req.body.update_session_id;
 	res.send();
 };
