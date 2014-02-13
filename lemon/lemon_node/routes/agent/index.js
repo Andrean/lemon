@@ -13,5 +13,6 @@ module.exports	= function( app ){
 	app.get( '/agents/:id',	agent.show_one	);
 	app.get( '/agents/:id/update', agent.show_update	);
 	app.put( '/agents/:id/update', agent.accept_update	);
+	app.del( '/agents/:id/update', agent.cancel_update	);
 	app.post('/agents/:id/update', agent.install_update	);
 };

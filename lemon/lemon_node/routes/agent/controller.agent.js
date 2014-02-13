@@ -4,7 +4,9 @@
 
 var mongoose	= require('mongoose')
 	, async		= require ('async')
-	, Agent		= mongoose.model('system.Agent');
+	, Agent		= mongoose.model('system.Agent')
+	, fs		= require('fs')
+	, uuid		= require('uuid');
 
 exports.list	= function( req, res, next){
 	var tags	= (req.param('tag') || '').split(',');
@@ -88,10 +90,20 @@ exports.show_update	= function( req, res ){
 	res.render( 'agents/agent.update.jade', { title: "Agent update - " + res.agent.name, agent: res.agent, bg_color: 'bg-color-Dark' });
 };
 exports.accept_update= function( req, res ){
-	console.log(req.files);
-	// save to mongodb this session and session_id and filename
-	res.send();
+	if( req.files.file ){
+		req.files.file.name	= 'agent_update_'+uuid.v4();
+		req.app.locals.lemon.send_file( '/upload', req.files.file, function(err, data){
+			if(err){ console.log(err); res.send(500); return; }
+			res.send( { 'update_session_id': req.files.file.name } );
+		});		
+	}
+	else
+		res.send(500);
+};
+exports.cancel_update	= function( req, res ){
+	req.body.update_session_id;
 };
 exports.install_update= function( req, res ){
+	req.body.update_session_id;
 	res.send();
 };

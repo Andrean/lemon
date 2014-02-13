@@ -9,7 +9,8 @@ var express = require('express')
 			, path = require('path')
 			, mongoose	= require('mongoose')
 			, async		= require('async')
-			, winston	= require('winston');
+			, winston	= require('winston')
+			, lemon		= require('./module.lemon');
 
 /*winston.loggers.add('production',{
 	console: {
@@ -38,8 +39,10 @@ db.once("open", function callback () {
 });
 mongoose.connect(config.db);
 
+lemon.connect( config.lemon );
 app.locals({
-	  config: config
+	  config: config,
+	  lemon:  lemon
 });
 ///////////////////////////////////////////////////////////////////////
 // config
