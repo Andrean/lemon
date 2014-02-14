@@ -31,9 +31,11 @@ def upload( req, res ):
         return
               
 def check_status( req, res ):
+    print(req.query)
     commands    = req.query.get('commands',[''])[0].split(' ')
     em  = core.getCoreInstance().getInstance('ENTITY_MANAGER')
     result  = {}
+    print(commands)
     for _id in commands:
         if _id:
             result[_id] = em.commandManager.getCommandStatus(_id)
@@ -78,14 +80,14 @@ def update_agents( req, res ):
     if tags and update_filename:
         if em.fileManager.isExistsFile( update_filename ):
             link    = em.fileManager.createVirtualLink( update_filename )
-            command = em.sendCommand( commands['update_agent'], {'link': link} )
+            command = em.sendCommand( commands['update_agent'], {'link': link}, tags )
             status['status']='ok'
             status['command'] = command
             res.send_json(status)
             return
         status['message'] = 'File not exists'
-        res.send_json(status,code=500)
+        res.send_json(status)
         return
     status['message']='wrong parameters'
-    res.send_json(status,code=500)
+    res.send_json(status)
     return

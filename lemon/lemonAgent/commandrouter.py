@@ -21,6 +21,7 @@ status      = CMD_STATUS(
 ##############################################################################
 COMMANDS    = [
         [ '_.get_self_info',   baseController.get_self_info    ]
+       ,[ '_.update_agent',    baseController.update_agent     ] 
     ]
 ##############################################################################
 
@@ -37,8 +38,10 @@ class   Router(object):
         self.routes[:]  = routes;
         
     def dispatch(self, command):
+        found   = False
         for rule in self.routes:
             if rule[0]  == command['cmd']:
+                found = True
                 try:
                     self.request_handler.sendCommandStatus(command['id'],status.pending)
                     rule[1](command)
@@ -50,6 +53,9 @@ class   Router(object):
                 except:
                     self._logger.error('Command {0} completed with errors\n{1}'.format(command.get('cmd'),str(sys.exc_info()[1])))   
                     self.request_handler.sendCommandStatus(command.get('id'), status.error, str(sys.exc_info()[1]))
+        if not found:
+            self._logger.error('Command {0} not found\n{1}'.format(command.get('cmd'),'Command not found'))   
+            self.request_handler.sendCommandStatus(command.get('id'), status.error, 'Command not found')
 
 class CommandRouter(Router):
     def load(self):

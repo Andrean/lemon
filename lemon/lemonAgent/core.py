@@ -234,6 +234,14 @@ class Core(object):
         self._stopStorage()
         self._running   = False
         self._corelogger.info('Shutdown Core')
-        
+    
+    def restart(self):
+        self.stop()
+        args    = sys.argv[:]
+        self._corelogger.info('Restarting script: '+','.join(args))
+        args.insert(0, sys.executable)
+        if sys.platform == 'win32':
+            args = ['"%s"' % arg for arg in args]
+        os.execv(sys.executable, args)
     
     
