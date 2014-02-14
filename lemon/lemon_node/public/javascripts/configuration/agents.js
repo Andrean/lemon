@@ -55,10 +55,14 @@
                 }
                 return myXhr;
             },
-			success: function(e){
-				$('#upload_progress_box').find('#install_btn').show();
+			success: function(res){
+				$('#upload_progress_box').find('#install_tlbar').show();
 				$('#upload_progress_box').find('.progress').hide();
 				$('#upload_progress_box').find('#file_item > div > h2 > i').removeClass('icon-arrow-up-3').addClass('icon-checkmark').addClass('fg-green');
+				if(res.update_session_id)
+					$('#upload_progress_box').find('#install_btn').on('click', function(e){
+						installUpdate( res.update_session_id );
+					});					
 			},
 			error: function(e){
 				$('#upload_progress_box').find('.progress').hide();
@@ -70,6 +74,31 @@
 		});
 		
 	}
+	
+	function installUpdate( update_session_id ){
+		$.ajax({
+			url:	window.location.toString().replace(/#.*/g, ''),
+			data:	{ update_session_id: update_session_id },
+			type:	'POST',
+			success:function( data ){
+				console.log( data );
+				if(data.status)
+					checkStatus( data.link, function(res){
+						console.log( res );
+					} );
+			},
+			error:	function( data ){
+				console.log( "error: "+ data);
+			}
+		});
+	}
+	function checkStatus( link, cb ){
+		$.get(link, function(res){
+			if( !cb(res) )
+				setTimeout( function(){ checkStatus(link, cb); }, 500);
+		});
+	};
+	
 	function convertSize( size ){
 		var suffix = ['B','KB','MB','GB','TB'];
 		var i = 0;

@@ -106,6 +106,18 @@ exports.cancel_update	= function( req, res ){
 };
 exports.install_update= function( req, res ){
 	res.agent;
-	req.body.update_session_id;
-	res.send();
+	req.body.update_session_id;	
+	req.app.locals.lemon.get( 
+			'/agents/update?tag='+res.agent.agent_id+'&update_filename='+req.body.update_session_id, 
+			function(err, data){
+				console.log( data );
+				if( err ){ console.log(err); res.send(500); return; }
+				//TODO: перенести check_link из плагина Webpersonal в главные контроллеры\
+				data	= JSON.parse( data );
+				if(data.status=='ok')
+					res.send( { status: true, link: '/lemon/commands/status?commands='+data.command } );
+				else
+					res.send( { status: false } );
+			}
+	);
 };

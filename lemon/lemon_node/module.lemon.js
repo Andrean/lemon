@@ -91,3 +91,16 @@ exports.send_file	= function( path, file, token, cb ){
 		});
 	});	
 };
+exports.check_status	= function( commands, token, cb ){
+	var headers	= {};
+	if(typeof commands === 'string' || typeof commands === 'number')
+		commands	= [ commands ];
+	if( typeof(token) === 'function' ){
+		cb	= token;
+	}
+	if( typeof(token) === 'object' ){
+		for(var p in token)
+			headers[p] = token[p];
+	}
+	exports.get( '/commands/status?commands='+commands.join('+'), headers, cb);
+};
