@@ -66,10 +66,18 @@
 				$item.find('#install_tlbar').show();
 				$item.find('.progress').hide();
 				$item.find('#name > i').removeClass('icon-arrow-up-3').addClass('icon-checkmark').addClass('fg-green');
-				if(res.update_session_id)
+				if(res.update_session_id){
 					$item.find('#install_btn').on('click', function(e){
 						installUpdate( res.update_session_id );
-					});					
+					});
+					$item.find('.close').on('click', function(e){
+						e.stopPropagation();
+						cancelUpdate($item, function(err){
+							if(!err)
+								$item.remove();
+						});
+					});
+				}
 			},
 			error: function(e){
 				$item.find('.progress').hide();
@@ -136,7 +144,21 @@
 			});			
 		}		
 		return result;
-	}	
+	}
+	function cancelUpdate( $el, cb ){
+		$.ajax({
+			url: window.location.toString(),
+			type: 'DELETE',
+			success: function(res){
+				console.log(res);
+				cb();
+			},
+			error: function(res){
+				console.log(res);
+				cb(res);
+			}
+		});
+	}
 	function convertSize( size ){
 		var suffix = ['B','KB','MB','GB','TB'];
 		var i = 0;
