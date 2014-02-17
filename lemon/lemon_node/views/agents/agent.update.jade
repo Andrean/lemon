@@ -29,17 +29,17 @@ block content
 						br
 						#upload_progress_box.upload-progress-panel(style="display:none;width: 100%; height: 40px;")
 							.u-panel-header.bg-darkBlue.fg-white
-								| Uploading file... 
+								| Upload file 
 								i.icon-upload-3.icon 								
 							.u-panel-content
-								#file_item.file-item
+								#__prototype.file-item(style="display:none")
 									.item-header(style="height: 30px;padding:2px 0;")
 										i.icon-cancel-2(style="float:right").close
 										#install_tlbar.toolbar.transparent(style="display:none;float:right;margin-right:25px;")
 											button#install_btn
 												i.icon-upload-2.on-left 
 												| Install
-										h2(style="width:auto;overflow:hidden;margin:auto;line-height:26px;height:26px;")
+										h2#name(style="width:auto;overflow:hidden;margin:auto;line-height:26px;height:26px;")
 											i.icon-arrow-up-3
 											|  test.alemon										
 									div(style="height:10px;")
@@ -47,5 +47,13 @@ block content
 										span
 											| 0%
 										.progress-bar.large(style="width:auto;overflow:hidden",data-role="progress-bar",data-color="bg-darkGreen")
+					#updating_progress_box.span10(style="padding-left: 60px;padding-top:20px;float:left;display:none;")
+						h2(style="font-size:34px !important;") Updating progress
+						br
+						#prototype__update_info.tile.triple.bg-white(style="display:none")
+							.tile-content
+								h2 #{agent.name}
+								p Status: completed
+								small#message 	
 	script(src='/javascripts/configuration/agents.js')
 	script(src='/javascripts/metroui/metro-progressbar.js')				

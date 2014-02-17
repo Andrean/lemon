@@ -2,6 +2,8 @@
  *  	/configuration/agents.js client script 
  */
 !function($){
+	var statusNames	= ['init','submit','pending','completed','error'];
+	statusNames[-1] = 'error';
 	$('.upload-box').bind({
 		dragover: function(e){
 			if( !$('.upload-box').hasClass('show'))
@@ -31,11 +33,15 @@
 	function displayFiles(files){
 		$('#upload_progress_box').show();		
 		$.each( files, function(i, file){
-			$('#upload_progress_box').find('#file_item > div > h2')[0].childNodes[1].data = " "+file.name+" ( "+convertSize(file.size)+" )";
-			uploadFile( file, window.location.toString());
+			var $file_item	= $('#upload_progress_box').find('#__prototype').clone();
+			$file_item.attr('id','').show();
+			$file_item.find('.progress-bar').progressbar({ color: 'bg-darkGreen'});
+			$file_item.find('#name')[0].childNodes[1].data = " "+file.name+" ( "+convertSize(file.size)+" )";
+			$file_item.appendTo($('#upload_progress_box > .u-panel-content'));
+			uploadFile( $file_item, file, window.location.toString());
 		});
 	}
-	function uploadFile( file, url ){
+	function uploadFile( $item, file, url ){
 		var formData	= new FormData();
 		formData.append('file', file);
 		$.ajax({
@@ -48,25 +54,26 @@
                     myXhr.upload.addEventListener('progress', function (evt) {
                         if (evt.lengthComputable) {
                             var percentComplete = Math.round((evt.loaded * 100) / evt.total);
-                            $('#upload_progress_box').find('.progress-bar').progressbar('value',percentComplete);
-                            $('#upload_progress_box').find('.progress > span').text(percentComplete + "%");
+                            console.log($item.find('.progress-bar'));
+                            $item.find('.progress-bar').progressbar('value',percentComplete);
+                            $item.find('.progress > span').text(percentComplete + "%");
                         } 
                     }, false); // for handling the progress of the upload
                 }
                 return myXhr;
             },
 			success: function(res){
-				$('#upload_progress_box').find('#install_tlbar').show();
-				$('#upload_progress_box').find('.progress').hide();
-				$('#upload_progress_box').find('#file_item > div > h2 > i').removeClass('icon-arrow-up-3').addClass('icon-checkmark').addClass('fg-green');
+				$item.find('#install_tlbar').show();
+				$item.find('.progress').hide();
+				$item.find('#name > i').removeClass('icon-arrow-up-3').addClass('icon-checkmark').addClass('fg-green');
 				if(res.update_session_id)
-					$('#upload_progress_box').find('#install_btn').on('click', function(e){
+					$item.find('#install_btn').on('click', function(e){
 						installUpdate( res.update_session_id );
 					});					
 			},
 			error: function(e){
-				$('#upload_progress_box').find('.progress').hide();
-				$('#upload_progress_box').find('#file_item > div > h2 > i').removeClass('icon-arrow-up-3').addClass('icon-blocked').addClass('fg-red');
+				$item.find('.progress').hide();
+				$item.find('#name > i').removeClass('icon-arrow-up-3').addClass('icon-blocked').addClass('fg-red');
 			},
             cache: false,
 			contentType: false,
@@ -83,8 +90,8 @@
 			success:function( data ){
 				console.log( data );
 				if(data.status)
-					checkStatus( data.link, function(res){
-						console.log( res );
+					getStatus( data.link, function(res){
+						return setStatus( JSON.parse(res) );
 					} );
 			},
 			error:	function( data ){
@@ -92,13 +99,44 @@
 			}
 		});
 	}
-	function checkStatus( link, cb ){
+	function getStatus( link, cb ){
 		$.get(link, function(res){
 			if( !cb(res) )
-				setTimeout( function(){ checkStatus(link, cb); }, 500);
+				setTimeout( function(){ getStatus(link, cb); }, 500);
 		});
 	};
-	
+	function setStatus( commands ){
+		var $box	= $('#updating_progress_box');
+		var $proto	= $('#updating_progress_box > #prototype__update_info');
+		var result	= false;
+		for(var _c in commands){
+			var c = commands[_c];
+			$box.show();
+			c.forEach( function( c_status ){
+				var $agent	= $box.find('div[agent_id="'+c_status.agent_id+'"]');
+				if( $agent.length <= 0 ){
+					$agent = $proto.clone();
+					$agent.show();
+					$agent.appendTo($box);
+					$agent.attr('agent_id',c_status.agent_id);
+					$agent.attr('id','');
+					$agent.find('h2').text(c_status.agent_id);
+					$.get('/agents?tag='+c_status.agent_id, function( res ){
+						if(res.data.length > 0)
+							$agent.find('h2').text(res.data[0].name);
+					});										
+				}
+				$agent.find('p').text('Status: '+statusNames[c_status.status] );
+				if( c_status.status == 3 )
+					result = true;
+				if( c_status.status == -1 ){
+					$agent.find('#message').text(c_status.message);
+					result = true;					
+				}					
+			});			
+		}		
+		return result;
+	}	
 	function convertSize( size ){
 		var suffix = ['B','KB','MB','GB','TB'];
 		var i = 0;
