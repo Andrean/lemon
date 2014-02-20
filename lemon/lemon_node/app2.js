@@ -30,6 +30,21 @@ var winstonStream = {
 	    }
 	};
 */
+function logErrors(err, req, res, next) {
+	console.error(err.stack);
+	next(err);
+}
+function clientErrorHandler(err, req, res, next) {
+	if (req.xhr) {
+		res.send(500, { error: 'Something blew up!' });
+	} else {
+		next(err);
+	}
+}
+function errorHandler(err, req, res, next) {
+    res.status(500);
+	res.render('system_pages/500');
+}
 var app		= express();
 var db		= mongoose.connection;
 
@@ -55,7 +70,9 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);
-app.use(express.errorHandler());
+app.use(logErrors);
+app.use(clientErrorHandler);
+app.use(errorHandler);
 /////////////////////////////////////////////////////////////////////////
 
 //load models

@@ -5,7 +5,7 @@
  */
 
 module.exports	= function( app, controller ){
-	app.param( 'entity_id',	controller.load );
+	app.param( 'entity_id',				controller.load );
 	app.all( '/configuration/entities', controller.list			);
 	app.get( '/configuration/entities/:entity_id?', controller.show	);	
 	app.put( '/configuration/entities', 		  	controller.add	);

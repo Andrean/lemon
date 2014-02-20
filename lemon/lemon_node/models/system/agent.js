@@ -10,7 +10,7 @@ var AgentSchema	= Schema({
 	agent_id:	{ type: String, unique: true},
 	name:		{ type: String, trim: true  },
 	tags:	[ String ],
-	entities:	[ {type: mongoose.Schema.Types.ObjectId, ref: 'Entity'} ]
+	entities:	[ {type: mongoose.Schema.Types.ObjectId, ref: 'inventory.Entity'} ]
 });
 AgentSchema.statics	= {
 	load: function(agent_id, cb){

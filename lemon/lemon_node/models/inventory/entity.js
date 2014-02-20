@@ -6,7 +6,7 @@ var mongoose	= require('mongoose');
 
 var EntitySchema	= mongoose.Schema({
 	entity_id:	{ type: String, unique: true },
-	agent:	 	{ type: mongoose.Schema.Types.ObjectId, ref: 'Agent' },
+	agent:	 	{ type: mongoose.Schema.Types.ObjectId, ref: 'system.Agent' },
 	info:		{
 		name: 		{ type: String, "default": '', trim: true },
 		description:{ type: String, "default": '', trim: true },

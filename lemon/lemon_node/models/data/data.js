@@ -6,11 +6,11 @@ var mongoose	= require('mongoose');
 
 var DataItemSchema	= mongoose.Schema({
 	name: 	{ type: String, trim: true, "default":'', required: true},
-	entity: { type: mongoose.Schema.Types.ObjectId, ref: 'Entity' 	},
-	data:	{ type: mongoose.Schema.Types.ObjectId, ref: 'Data' 	}, // hold document of Data with chunkNum: 0.
+	entity: { type: mongoose.Schema.Types.ObjectId, ref: 'inventory.Entity' 	},
+	data:	{ type: mongoose.Schema.Types.ObjectId, ref: 'data.Data' 	}, // hold document of Data with chunkNum: 0.
 	type:   { type: String, lowercase: true, trim: true 			},
-	contractor:	{ type: mongoose.Schema.Types.ObjectId, ref: 'Contractor'	},
-	trigger:{ type: mongoose.Schema.Types.ObjectId, ref: 'Trigger'	}
+	contractor:	{ type: mongoose.Schema.Types.ObjectId, ref: 'data.Contractor'	},
+	trigger:{ type: mongoose.Schema.Types.ObjectId, ref: 'data.Trigger'	}
 },	{
 	autoIndex: false
 });
