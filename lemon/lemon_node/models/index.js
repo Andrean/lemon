@@ -14,6 +14,8 @@ var mongoose	= require('mongoose')
 function load(cb){
 	// load system modules
 	require('./system');
+	require('./inventory/entity');
+	require('./data');
 	// and then from Plugin model getting request to mongodb
 	var Plugin	= mongoose.model('system.Plugin');
 	Plugin.find({enabled: true}, function(err, plugins){
