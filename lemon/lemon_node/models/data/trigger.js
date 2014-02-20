@@ -13,4 +13,4 @@ var TriggerSchema	= mongoose.Schema({
 
 TriggerSchema.set('collection','triggers');
 
-module.exports	= mongoose.model('Trigger',TriggerSchema);
+module.exports	= function(__prefix__){	mongoose.model(__prefix__+'.'+'Trigger',TriggerSchema); };

@@ -18,4 +18,4 @@ var EntitySchema	= mongoose.Schema({
 
 EntitySchema.set('collection','entities');
 
-module.exports	= mongoose.model('Entity',EntitySchema);
+module.exports	= mongoose.model('inventory.Entity',EntitySchema);

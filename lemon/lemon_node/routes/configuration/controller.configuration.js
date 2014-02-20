@@ -25,5 +25,17 @@ exports.plugins.show	= function( req, res ){
 };
 exports.plugins.add		= function( req, res){};
 exports.plugins.edit		= function( req, res){};
+//################################################################
 
+//////////////////////////////////////////////////////////////////
+//ENTITIES CONTROLLERS
+//////////////////////////////////////////////////////////////////
+var  Entity	= mongoose.model('inventory.Entity');	
+exports.entities	= {};
+exports.load		= function(req, res, next){};
+exports.list		= function(req, res){};
+exports.show		= function(req, res){};
+exports.add			= function(req, res){};
+exports.edit		= function(req, res){};
+exports.remove		= function(req, res){};
 //################################################################

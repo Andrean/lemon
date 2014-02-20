@@ -4,7 +4,8 @@
  * 		Loader for Data models
  */
 module.exports	= function(){
-	require('./data');
-	require('./trigger');
-	require('./contractor');
+	var prefix	= 'data';
+	require('./data')(prefix);
+	require('./trigger')(prefix);
+	require('./contractor')(prefix);
 }();

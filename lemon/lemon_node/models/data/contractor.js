@@ -12,4 +12,4 @@ var ContractorSchema	= mongoose.Schema({
 });
 ContractorSchema.set('collection','contractors');
 
-module.exports	= mongoose.model('Contractor', ContractorSchema);
+module.exports	= function(__prefix__){	mongoose.model(__prefix__ + '.'+'Contractor', ContractorSchema); };

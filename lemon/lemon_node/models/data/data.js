@@ -57,7 +57,8 @@ DataItemSchema.statics = {
 DataItemSchema.set('collection','data_item');
 DataSchema.set('collection','data');
 
-module.exports	= function() {
-	mongoose.model('Data',DataSchema);
-	mongoose.model('DataItem',DataItemSchema);
-}();
+module.exports	= function(__prefix__){
+	__prefix__ = __prefix__ + '.';
+	mongoose.model(__prefix__ + 'Data',DataSchema);
+	mongoose.model(__prefix__ + 'DataItem',DataItemSchema);
+};

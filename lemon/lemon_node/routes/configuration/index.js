@@ -7,4 +7,5 @@
 module.exports	= function( app ){
 	var controllers	= require('./controller.configuration.js');
 	require('./plugins')( app, controllers.plugins );
+	require('./entities')( app, controllers.entities );
 };
