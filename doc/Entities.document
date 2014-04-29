@@ -1,0 +1,45 @@
+Entity - главная сущность мониторинга. Entity являет собой отдельную единицу мониторинга. 
+Entity - это, например, хост, контроллер, коммутатор, роутер - все, чье состояние важно в целом.
+Структура Entity:
+	entity_id: String, уникальный идентификатор сущности
+	agent:	ObjectId, ref agent. Какой агент мониторит данную сущность.
+	info:
+		name:     	String,
+		description:	String,
+		_addedAt:       DateTime
+	data_items: [ DataItem ]
+
+DataItem - счетчик, набор данных, которые отправляет присылает агент.
+Structure of DataItem:
+	name:	String
+	entity: ObjectId, ref "Entity"
+	type: 	String
+	contractor: ObjectId, ref "Contractor"
+	trigger: ObjectId, ref "Trigger"
+	data:	ObjectId, ref Data
+
+Structure of Data
+	_id: ObjectId
+	meta: [         		// порядкой номер чанка определяется по индексу в массиве
+		MetaOfChunk1,
+		MetaOfChunk2,
+		...,
+		MetaOfChunkN,
+		// MetaOfChunk:
+		{
+			chunk: ObjectId, ref "DataChunk"
+			size: Number, размер чанка в мегабайтах
+			count: Number, число записей в чанке
+			range: [timestamp-first, timestamp-last]			
+		}
+		
+	]
+Structure of DataChunk
+	_id: ObjectId
+	raw: [ 
+		{ 
+			timestamp: DateTime,
+			value: Mixed
+		} 
+	] 
+	

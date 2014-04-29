@@ -1,0 +1,21 @@
+extends ..\layout
+block head
+	title= title
+block content
+	include ..\page-header
+	.metro
+		.page
+			#header.info_header.bg-color-Dark
+				h3.fg-white
+					case action 
+						default
+							| Configuration > Entities
+			section#workspace.container(style="float:left;padding: 10px 0 0 20px;")
+				#entities_list
+					h1 Entities
+					br
+					each item in entities
+						a(href="/agents/#{item.entity_id}").tile.double.bg-darkGreen.fg-white
+							.tile-content
+								.padding10(style="padding-left:20px")
+									h3.fg-white #{item.info.name}

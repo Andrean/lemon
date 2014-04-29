@@ -12,10 +12,22 @@ var EntitySchema	= mongoose.Schema({
 		description:{ type: String, "default": '', trim: true },
 		_addedAt: 	{ type: Date,   "default": Date.now() }
 	},
-	data_items: [ {type: mongoose.Schema.Types.ObjectId, ref: 'DataItem'} ]
+	data_items: [ {type: mongoose.Schema.Types.ObjectId, ref: 'data.DataItem'} ]
 	// TODO: Здесь должен быть триггер, определяющий общее состояние Сущности по значениям всех data_items
 });
 
+EntitySchema.statics	= {
+	load:	function( entity_id, cb ){
+		this.findOne({ entity_id: entity_id })
+			.populate( 'agent data_items' )
+			.exec(cb);
+	},
+	list:	function( cb ){
+		this.find({})
+			.populate( 'agent data_items' )
+			.exec(cb);
+	}
+};
 EntitySchema.set('collection','entities');
 
 module.exports	= mongoose.model('inventory.Entity',EntitySchema);

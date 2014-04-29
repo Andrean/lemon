@@ -32,10 +32,23 @@ exports.plugins.edit		= function( req, res){};
 //////////////////////////////////////////////////////////////////
 var  Entity	= mongoose.model('inventory.Entity');	
 exports.entities	= {};
-exports.entities.load		= function(req, res, next){};
-exports.entities.list		= function(req, res){};
+exports.entities.load		= function(req, res, next){
+	Entity.load( req.params.entity_id, function(err, entity){
+		if(err) throw err;
+		res.entity	= entity;
+	});
+};
+exports.entities.list		= function(req, res){
+	Entity.list(function(err,entities){
+		if(err) throw err;
+		if(req.xhr)
+			res.send(entities);
+		else
+			res.render('configuration/entities', {title: 'Configuration > Entities',  bg_color: 'bg-color-Dark', entities: entities });
+	});
+};
 exports.entities.show		= function(req, res){};
-exports.entities.add			= function(req, res){};
+exports.entities.add		= function(req, res){};
 exports.entities.edit		= function(req, res){};
 exports.entities.remove		= function(req, res){};
 //################################################################
