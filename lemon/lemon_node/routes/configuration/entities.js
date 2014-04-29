@@ -7,7 +7,9 @@
 module.exports	= function( app, controller ){
 	app.param( 'entity_id',				controller.load );
 	app.all( '/configuration/entities', controller.list			);
-	app.get( '/configuration/entities/:entity_id?', controller.show	);	
+	app.get( '/configuration/entities/create', 		controller.show_create	);
+	app.post('/configuration/entities/new', 		controller.create	);
+	app.get( '/configuration/entities/:entity_id?', controller.show	);		
 	app.put( '/configuration/entities', 		  	controller.add	);
 	app.post('/configuration/entities/:entity_id?', controller.edit	);
 	app.del( '/configuration/entities/:entity_id' , controller.remove	);

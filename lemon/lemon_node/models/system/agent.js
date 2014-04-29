@@ -18,6 +18,12 @@ AgentSchema.statics	= {
 			.populate('entities')
 			.exec(cb);
 	},
+	list: function(cb){
+		this.find({})
+			.populate('entities')
+			.sort('name')
+			.exec(cb);
+	},
 	listByTag: function(tag, cb){
 		this.find( {tags: tag})
 			.populate('entities')

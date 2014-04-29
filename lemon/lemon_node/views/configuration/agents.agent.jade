@@ -1,0 +1,53 @@
+extends ..\layout
+block head
+	title= title
+block content
+	include ..\page-header
+	.metro
+		.page
+			#header.info_header.bg-color-Dark
+				h3.fg-white
+					| Configuration > Agent > #{agent.name}
+			section(style="float:left;padding: 10px 0 0 20px;")
+				if action=="not"
+					div
+						h1
+							a(href="/configuration/agents")
+								i.icon-arrow-left-3.fg-dark
+							|	Agent not found
+				else
+					div
+						h1 
+							a(href="/configuration/agents")
+								i.icon-arrow-left-3.fg-dark
+							|	#{agent.name}
+						div.span10(style="padding-left: 60px;padding-top:20px;float:left")
+							h2(style="font-size:34px !important;") Information
+							br
+							table.span10.hovered
+								tbody
+									tr
+										td.span3
+											h3.fg-black Name
+										td
+											h3.fg-black #{agent.name}
+									tr
+										td
+											h3.fg-black Identifier
+										td
+											h3.fg-black #{agent.agent_id}
+									tr
+										td
+											h3.fg-black	Version
+										td
+											h3.fg-black #{agent.version}
+									tr
+										td(style="vertical-align:top;")
+											h3.fg-black Tags
+										td 
+											- each tag in agent.tags
+												h3
+													a(href="#").fg-black #{tag}	
+						.span10(style="padding-left: 60px;padding-top:20px;float:left")
+							h2(style="font-size:34px !important;") Entities
+							br			

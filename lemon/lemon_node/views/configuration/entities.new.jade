@@ -1,0 +1,17 @@
+extends ..\layout
+block head
+	title= title
+block content
+	include ..\page-header
+	.metro
+		.page
+			#header.info_header.bg-color-Dark
+				h3.fg-white
+					case action 
+						default
+							| Configuration > Entities > New
+			section#workspace.container(style="float:left;padding: 10px 0 0 20px;")
+				h1
+					a(href="/configuration/entities")
+						i.icon-arrow-left-3.fg-dark
+					|	New entity

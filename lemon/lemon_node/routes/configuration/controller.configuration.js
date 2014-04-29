@@ -47,8 +47,42 @@ exports.entities.list		= function(req, res){
 			res.render('configuration/entities', {title: 'Configuration > Entities',  bg_color: 'bg-color-Dark', entities: entities });
 	});
 };
+exports.entities.show_create		= function(req, res){
+	res.render('configuration/entities.new.jade', {title: 'New entity', bg_color: 'bg-color-Dark'});
+};
+exports.entities.create		= function(req, res){};
 exports.entities.show		= function(req, res){};
 exports.entities.add		= function(req, res){};
 exports.entities.edit		= function(req, res){};
 exports.entities.remove		= function(req, res){};
+//################################################################
+
+//////////////////////////////////////////////////////////////////
+//ENTITIES CONTROLLERS
+//////////////////////////////////////////////////////////////////
+var  Agent	= mongoose.model('system.Agent');	
+exports.agents	= {};
+exports.agents.load		= function(req, res, next){
+	Agent.load( req.params.agent_id, function(err, agent){
+		if(err) throw err;
+		if(!agent) throw Exception;
+		res.agent	= agent;
+		next();
+	});
+};
+exports.agents.list		= function(req, res){
+	Agent.list(function(err,agents){
+		if(err) throw err;
+		if(req.xhr)
+			res.send(agents);
+		else
+			res.render('configuration/agents', {title: 'Configuration > Agents',  bg_color: 'bg-color-Dark', agents: agents });
+	});
+};
+exports.agents.show		= function(req, res){
+	res.render('configuration/agents.agent.jade', {title: 'Configuration agent '+res.agent.name, bg_color: 'bg-color-Dark', agent: res.agent});
+};
+exports.agents.add		= function(req, res){};
+exports.agents.edit		= function(req, res){};
+exports.agents.remove		= function(req, res){};
 //################################################################

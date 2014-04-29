@@ -81,7 +81,7 @@ exports.load_agent	= function( req, res, next ){
 	});
 };
 exports.show_agentNotFound= function( req, res){
-	res.render( 'agents/agent', { tiitle: "Agent not found", bg_color: 'bg-color-Dark', action: 'not'});
+	res.render( 'agents/agent', { title: "Agent not found", bg_color: 'bg-color-Dark', action: 'not'});
 };
 exports.show_one	= function( req, res ){
 	res.render( 'agents/agent', { title: "Agent - " + res.agent.name, agent: res.agent, bg_color: 'bg-color-Dark' });	
