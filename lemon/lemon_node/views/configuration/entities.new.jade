@@ -15,3 +15,17 @@ block content
 					a(href="/configuration/entities")
 						i.icon-arrow-left-3.fg-dark
 					|	New entity
+				.span10(style="padding-left: 60px;padding-top:20px;float:left")
+					form(method="post",action="",enctype="multipart/form-data")
+						fieldset
+							label
+								h3 Name
+							.input-control.text
+								input(type="text",name="name",placeholder="Уникальный тэг группы",required)
+							label
+								h3 Description
+							.input-control.text
+								textarea(name="description",value="",placeholder="Description")													
+					button#submit.default.large Добавить
+				
+					

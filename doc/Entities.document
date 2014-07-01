@@ -16,30 +16,25 @@ Structure of DataItem:
 	type: 	String
 	contractor: ObjectId, ref "Contractor"
 	trigger: ObjectId, ref "Trigger"
-	data:	ObjectId, ref Data
+	data:	ObjectId, ref DataMeta
 
-Structure of Data
-	_id: ObjectId
-	meta: [         		// порядкой номер чанка определяется по индексу в массиве
-		MetaOfChunk1,
-		MetaOfChunk2,
-		...,
-		MetaOfChunkN,
-		// MetaOfChunk:
-		{
-			chunk: ObjectId, ref "DataChunk"
-			size: Number, размер чанка в мегабайтах
-			count: Number, число записей в чанке
-			range: [timestamp-first, timestamp-last]			
+Structure of DataMeta:
+	meta_id: Number,
+	count: Number,
+	last: {
+		data:	Mixed
+		timestamp: Date
 		}
-		
-	]
-Structure of DataChunk
-	_id: ObjectId
-	raw: [ 
-		{ 
-			timestamp: DateTime,
-			value: Mixed
-		} 
-	] 
 	
+	
+Structure of Data
+	meta_id: String,
+	num:	 Number,
+	chunk: 	 [
+		{
+			data: Mixed,
+			timestamp: Date
+		}
+	],
+	_firstTimestamp: Date
+	_endTimestamp:	 Date

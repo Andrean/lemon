@@ -15,6 +15,7 @@ import controllers.baseController    as baseController
 import controllers.dataController    as dataController
 import controllers.webController     as webController
 import controllers.fileController    as fileController
+import controllers.dbController      as dbController
 
 ####
 # LOADER FOR PLUGIN'S ROUTES
@@ -51,6 +52,7 @@ WEB_INTERFACE_ROUTES = [
     ,[  'GET',  r'^/agents$',   webController.get_agents                    ]
     ,[  'GET',  r'^/agents/update[?=%&_\-\+\w]*$',   webController.update_agents    ]
     ,[  'GET',  r'^/commands/status[?=%&_\-\+\w]*$',  webController.check_status    ]
+    ,[  'GET',  r'^/db/dataitem[?=%&_\-\+\w]*$',   dbController.getDataItem ]
     ,[  '#LOAD',None, lambda: loader('web','GET')   ]
     ,[  'GET',  r'.*',           baseController.get_404                     ]
     

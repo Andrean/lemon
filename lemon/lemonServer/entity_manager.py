@@ -10,6 +10,7 @@ import time
 import uuid
 import collections
 import os
+import data_manager
 
 commands    = { 
                'get_self_info' : '_.get_self_info',
@@ -42,7 +43,7 @@ class EntityManager(lemon.BaseServerComponent):
         self.commandManager = CommandManager(self)
         self.fileManager    = FileManager('files')
         self.agentManager   = AgentManager()
-        self.dataManager    = DataManager()
+        self.dataManager    = data_manager.DataManager()
         self._setReady()
         while(self._running):
             self.update()
@@ -89,10 +90,6 @@ class EntityManager(lemon.BaseServerComponent):
         #self.tagManager._update()
         #self.commandManager._update()
 
-class DataManager(object):
-    def __init__(self):
-        self._db    = core.getCoreInstance().getInstance('STORAGE').getInstance()    
-    
 class AgentManager(object):
     def __init__(self):
         self._agents    = core.getCoreInstance().getInstance('STORAGE').getInstance()
