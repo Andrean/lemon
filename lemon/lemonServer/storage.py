@@ -26,10 +26,12 @@ class Storage(lemon.BaseServerComponent):
         mongodb_addr    = self._config['database'].get('host','localhost');
         mongodb_port    = self._config['database'].get('port',27017);
         db_name         = self._config['database'].get('db_name','lemon');
+        self.db_instance = None
         try:
             self._client    = pymongo.MongoClient(mongodb_addr, mongodb_port)
             self._logger.info("Connection to mongodb successfully established")
             self._db = self._client[db_name]
+            self.db = self._db
             self._logger.debug("Successfully connected to '{0}'".format(db_name))
             self._test  = 1
         except pymongo.errors.ConnectionFailure as err:

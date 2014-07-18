@@ -11,7 +11,7 @@ class DataManager(object):
         self._db    = core.getCoreInstance().getInstance('STORAGE').getInstance()
         
     def getDataItem(self, _id):
-        
+        pass
     
     def getData(self, _meta_id, _from, _to):
         pass
